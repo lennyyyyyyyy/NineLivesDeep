@@ -1,0 +1,12 @@
+fileFormatVersion: 2
+guid: 4d18e2af896cf41a8b45f91fe17e5119
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - tex2d: {fileID: 2800000, guid: 35d87ec0f55794035b21944c555ec023, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

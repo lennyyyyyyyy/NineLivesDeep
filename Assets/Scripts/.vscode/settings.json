@@ -1,0 +1,19 @@
+{
+"omnisharp.json.enableRoslynAnalyzers": true,
+"[csharp]": {
+    "editor.defaultFormatter": "ms-dotnettools.csharp",
+    "editor.formatOnType": false,
+    "editor.formatOnSave": false
+},
+"csharp.format.indentation": {
+    "newLinesForBracesInMethods": false,
+    "newLinesForBracesInTypes": false,
+    "newLinesForBracesInProperties": false,
+    "newLinesForBracesInAccessors": false,
+    "newLinesForBracesInAnonymousMethods": false,
+    "newLinesForBracesInControlBlocks": false,
+    "newLinesForBracesInAnonymousTypes": false,
+    "newLinesForBracesInObjectCollectionArrayInitializers": false,
+    "newLinesForBracesInLambdaExpressionBody": false
+}
+}

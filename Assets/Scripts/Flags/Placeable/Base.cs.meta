@@ -1,0 +1,13 @@
+fileFormatVersion: 2
+guid: d0f39a4085c7f4c41b52e10da8f821cb
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - tex2d: {fileID: 2800000, guid: 1239e558213ce4db4979349064bbde19, type: 3}
+  - sprite: {fileID: -5154189640090123692, guid: 1239e558213ce4db4979349064bbde19, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
