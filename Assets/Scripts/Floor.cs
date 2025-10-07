@@ -105,7 +105,7 @@ public class Floor : MonoBehaviour
         backgroundTiles.Clear();
 
         for (int i=0; i<MaxSize() * MaxSize() * 1.25f; i++) {
-            Instantiate(GameManager.s.tile_background_p, transform);
+            backgroundTiles.Add(Instantiate(GameManager.s.tile_background_p, transform));
         }
 
 		ParticleSystem.ShapeModule sh = ambientDust.shape;

@@ -3,19 +3,20 @@ using UnityEngine;
 public class BackgroundTile : Parallax {
     private Vector4 seed;
     private float speed = 0.065f;
+	public SpriteRenderer sr;
+
+	protected static readonly int ThemeID = Shader.PropertyToID("_Theme");
+
     protected override void Start() {
         base.Start();
         seed = new Vector4(Random.Range(0f, 1000f), Random.Range(0f, 1000f), Random.Range(0f, 1000f), Random.Range(0f, 1000f));
-        Sprite s;
-        float r = Random.Range(0f, 1f);
-        if (r < .8f) {
-            s = UIManager.s.tile_s;
-        } else if (r < .9f) {
-            s = UIManager.s.tile_wood_s;
-        } else {
-            s = UIManager.s.tile_brick_s;
-        }
-        GetComponent<SpriteRenderer>().sprite = s;
+
+		//put the correct theme for the floor
+		MaterialPropertyBlock mpb = new MaterialPropertyBlock();
+		sr.GetPropertyBlock(mpb);
+		mpb.SetFloat(ThemeID, Floor.s.floor/3 + 1);
+		sr.SetPropertyBlock(mpb);
+
         transform.eulerAngles = Random.Range(0,4) * Vector3.forward * 90;
     }
     protected override void Update() {

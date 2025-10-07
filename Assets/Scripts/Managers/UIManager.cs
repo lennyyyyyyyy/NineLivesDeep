@@ -53,8 +53,6 @@ public class UIManager : MonoBehaviour
     public Sprite player, player_trapped;
     public GameObject canvas, STARTUI, GAMEUI, flagGroup, pawGroup, tooltipGroup, bubbleGroup;
     [System.NonSerialized]
-    public Sprite tile_s, tile_wood_s, tile_brick_s, tile_exit_s, tile_trial_s;
-    [System.NonSerialized]
     public RectTransform canvasRt;
     public GameObject nine, lives, deep, startbutton, minecount;
     public float startIdleStrength, startIdleSpeed;
@@ -67,7 +65,7 @@ public class UIManager : MonoBehaviour
     [System.NonSerialized]
     public List<GameObject> paws = new List<GameObject>();
     [System.NonSerialized]
-    public Material alphaEdgeBlueMat;
+    public Material alphaEdgeBlueMat, tileNormalMat, tileExitMat, tileTrialMat, tilePuddleMat, tileMossyMat;
     public Volume ppv;
     [System.NonSerialized]
     public VolumeProfile ppvp;
@@ -222,11 +220,11 @@ public class UIManager : MonoBehaviour
 		Player.s.cursesUnseen = new List<Type>(curseUIVars.Keys);
 
         alphaEdgeBlueMat = Resources.Load<Material>("Materials/AlphaEdgeBlue");
-        tile_s = Resources.Load<Sprite>("Textures/tile");
-        tile_wood_s = Resources.Load<Sprite>("Textures/tile_wood");
-        tile_brick_s = Resources.Load<Sprite>("Textures/tile_brick");
-		tile_exit_s = Resources.Load<Sprite>("Textures/tile_exit");
-		tile_trial_s = Resources.Load<Sprite>("Textures/tile_trial");
+		tileNormalMat = Resources.Load<Material>("Materials/TileNormal");
+		tileExitMat = Resources.Load<Material>("Materials/TileExit");
+		tileTrialMat = Resources.Load<Material>("Materials/TileTrial");
+		tilePuddleMat = Resources.Load<Material>("Materials/TilePuddle");
+		tileMossyMat = Resources.Load<Material>("Materials/TileMossy");
         ppvp = Resources.Load<VolumeProfile>("PPVoluemeProfile");
     }
     private void Start() {

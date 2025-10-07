@@ -56,7 +56,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -876546973899608171, guid: d6b690c47f05747c9bfc12d84ca796db, type: 3}
+  - {fileID: 2100000, guid: 13ccc0892ddf14617aa5ae443b915e6d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -106,3 +106,4 @@ MonoBehaviour:
   sortWithDepth: []
   underTileActive: 0
   coord: {x: 0, y: 0}
+  sr: {fileID: 6338453205203800448}

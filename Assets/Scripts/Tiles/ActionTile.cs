@@ -6,7 +6,7 @@ public class ActionTile : Tile
 {
 	public const int EXITTOSHOP = 0, EXITTOMINEFIELD = 1, EXITTOTRIAL = 2, GIVETRIALREWARD = 3;
 	protected Action action;
-	protected Sprite s;
+	protected Material m;
 	protected int amount = 1;
 	private Action ExitAction(string newFloorType, int newFloor) {
 		return () => { 
@@ -18,16 +18,16 @@ public class ActionTile : Tile
 	}	
 	public void Init(int actionCode) {
 		if (actionCode == EXITTOSHOP) {
-			s = UIManager.s.tile_exit_s;
+			m = UIManager.s.tileExitMat;
 			action = ExitAction("shop", Floor.s.floor);
 		} else if (actionCode == EXITTOMINEFIELD) {
-			s = UIManager.s.tile_exit_s;
+			m = UIManager.s.tileExitMat;
 			action = ExitAction("minefield", Floor.s.floor+1);
 		} else if (actionCode == EXITTOTRIAL) {
-			s = UIManager.s.tile_trial_s;
+			m = UIManager.s.tileTrialMat;
 			action = ExitAction("trial", Floor.s.floor);
 		} else if (actionCode == GIVETRIALREWARD) {
-			s = UIManager.s.tile_trial_s;
+			m = UIManager.s.tileTrialMat;
 			action = () => {
 				Tile t = Floor.s.PlaceTile(GameManager.s.tile_p, Floor.s.width-1, Floor.s.height-2).GetComponent<Tile>();
 				t.PositionUnbuilt();
@@ -40,8 +40,8 @@ public class ActionTile : Tile
 			};
 		}
 	}
-	public void Init(Sprite sprite, Action a, int am) {
-		s = sprite;
+	public void Init(Material mat, Action a, int am) {
+		m = mat;
 		action = a;
 		amount = am;
 	}
@@ -52,7 +52,7 @@ public class ActionTile : Tile
 		}
 	}
 	protected override void Start() {
+		GetComponent<SpriteRenderer>().material = m;
 		base.Start();
-		GetComponent<SpriteRenderer>().sprite = s;
 	}
 }

@@ -12,7 +12,10 @@ public class Tile : Parallax
     [System.NonSerialized]
     public float externalDepthImpulse = 0;
     protected BoxCollider2D collider;
+	public SpriteRenderer sr;
     
+	protected static readonly int ThemeID = Shader.PropertyToID("_Theme");
+	
     protected override void Start()
     {
         base.Start();
@@ -25,6 +28,11 @@ public class Tile : Parallax
         collider = gameObject.AddComponent<BoxCollider2D>();
         collider.isTrigger = true;
         period = Random.Range(4f, 6f);
+		//put the correct theme for the floor
+		MaterialPropertyBlock mpb = new MaterialPropertyBlock();
+		sr.GetPropertyBlock(mpb);
+		mpb.SetFloat(ThemeID, Floor.s.floor/3 + 1);
+		sr.SetPropertyBlock(mpb);
     }
     protected override void Update()
     {

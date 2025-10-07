@@ -75,7 +75,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1993326907
-  m_SortingLayer: 6
+  m_SortingLayer: 4
   m_SortingOrder: 35
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -157,7 +157,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -876546973899608171, guid: d6b690c47f05747c9bfc12d84ca796db, type: 3}
+  - {fileID: 2100000, guid: 03b6e352234e3404dae5887bb713cbd8, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -176,7 +176,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1993326907
-  m_SortingLayer: 6
+  m_SortingLayer: 4
   m_SortingOrder: 0
   m_Sprite: {fileID: -9210852089714261825, guid: d519d2ec36fc24a9c920823b3a56e386, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -204,6 +204,8 @@ MonoBehaviour:
   referencePos: {x: 0, y: 0, z: 0}
   referenceScale: {x: 1, y: 1, z: 1}
   depth: 1
-  underTile: {fileID: 0}
+  sortWithDepth: []
+  underTileActive: 1
   coord: {x: 0, y: 0}
+  sr: {fileID: 6338453205203800448}
   puddle: {fileID: 634095995805408109}
