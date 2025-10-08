@@ -185,10 +185,10 @@ public class Floor : MonoBehaviour
             }
         }
 
-        PlacePickupSprite(Player.s.flagsUnseen, 0, 1, 1);
-        PlacePickupSprite(Player.s.flagsUnseen, 15, 2, 1);
-        PlacePickupSprite(Player.s.flagsUnseen, 15, 3, 1);
-        PlacePickupSprite(Player.s.flagsUnseen, 15, 4, 1);
+        PlacePickupSprite(Player.s.flagsUnseen, PickupSprite.SHOP, 0, 1, 1);
+        PlacePickupSprite(Player.s.flagsUnseen, PickupSprite.SHOP, 15, 2, 1);
+        PlacePickupSprite(Player.s.flagsUnseen, PickupSprite.SHOP, 15, 3, 1);
+        PlacePickupSprite(Player.s.flagsUnseen, PickupSprite.SHOP, 15, 4, 1);
     }
 	public void InitTrial() {
 		InitLayout(floor + 7 + Player.s.modifiers.floorExpansion, floor + 7 + Player.s.modifiers.floorExpansion, "trial");
@@ -258,10 +258,10 @@ public class Floor : MonoBehaviour
         m.init(x, y);
         mines[m.coord.x, m.coord.y] = g;
     }
-    public void PlacePickupSprite(List<Type> pool, int p, int x, int y) {
+    public void PlacePickupSprite(List<Type> pool, int spawnType, int p, int x, int y) {
         GameObject g = Instantiate(GameManager.s.flagSprite_p);
         PickupSprite ps = g.AddComponent(typeof(PickupSprite)) as PickupSprite;
-        ps.Init(pool[Random.Range(0, pool.Count)], p, x, y);
+        ps.Init(pool[Random.Range(0, pool.Count)], spawnType, p, x, y);
         Player.s.NoticeFlag(ps.parentType);
     }
     public bool within(int x, int y) {

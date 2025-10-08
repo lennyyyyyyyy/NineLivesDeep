@@ -9,16 +9,12 @@ public class Placeable : Flag
     public GameObject sprite;
     protected override void init() {
         if (UIManager.s.flagUIVars.ContainsKey(GetType())) {
-            init(UIManager.s.flagUIVars[GetType()].tex2d, 
-             UIManager.s.flagUIVars[GetType()].name, 
-             UIManager.s.flagUIVars[GetType()].flavor, 
-             UIManager.s.flagUIVars[GetType()].info,
-             UIManager.s.flagUIVars[GetType()].color,
-             UIManager.s.flagUIVars[GetType()].spriteType);
+			FlagUIVars uivars = UIManager.s.flagUIVars[GetType()];
+            init(uivars.tex2d, uivars.name, uivars.flavor, uivars.info, uivars.color, uivars.showCount, uivars.spriteType);
         }
     }
-    protected virtual void init(Texture2D tex2d, string n, string f, string i, Color c, Type type) {
-        init(tex2d, n, f, i, c);
+    protected virtual void init(Texture2D tex2d, string n, string f, string i, Color c, bool showC, Type type) {
+        init(tex2d, n, f, i, c, showC);
         flagSprite = type;
     }
     protected virtual void OnPointerDown(PointerEventData data) {
@@ -38,7 +34,6 @@ public class Placeable : Flag
     }
     protected override void Start()
     {
-        showCount = true;
         base.Start();
         entry = new EventTrigger.Entry{eventID = EventTriggerType.PointerDown};
         entry.callback.AddListener((data) => { OnPointerDown((PointerEventData)data); });

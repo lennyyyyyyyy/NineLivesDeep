@@ -30,9 +30,17 @@ public class Flag : UIItem {
     }
     protected virtual void init() {
         if (UIManager.s.flagUIVars.ContainsKey(GetType())) {
-			UIVars uivars = UIManager.s.flagUIVars[GetType()];
-            init(uivars.tex2d, uivars.name, uivars.flavor, uivars.info, uivars.color);
+			FlagUIVars uivars = UIManager.s.flagUIVars[GetType()];
+            init(uivars.tex2d, uivars.name, uivars.flavor, uivars.info, uivars.color, uivars.showCount);
         }
+    }
+    protected virtual void init(Texture2D t, string n, string f, string i, Color c, bool showC) {
+		tex2d = t;
+		name = n;
+		flavor = f;
+		info = i;
+		color = c;
+		showCount = showC;
     }
     protected override void Start() {
 		if (tex2d == null) {

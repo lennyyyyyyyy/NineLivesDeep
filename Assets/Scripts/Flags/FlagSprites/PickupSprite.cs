@@ -2,8 +2,12 @@ using UnityEngine;
 using Random = UnityEngine.Random;
 using System;
 using UnityEngine.Rendering.Universal;
+using TMPro;
 public class PickupSprite : VerticalObject {
-    protected int price;
+	public static readonly int RANDOM = 0, TRIAL = 1, SHOP = 2;
+    protected int price, spawnType;
+	[System.NonSerialized]
+	public int count = 0;
     protected bool hovered = false;
     [System.NonSerialized]
     public Vector2Int coord;
@@ -11,9 +15,11 @@ public class PickupSprite : VerticalObject {
     public Type parentType;
     protected Light2D light;
     protected SpriteRenderer sr;
+	protected TMP_Text tmpro;
     public static float droppedScale = 0.6f, hoveredScale = 0.8f, hoveredOffset;
-    public virtual void Init(Type pType, int p, int x, int y) {
+    public virtual void Init(Type pType, int sType, int p, int x, int y) {
         parentType = pType;
+		spawnType = sType;
         price = p;
         coord = new Vector2Int(x, y);
     }
@@ -22,6 +28,7 @@ public class PickupSprite : VerticalObject {
         marker = transform.Find("Marker").gameObject;
         sr = GetComponent<SpriteRenderer>();
         light = GetComponentInChildren<Light2D>();
+		tmpro = GetComponentInChildren<TMP_Text>();
         if (parentType != null && UIManager.s.flagUIVars.ContainsKey(parentType)) {
             sr.sprite = UIManager.s.flagUIVars[parentType].sprite;
             light.color = UIManager.s.flagUIVars[parentType].color;
@@ -29,6 +36,18 @@ public class PickupSprite : VerticalObject {
                                                 UIManager.s.flagUIVars[parentType].flavor, 
                                                 UIManager.s.flagUIVars[parentType].info,
                                                 UIManager.s.flagUIVars[parentType].color, true, price);
+			//consumable count numbers based on the way it spawns
+			if (typeof(Consumable).IsAssignableFrom(parentType)) {
+				tmpro.enabled = true;
+				if (spawnType == RANDOM) {
+					count = 1;
+				} else if (spawnType == TRIAL) {
+					count = Random.Range(Mathf.Max(1, UIManager.s.flagUIVars[parentType].consumableDefaultCount/3 - 1), UIManager.s.flagUIVars[parentType].consumableDefaultCount/3 + 2);
+				} else if (spawnType == SHOP) {
+					count = UIManager.s.flagUIVars[parentType].consumableDefaultCount;
+				}
+				tmpro.text = count.ToString();
+			}
         }
         Floor.s.flags[coord.x, coord.y] = gameObject;
         transform.parent = Floor.s.tiles[coord.x, coord.y].transform;
@@ -63,7 +82,11 @@ public class PickupSprite : VerticalObject {
         if (Player.s.mines >= price) {
             Player.s.UpdateMineCount(Player.s.mines - price);
             GameObject g = Instantiate(GameManager.s.flag_p, transform.position, Quaternion.identity, UIManager.s.flagGroup.transform);
-            g.AddComponent(parentType);
+            Flag f = g.AddComponent(parentType) as Flag;
+			// it this has a count then give the item the same count
+			if (tmpro.enabled) {
+				f.count = count;
+			}
             Floor.s.flags[coord.x, coord.y] = null;
             Destroy(gameObject);
             Player.s.destroyPrints();

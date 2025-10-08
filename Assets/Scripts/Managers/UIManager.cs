@@ -39,8 +39,15 @@ public class UIVars {
 }
 public class FlagUIVars : UIVars {
     public Type spriteType;
-    public FlagUIVars(string resourceName, string n, string f, string i, Type type = null) : base("flag", resourceName, n, f, i) {
+	public int consumableDefaultCount = 0; 
+	public bool showCount = false;
+    public FlagUIVars(string resourceName, string n, string f, string i, bool showC, Type type = null) : base("flag", resourceName, n, f, i) {
+		showCount = showC;
         spriteType = type;
+    }
+    public FlagUIVars(string resourceName, string n, string f, string i, bool showC, int defaultCount) : base("flag", resourceName, n, f, i) {
+		showCount = showC;
+		consumableDefaultCount = defaultCount;
     }
 }
 public class CurseUIVars : UIVars {
@@ -167,33 +174,33 @@ public class UIManager : MonoBehaviour
         s = this;
         flagUIVars = new Dictionary<Type, FlagUIVars>{
             //placeable flags
-            {typeof(Base), new FlagUIVars("base", "Flag", "Nostalgic, isn't it?", "Drag and drop these wherever you think mines are.", typeof(BaseSprite))},
-            {typeof(Anti), new FlagUIVars("anti", "Anti-Flag", "Anti-matter without the explosion.", "Remove and reuse your placed flags by dropping this flag on them.", typeof(AntiSprite))},
-            {typeof(Psychic), new FlagUIVars("psychic", "Psychic Flag", "I can see what you can't, stupid cat.", "Points its eye to the nearest mine.", typeof(PsychicSprite))},
-            {typeof(Rahhh), new FlagUIVars("rahhh", "RAHHH", "Coloni—spread freedom from afar!", "Discovers a 3x3 area, applying to all map flags.", typeof(RahhhSprite))},
-            {typeof(Rubber), new FlagUIVars("rubber", "Rubber Flag", "Instead of blowing in the wind, it just kind of vibrates.", "Place these and bounce on them to travel further.", typeof(RubberSprite))},
-            {typeof(You), new FlagUIVars("you", "You Flag", "For use in the worst case scenario", "Revive yourself whenever you die", typeof(YouSprite))},
-            {typeof(Raincloud), new FlagUIVars("raincloud", "Raincloud Flag", "The tiles are actually pretty porous.", "Guarantees a puddle at the same coordinates on all following floors.", typeof(RaincloudSprite))},
+            {typeof(Base), new FlagUIVars("base", "Flag", "Nostalgic, isn't it?", "Drag and drop these wherever you think mines are.", true, typeof(BaseSprite))},
+            {typeof(Anti), new FlagUIVars("anti", "Anti-Flag", "Anti-matter without the explosion.", "Remove and reuse your placed flags by dropping this flag on them.", true, typeof(AntiSprite))},
+            {typeof(Psychic), new FlagUIVars("psychic", "Psychic Flag", "I can see what you can't, stupid cat.", "Points its eye to the nearest mine.", true, typeof(PsychicSprite))},
+            {typeof(Rahhh), new FlagUIVars("rahhh", "RAHHH", "Coloni—spread freedom from afar!", "Discovers a 3x3 area, applying to all map flags.", true, typeof(RahhhSprite))},
+            {typeof(Rubber), new FlagUIVars("rubber", "Rubber Flag", "Instead of blowing in the wind, it just kind of vibrates.", "Place these and bounce on them to travel further.", true, typeof(RubberSprite))},
+            {typeof(You), new FlagUIVars("you", "You Flag", "For use in the worst case scenario", "Revive yourself whenever you die", true, typeof(YouSprite))},
+            {typeof(Raincloud), new FlagUIVars("raincloud", "Raincloud Flag", "The tiles are actually pretty porous.", "Guarantees a puddle at the same coordinates on all following floors.", true, typeof(RaincloudSprite))},
             //passive flags
-            {typeof(Aromatic), new FlagUIVars("aromatic", "Aromatic Flag", "Your sinuses feel clearer already!", "You can now sniff out mines an extra 1 tile away. Detect mice.")},
-            {typeof(Catnip), new FlagUIVars("catnip", "Catnip Flag", "", "You can now jump to tiles two units away.")},
-            {typeof(Gambling), new FlagUIVars("gambling", "Gambling Addiction", "It's only a crippling addiction if you lose.", "Remove all health. Mines have an 80% chance to do nothing and a 20% chance to kill you instantly.")},
-            {typeof(OneUp), new FlagUIVars("1up", "One-Up Flag", "Nintendo please don't sue me.", "One random square on the floor gives you an additional heart.")},
-            {typeof(Daytrader), new FlagUIVars("daytrader", "Daytrader Flag", "", "Every floor, gain either 50% more mines or 25% less.")},
-            {typeof(Bank), new FlagUIVars("bank", "Bank Flag", "", "Every floor, gain 10% more mines.")},
-            {typeof(Collector), new FlagUIVars("collector", "Collector Flag", "Unlike Pokemon cards, high-tech mines are genuinely expensive to produce.", "The more advanced the mine, the more it's worth.")},
-            {typeof(Reflection), new FlagUIVars("reflection", "Reflection Flag", "Use one get one free!", "Placing a non-base flag in a puddle gives you a base flag back.")},
-            {typeof(Wildcat), new FlagUIVars("wildcat", "Wildcat Flag", "Born to be wild.", "Every five new grassy tiles you step in gives you an extra life.")},
+            {typeof(Aromatic), new FlagUIVars("aromatic", "Aromatic Flag", "Your sinuses feel clearer already!", "You can now sniff out mines an extra 1 tile away. Detect mice.", false)},
+            {typeof(Catnip), new FlagUIVars("catnip", "Catnip Flag", "", "You can now jump to tiles two units away.", false)},
+            {typeof(Gambling), new FlagUIVars("gambling", "Gambling Addiction", "It's only a crippling addiction if you lose.", "Remove all health. Mines have an 80% chance to do nothing and a 20% chance to kill you instantly.", false)},
+            {typeof(OneUp), new FlagUIVars("1up", "One-Up Flag", "Nintendo please don't sue me.", "One random square on the floor gives you an additional heart.", false)},
+            {typeof(Daytrader), new FlagUIVars("daytrader", "Daytrader Flag", "", "Every floor, gain either 50% more mines or 25% less.", false)},
+            {typeof(Bank), new FlagUIVars("bank", "Bank Flag", "", "Every floor, gain 10% more mines.", false)},
+            {typeof(Collector), new FlagUIVars("collector", "Collector Flag", "Unlike Pokemon cards, high-tech mines are genuinely expensive to produce.", "The more advanced the mine, the more it's worth.", false)},
+            {typeof(Reflection), new FlagUIVars("reflection", "Reflection Flag", "Use one get one free!", "Placing a non-base flag in a puddle gives you a base flag back.", false)},
+            {typeof(Wildcat), new FlagUIVars("wildcat", "Wildcat Flag", "Born to be wild.", "Every five new grassy tiles you step in gives you an extra life.", true)},
             //map flags
-            {typeof(Brain), new FlagUIVars("brain", "Brain Flag", "Turns out your puny little brain is also a flag.", "Senses the number of mines around you.")},
-            {typeof(Vertical), new FlagUIVars("vertical", "Vertical Flag", "", "Gives the number of mines in your column.")},
-            {typeof(Horizontal), new FlagUIVars("horizontal", "Horizontal Flag", "", "Gives the number of mines in your row.")},
-            {typeof(Manhattan), new FlagUIVars("manhattan", "Manhattan Flag", "The nearest mine's just around the block.", "Gives the manhattan distance to the nearest mine.")},
-            {typeof(Knight), new FlagUIVars("knight", "Knight Flag", "Yee haw", "Gives the number of mines a knight's move away.")},
+            {typeof(Brain), new FlagUIVars("brain", "Brain Flag", "Turns out your puny little brain is also a flag.", "Senses the number of mines around you.", false)},
+            {typeof(Vertical), new FlagUIVars("vertical", "Vertical Flag", "", "Gives the number of mines in your column.", false)},
+            {typeof(Horizontal), new FlagUIVars("horizontal", "Horizontal Flag", "", "Gives the number of mines in your row.", false)},
+            {typeof(Manhattan), new FlagUIVars("manhattan", "Manhattan Flag", "The nearest mine's just around the block.", "Gives the manhattan distance to the nearest mine.", false)},
+            {typeof(Knight), new FlagUIVars("knight", "Knight Flag", "Yee haw", "Gives the number of mines a knight's move away.", false)},
             //consumable flags
-            {typeof(Chocolate), new FlagUIVars("chocolate", "Chocolate Flag", "Curiosity made the cat stronger.", "ONE TIME USE - Sacrifice half your health rounded up for two random flags.")},
-            {typeof(Dog), new FlagUIVars("dog", "Dog Flag", "Oh, how the tables have turned.", "For your next movement, you are immune to mines, but take damage from safe tiles.")},
-            {typeof(Shovel), new FlagUIVars("shovel", "Shovel Flag", "An upgrade for your tiny claws.", "ONE TIME USE - Immeditaely skip to the start of the next floor.")},
+            {typeof(Chocolate), new FlagUIVars("chocolate", "Chocolate Flag", "Curiosity made the cat stronger.", "ONE TIME USE - Sacrifice half your health rounded up for two random flags.", true, 1)},
+            {typeof(Dog), new FlagUIVars("dog", "Dog Flag", "Oh, how the tables have turned.", "For your next movement, you are immune to mines, but take damage from safe tiles.", true, 10)},
+            {typeof(Shovel), new FlagUIVars("shovel", "Shovel Flag", "An upgrade for your tiny claws.", "ONE TIME USE - Immeditaely skip to the start of the next floor.", true, 1)},
         };
 		Player.s.flagsUnseen = new List<Type>(flagUIVars.Keys);
 		Player.s.consumableFlagsUnseen = Player.s.flagsUnseen.Where(flag => typeof(Consumable).IsAssignableFrom(flag)).ToList();
