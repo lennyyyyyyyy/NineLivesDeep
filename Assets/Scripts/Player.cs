@@ -33,10 +33,10 @@ public class Player : VerticalObject
     [System.NonSerialized]
     public List<GameObject> prints = new List<GameObject>();
     [System.NonSerialized]
-    public List<GameObject> flags = new List<GameObject>(), notFlags = new List<GameObject>();
+    public List<GameObject> flags = new List<GameObject>(), notFlags = new List<GameObject>(), tilesUnvisited = new List<GameObject>();
     public HashSet<Type> flagsSeen = new HashSet<Type>(), cursesSeen = new HashSet<Type>(); // not in use but holding on to these
 	public List<Type> flagsUnseen, consumableFlagsUnseen, cursesUnseen;
-    public HashSet<Vector2Int> coordsVisited = new HashSet<Vector2Int>();
+    public HashSet<GameObject> tilesVisited = new HashSet<GameObject>();
     public List<Vector2Int> printLocs;
     public Vector2Int coord;
     public GameObject light, blood, feet;
@@ -113,6 +113,7 @@ public class Player : VerticalObject
             UpdateActiveMapLayers();
             UpdateActivePrints();
 			tempChanges = 0;
+			triggerMines();
         }, GameManager.s.deathReviveDuration);
     }
     public void UpdateActiveMapLayers() {
@@ -235,7 +236,9 @@ public class Player : VerticalObject
         }
     }
     public void triggerMines() {
-        Floor.s.mines[coord.x, coord.y]?.GetComponent<Mine>().trigger();
+		if (Player.s.alive && Floor.s.mines[coord.x, coord.y] != null) {
+			Floor.s.mines[coord.x, coord.y].GetComponent<Mine>().trigger();
+		}
     }
     public void discoverTiles() {
         for (int dx=-discoverRange; dx<=discoverRange; dx++) {
@@ -286,7 +289,7 @@ public class Player : VerticalObject
             discoverTiles();
         }
         //wildcat passive
-        if (hasFlag(typeof(Wildcat)) && !coordsVisited.Contains(coord) && Floor.s.tiles[x, y].GetComponent<MossyTile>() != null) {
+        if (hasFlag(typeof(Wildcat)) && !tilesVisited.Contains(Floor.s.tiles[x, y]) && Floor.s.tiles[x, y].GetComponent<MossyTile>() != null) {
             Flag w = UIManager.s.flagUIVars[typeof(Wildcat)].instances[0].GetComponent<Flag>();
             w.UpdateCount(w.count-1);
         }
@@ -297,11 +300,20 @@ public class Player : VerticalObject
 				Die();
 			}
 		}
-        coordsVisited.Add(coord);
-
+        tilesVisited.Add(Floor.s.tiles[x, y]);
+		tilesUnvisited.Remove(Floor.s.tiles[x, y]);
     }
+	public void setCoord(GameObject tile) {
+		setCoord(tile.GetComponent<Tile>().coord.x, tile.GetComponent<Tile>().coord.y);
+	}
     private void onFloorChange() {
-        coordsVisited.Clear();
+        tilesVisited.Clear();
+		tilesUnvisited.Clear();
+		foreach (GameObject tile in Floor.s.tiles) {
+			if (tile != null) {
+				tilesUnvisited.Add(tile);
+			}
+		}
         setCoord(0, 0, false);
         setTrapped(false);
 		tempChanges = 0;

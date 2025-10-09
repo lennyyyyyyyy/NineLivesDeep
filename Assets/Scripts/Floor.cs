@@ -157,16 +157,19 @@ public class Floor : MonoBehaviour
                 if (MineAvailableStart(i, j)) {
                     float rand = Random.value;
                     float mineMult = tiles[i, j].GetComponent<Tile>().mineMult * Player.s.modifiers.mineSpawnMult;
-                    if (rand < 0.02f*mineMult) {
-                        PlaceMine(typeof(Mine), i, j);
-                    } else if (rand == 0.04f*mineMult) {
-                        PlaceMine(typeof(Mini), i, j);
-                    } else if (rand == 0.06f*mineMult) {
-                        PlaceMine(typeof(Mouse), i, j);
-                    } else if (rand == 0.08f*mineMult) {
-                        PlaceMine(typeof(Trap), i, j);
-                    } else if (rand == 0.1f*mineMult) {
-                        PlaceMine(typeof(Hydra), i, j);
+                    //if (rand < 0.02f*mineMult) {
+                    //    PlaceMine(typeof(Mine), i, j);
+                    //} else if (rand == 0.04f*mineMult) {
+                    //    PlaceMine(typeof(Mini), i, j);
+                    //} else if (rand == 0.06f*mineMult) {
+                    //    PlaceMine(typeof(Mouse), i, j);
+                    //} else if (rand == 0.08f*mineMult) {
+                    //    PlaceMine(typeof(Trap), i, j);
+                    //} else if (rand == 0.1f*mineMult) {
+                    //    PlaceMine(typeof(Hydra), i, j);
+					//}
+					if (rand < 1f * mineMult) {
+						PlaceMine(typeof(Telemine), i, j);
 					}
 				}
             }

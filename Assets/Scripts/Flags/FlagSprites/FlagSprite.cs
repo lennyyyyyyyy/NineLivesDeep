@@ -14,6 +14,7 @@ public class FlagSprite : VerticalObject
     [System.NonSerialized]
     public string state = "held";
     protected Light2D light;
+	protected bool removesMines = true;
     protected SpriteRenderer sr;
 	protected float placeImpulse = 0.2f;
     public virtual void Init(Type pType) {
@@ -76,7 +77,7 @@ public class FlagSprite : VerticalObject
         Player.s.destroyPrints();
         Player.s.updatePrints();
         sr.sortingLayerName = "Player";
-        if (Floor.s.mines[coord.x, coord.y] != null) {
+        if (removesMines && Floor.s.mines[coord.x, coord.y] != null) {
             Player.s.UpdateMineCount(Player.s.mines + Player.s.modifiers.mineDefuseMult);
             Destroy(Floor.s.mines[coord.x, coord.y]);
         }
