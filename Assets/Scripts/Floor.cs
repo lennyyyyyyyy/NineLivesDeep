@@ -168,8 +168,8 @@ public class Floor : MonoBehaviour
                     //} else if (rand == 0.1f*mineMult) {
                     //    PlaceMine(typeof(Hydra), i, j);
 					//}
-					if (rand < 1f * mineMult) {
-						PlaceMine(typeof(Telemine), i, j);
+					if (rand < 0.2f * mineMult) {
+						PlaceMine(typeof(Chief), i, j);
 					}
 				}
             }
