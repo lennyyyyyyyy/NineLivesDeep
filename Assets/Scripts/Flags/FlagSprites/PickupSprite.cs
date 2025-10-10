@@ -80,7 +80,7 @@ public class PickupSprite : VerticalObject {
     }
     protected virtual void OnMouseDown() {
         if (Player.s.money >= price) {
-            Player.s.UpdateMineCount(Player.s.money - price);
+            Player.s.UpdateMoney(Player.s.money - price);
             GameObject g = Instantiate(GameManager.s.flag_p, transform.position, Quaternion.identity, UIManager.s.flagGroup.transform);
             Flag f = g.AddComponent(parentType) as Flag;
 			// it this has a count then give the item the same count

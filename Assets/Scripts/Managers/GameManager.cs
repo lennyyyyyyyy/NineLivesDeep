@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     // prefabs
-    public GameObject tile_p, tile_exit_p, tile_puddle_p, tile_mossy_p, tile_background_p, moss_p, grass1_p, grass2_p, mine_p, number_p, print_p, blood_p, heart_p, flag_p, curse_p, flagSprite_p, paw_p, tooltip_p, bubble_p, psychicEye_p, playerBit_p;
+    public GameObject tile_p, tile_exit_p, tile_puddle_p, tile_mossy_p, tile_background_p, moss_p, grass1_p, grass2_p, mine_p, mineSprite_p, number_p, print_p, blood_p, heart_p, flag_p, curse_p, flagSprite_p, paw_p, tooltip_p, bubble_p, psychicEye_p, playerBit_p;
     public GameObject underDarkenTarget;
     public static GameManager s;
     [System.NonSerialized]

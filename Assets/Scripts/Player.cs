@@ -153,12 +153,11 @@ public class Player : VerticalObject
             g.active = active;
         }
     }
-    public void UpdateMineCount(float newCount) {
-        UIManager.s.InstantiateBubble(UIManager.s.minecount, (newCount - money >= 0 ? "+" : "-") + (Mathf.Round(Mathf.Abs(newCount - money)*100f)/100f).ToString(), Color.white);
+    public void UpdateMoney(float newCount) {
+        UIManager.s.InstantiateBubble(MineUIItem.s.gameObject, (newCount - money >= 0 ? "+" : "-") + (Mathf.Round(Mathf.Abs(newCount - money)*100f)/100f).ToString(), Color.white);
         money = newCount;
         
-        UIManager.s.minecount.GetComponent<TMP_Text>().text = money.ToString();
-        
+        MineUIItem.s.count.text = money.ToString();
     }
     public void destroyPrints() {
         for (int i = 0; i < prints.Count; i++) {

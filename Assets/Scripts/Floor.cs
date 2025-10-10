@@ -43,6 +43,21 @@ public class Floor : MonoBehaviour
         }, time);
 		time += 2.8f;
 
+		if (floorType == "minefield") {
+			GameManager.s.DelayAction(() => {
+				UIManager.s.InstantiateBubble(Vector3.zero, "a mine appears...", new Color(0.5f, 0.5f, 0.5f), 2f, 2f);
+			}, time);
+			GameManager.s.DelayAction(() => {
+				GameObject mine = Instantiate(GameManager.s.mine_p, Vector3.zero, Quaternion.identity, UIManager.s.GAMEUI.transform);
+				if (floor == 0) {
+					mine.AddComponent(typeof(Mine));
+				} else {
+					mine.AddComponent(Player.s.minesUnseen[Random.Range(0, Player.s.minesUnseen.Count)]);
+				}
+			}, time + 1f);
+			time += 2.8f;
+		}
+
 		if (floorType == "minefield" && floor % 3 == 0) {
 			GameManager.s.DelayAction(() => {
 				UIManager.s.InstantiateBubble(Vector3.zero, "CURSED", new Color(0.5f, 0, 0), 2f, 2f);
@@ -157,19 +172,13 @@ public class Floor : MonoBehaviour
                 if (MineAvailableStart(i, j)) {
                     float rand = Random.value;
                     float mineMult = tiles[i, j].GetComponent<Tile>().mineMult * Player.s.modifiers.mineSpawnMult;
-                    //if (rand < 0.02f*mineMult) {
-                    //    PlaceMine(typeof(Mine), i, j);
-                    //} else if (rand == 0.04f*mineMult) {
-                    //    PlaceMine(typeof(Mini), i, j);
-                    //} else if (rand == 0.06f*mineMult) {
-                    //    PlaceMine(typeof(Mouse), i, j);
-                    //} else if (rand == 0.08f*mineMult) {
-                    //    PlaceMine(typeof(Trap), i, j);
-                    //} else if (rand == 0.1f*mineMult) {
-                    //    PlaceMine(typeof(Hydra), i, j);
-					//}
-					if (rand < 0.2f * mineMult) {
-						PlaceMine(typeof(ChiefSprite), i, j);
+					float totalMineChance = mineMult * (0.1f + 0.05f * floor);
+					for (int index = 0; index < Player.s.mines.Count; index++) {
+						Mine mine = Player.s.mines[index].GetComponent<Mine>();
+						if (rand < totalMineChance * (1 - (Player.s.mines.Count - index - 1) / (1.125f + Player.s.mines.Count * 0.875f))) {
+							PlaceMine(mine.spriteType, i, j);
+							break;
+						}
 					}
 				}
             }
@@ -255,7 +264,7 @@ public class Floor : MonoBehaviour
         }
     }
     public void PlaceMine(Type t, int x, int y) {
-        GameObject g = Instantiate(GameManager.s.mine_p, tiles[x, y].transform);
+        GameObject g = Instantiate(GameManager.s.mineSprite_p, tiles[x, y].transform);
 		g.transform.localPosition = Vector3.zero;
         MineSprite m = g.AddComponent(t) as MineSprite;
         m.init(x, y);

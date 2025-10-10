@@ -67,7 +67,7 @@ public class UIManager : MonoBehaviour
     public GameObject canvas, STARTUI, GAMEUI, flagGroup, pawGroup, tooltipGroup, bubbleGroup;
     [System.NonSerialized]
     public RectTransform canvasRt;
-    public GameObject nine, lives, deep, startbutton, minecount;
+    public GameObject nine, lives, deep, startbutton;
     public float startIdleStrength, startIdleSpeed;
     [System.NonSerialized]
     public Vector3 lastMousePos, mouseVelocity = Vector2.zero;
@@ -136,6 +136,20 @@ public class UIManager : MonoBehaviour
 		Player.s.RecalculateModifiers();
     }
 	public void OrganizeNotFlags() {
+		//sort in the right order
+		List<GameObject> sortedNotFlags = new List<GameObject>() { MineUIItem.s.gameObject };
+		foreach (GameObject notFlag in Player.s.notFlags) {
+			if (notFlag.GetComponent<UIItem>() is Curse) {
+				sortedNotFlags.Add(notFlag);
+			}
+		}
+		foreach (GameObject notFlag in Player.s.notFlags) {
+			if (notFlag.GetComponent<UIItem>() is Mine) {
+				sortedNotFlags.Add(notFlag);
+			}
+		}
+		Player.s.notFlags = sortedNotFlags;
+		//then move items in their places
         bool variableSpacing = Player.s.notFlags.Count * 100 > (UIManager.s.canvas.transform as RectTransform).rect.height;
         for (int i = 0; i < Player.s.notFlags.Count; i++) {
             GameObject g = Player.s.notFlags[i];
