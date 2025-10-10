@@ -16,8 +16,8 @@ public class UIVars {
 	public static int nextID = 0;
 	public List<GameObject> instances = new List<GameObject>();
 	public UIVars(string category, string resourceName, string n, string f, string i) {
-		tex2d = Resources.Load<Texture2D>("Textures/" + category + "_" + resourceName);
-		sprite = Resources.Load<Sprite>("Textures/" + category + "_" + resourceName);
+		tex2d = UIManager.s.LoadResourceSafe<Texture2D>("Textures/" + category + "_" + resourceName);
+		sprite = UIManager.s.LoadResourceSafe<Sprite>("Textures/" + category + "_" + resourceName);
         Color[] colors = tex2d.GetPixels();
         float r = 0, g = 0, b = 0;
         foreach (Color c in colors) {
@@ -54,6 +54,12 @@ public class CurseUIVars : UIVars {
 	public CurseUIVars(string resourceName, string n, string f, string i) : base("curse", resourceName, n, f, i) {
 	}
 }
+public class MineUIVars : UIVars {
+	public Type spriteType;
+	public MineUIVars(string resourceName, string n, string f, string i, Type type) : base("mine", resourceName, n, f, i) {
+		spriteType = type;
+	}
+}
 public class UIManager : MonoBehaviour
 {
     public static UIManager s;
@@ -67,8 +73,9 @@ public class UIManager : MonoBehaviour
     public Vector3 lastMousePos, mouseVelocity = Vector2.zero;
     private float mouseTimer = 0;
     public Dictionary<Type, FlagUIVars> flagUIVars;
-    public Dictionary<Type, Type> spriteToFlag = new Dictionary<Type, Type>();
+    public Dictionary<Type, Type> spriteToFlag = new Dictionary<Type, Type>(), spriteToMine = new Dictionary<Type, Type>();
 	public Dictionary<Type, CurseUIVars> curseUIVars;
+	public Dictionary<Type, MineUIVars> mineUIVars;
     [System.NonSerialized]
     public List<GameObject> paws = new List<GameObject>();
     [System.NonSerialized]
@@ -226,14 +233,33 @@ public class UIManager : MonoBehaviour
 		};
 		Player.s.cursesUnseen = new List<Type>(curseUIVars.Keys);
 
-        alphaEdgeBlueMat = Resources.Load<Material>("Materials/AlphaEdgeBlue");
-		tileNormalMat = Resources.Load<Material>("Materials/TileNormal");
-		tileExitMat = Resources.Load<Material>("Materials/TileExit");
-		tileTrialMat = Resources.Load<Material>("Materials/TileTrial");
-		tilePuddleMat = Resources.Load<Material>("Materials/TilePuddle");
-		tileMossyMat = Resources.Load<Material>("Materials/TileMossy");
-        ppvp = Resources.Load<VolumeProfile>("PPVoluemeProfile");
+		mineUIVars = new Dictionary<Type, MineUIVars>{
+			{typeof(Mine), new MineUIVars("mine", "Mine", "Boom.", "Standard mine. Explodes when stepped on.", typeof(MineSprite))},
+			{typeof(Hydra), new MineUIVars("hydra", "Hydra Mine", "The mine, the myth, the legend.", "When stepped on, explodes and spawns two standard mines in adjacent tiles.", typeof(HydraSprite))},
+			{typeof(Mouse), new MineUIVars("mouse", "Mouse Mine", "Slippery vermin.", "Moves to an adjacent tile periodically.", typeof(MouseSprite))},
+			{typeof(Chief), new MineUIVars("chief", "Chief Mine", "It calls to its cronies.", "When triggered, moves mines closer to you.", typeof(ChiefSprite))},
+			{typeof(Telemine), new MineUIVars("telemine", "Telemine", "Explosion so powerful it makes a wormhole.", "Teleports you to a nearby undiscovered tile when triggered.", typeof(TelemineSprite))},
+		};
+		Player.s.minesUnseen = new List<Type>(mineUIVars.Keys);	
+		foreach (KeyValuePair<Type, MineUIVars> entry in mineUIVars) {
+			spriteToMine[entry.Value.spriteType] = entry.Key;
+		}
+
+        alphaEdgeBlueMat = LoadResourceSafe<Material>("Materials/AlphaEdgeBlue");
+		tileNormalMat = LoadResourceSafe<Material>("Materials/TileNormal");
+		tileExitMat = LoadResourceSafe<Material>("Materials/TileExit");
+		tileTrialMat = LoadResourceSafe<Material>("Materials/TileTrial");
+		tilePuddleMat = LoadResourceSafe<Material>("Materials/TilePuddle");
+		tileMossyMat = LoadResourceSafe<Material>("Materials/TileMossy");
+        ppvp = LoadResourceSafe<VolumeProfile>("PPVoluemeProfile");
     }
+	public T LoadResourceSafe<T>(string path) where T : UnityEngine.Object {
+		T resource = Resources.Load<T>(path);
+		if (typeof(T) == typeof(Texture2D)) {
+			return resource == null ? Resources.Load<T>("Textures/nulltex") : resource;
+		}
+		return resource;
+	}
     private void Start() {
         lastMousePos = UnityEngine.InputSystem.Mouse.current.position.ReadValue();
         canvasRt = canvas.transform as RectTransform;

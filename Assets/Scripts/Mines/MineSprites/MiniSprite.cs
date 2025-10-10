@@ -1,6 +1,5 @@
 using UnityEngine;
 
-public class Mini : Mine
-{
+public class MiniSprite : MineSprite {
     public bool detectable = false;
 }

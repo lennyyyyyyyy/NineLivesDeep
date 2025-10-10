@@ -78,7 +78,7 @@ public class FlagSprite : VerticalObject
         Player.s.updatePrints();
         sr.sortingLayerName = "Player";
         if (removesMines && Floor.s.mines[coord.x, coord.y] != null) {
-            Player.s.UpdateMineCount(Player.s.mines + Player.s.modifiers.mineDefuseMult);
+            Player.s.UpdateMineCount(Player.s.money + Player.s.modifiers.mineDefuseMult);
             Destroy(Floor.s.mines[coord.x, coord.y]);
         }
         if (Player.s.hasFlag(typeof(Reflection)) && GetType() != typeof(BaseSprite) && Floor.s.tiles[coord.x, coord.y].GetComponent<Puddle>() != null) {

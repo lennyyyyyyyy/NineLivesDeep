@@ -79,8 +79,8 @@ public class PickupSprite : VerticalObject {
         LeanTween.value(light.gameObject, (float f) => { light.intensity = f; }, light.intensity, 3f, 0.25f).setEase(LeanTweenType.easeInOutCubic);
     }
     protected virtual void OnMouseDown() {
-        if (Player.s.mines >= price) {
-            Player.s.UpdateMineCount(Player.s.mines - price);
+        if (Player.s.money >= price) {
+            Player.s.UpdateMineCount(Player.s.money - price);
             GameObject g = Instantiate(GameManager.s.flag_p, transform.position, Quaternion.identity, UIManager.s.flagGroup.transform);
             Flag f = g.AddComponent(parentType) as Flag;
 			// it this has a count then give the item the same count

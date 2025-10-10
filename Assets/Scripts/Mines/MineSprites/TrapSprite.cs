@@ -1,7 +1,6 @@
 using UnityEngine;
 
-public class Trap : Mine
-{
+public class TrapSprite : MineSprite {
     public override void trigger() {
         base.trigger();
         Player.s.setTrapped(true);

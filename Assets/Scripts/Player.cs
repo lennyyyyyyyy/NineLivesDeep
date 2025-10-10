@@ -33,9 +33,9 @@ public class Player : VerticalObject
     [System.NonSerialized]
     public List<GameObject> prints = new List<GameObject>();
     [System.NonSerialized]
-    public List<GameObject> flags = new List<GameObject>(), notFlags = new List<GameObject>(), tilesUnvisited = new List<GameObject>();
-    public HashSet<Type> flagsSeen = new HashSet<Type>(), cursesSeen = new HashSet<Type>(); // not in use but holding on to these
-	public List<Type> flagsUnseen, consumableFlagsUnseen, cursesUnseen;
+    public List<GameObject> flags = new List<GameObject>(), notFlags = new List<GameObject>(), mines = new List<GameObject>(), tilesUnvisited = new List<GameObject>();
+    public HashSet<Type> flagsSeen = new HashSet<Type>(), cursesSeen = new HashSet<Type>(), minesSeen = new HashSet<Type>(); // not in use but holding on to these
+	public List<Type> flagsUnseen, consumableFlagsUnseen, cursesUnseen, minesUnseen;
     public HashSet<GameObject> tilesVisited = new HashSet<GameObject>();
     public List<Vector2Int> printLocs;
     public Vector2Int coord;
@@ -50,7 +50,7 @@ public class Player : VerticalObject
     public int texWidth, texHeight;
     public static Action OnDie, OnRevive, OnAliveChange;
     [System.NonSerialized]
-    public float mines = 0;
+    public float money = 0;
     private float stepImpulse = 0.2f;
     [System.NonSerialized]
 	public float vision = 2f;
@@ -94,6 +94,10 @@ public class Player : VerticalObject
 	public void NoticeCurse(Type type) {
 		cursesSeen.Add(type);
 		cursesUnseen.Remove(type);
+	}
+	public void NoticeMine(Type type) {
+		minesSeen.Add(type);
+		minesUnseen.Remove(type);
 	}
     public void Die() {
 		Floor.s.floorDeathCount++;
@@ -150,10 +154,10 @@ public class Player : VerticalObject
         }
     }
     public void UpdateMineCount(float newCount) {
-        UIManager.s.InstantiateBubble(UIManager.s.minecount, (newCount - mines >= 0 ? "+" : "-") + (Mathf.Round(Mathf.Abs(newCount - mines)*100f)/100f).ToString(), Color.white);
-        mines = newCount;
+        UIManager.s.InstantiateBubble(UIManager.s.minecount, (newCount - money >= 0 ? "+" : "-") + (Mathf.Round(Mathf.Abs(newCount - money)*100f)/100f).ToString(), Color.white);
+        money = newCount;
         
-        UIManager.s.minecount.GetComponent<TMP_Text>().text = mines.ToString();
+        UIManager.s.minecount.GetComponent<TMP_Text>().text = money.ToString();
         
     }
     public void destroyPrints() {
@@ -237,7 +241,7 @@ public class Player : VerticalObject
     }
     public void triggerMines() {
 		if (Player.s.alive && Floor.s.mines[coord.x, coord.y] != null) {
-			Floor.s.mines[coord.x, coord.y].GetComponent<Mine>().trigger();
+			Floor.s.mines[coord.x, coord.y].GetComponent<MineSprite>().trigger();
 		}
     }
     public void discoverTiles() {

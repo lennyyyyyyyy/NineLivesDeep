@@ -169,7 +169,7 @@ public class Floor : MonoBehaviour
                     //    PlaceMine(typeof(Hydra), i, j);
 					//}
 					if (rand < 0.2f * mineMult) {
-						PlaceMine(typeof(Chief), i, j);
+						PlaceMine(typeof(ChiefSprite), i, j);
 					}
 				}
             }
@@ -257,7 +257,7 @@ public class Floor : MonoBehaviour
     public void PlaceMine(Type t, int x, int y) {
         GameObject g = Instantiate(GameManager.s.mine_p, tiles[x, y].transform);
 		g.transform.localPosition = Vector3.zero;
-        Mine m = g.AddComponent(t) as Mine;
+        MineSprite m = g.AddComponent(t) as MineSprite;
         m.init(x, y);
         mines[m.coord.x, m.coord.y] = g;
     }

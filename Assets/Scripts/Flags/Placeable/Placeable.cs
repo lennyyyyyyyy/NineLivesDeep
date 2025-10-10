@@ -2,8 +2,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using System;
 
-public class Placeable : Flag
-{
+public class Placeable : Flag {
     protected Type flagSprite;
     [System.NonSerialized]
     public GameObject sprite;
