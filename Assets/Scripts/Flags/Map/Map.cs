@@ -88,6 +88,6 @@ public class Map : Flag
         trigger.triggers.Add(entry);
     }
     protected override bool IsUsable() {
-        return base.IsUsable() && Floor.s.floorType == "minefield";
+        return base.IsUsable();
     }
 }

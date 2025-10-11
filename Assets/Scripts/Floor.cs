@@ -212,7 +212,7 @@ public class Floor : MonoBehaviour
 				if (tiles[i, j] == null) {
 					PlaceTile(GameManager.s.tile_p, i, j);
 					if (MineAvailableStart(i, j) && Random.value < 0.2 * Player.s.modifiers.mineSpawnMult) {
-						PlaceMine(typeof(Mine), i, j);
+						PlaceMine(typeof(MineSprite), i, j);
 					}
 				}
 			}

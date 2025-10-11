@@ -2,9 +2,14 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.EventSystems;
+using System;
+using System.Collections.Generic;
 
 public class Flag : UIItem {
     protected bool showCount = false;
+	protected int consumableDefaultCount = 0;
+	protected Type spriteType;	
+	protected List<string> allowedFloorTypes = new List<string>{"minefield"};
     [System.NonSerialized]
     public bool usable = true;
     public int count;
@@ -31,16 +36,19 @@ public class Flag : UIItem {
     protected virtual void init() {
         if (UIManager.s.flagUIVars.ContainsKey(GetType())) {
 			FlagUIVars uivars = UIManager.s.flagUIVars[GetType()];
-            init(uivars.tex2d, uivars.name, uivars.flavor, uivars.info, uivars.color, uivars.showCount);
+            init(uivars.tex2d, uivars.name, uivars.flavor, uivars.info, uivars.color, uivars.spriteType, uivars.consumableDefaultCount, uivars.showCount, uivars.allowedFloorTypes);
         }
     }
-    protected virtual void init(Texture2D t, string n, string f, string i, Color c, bool showC) {
+    protected virtual void init(Texture2D t, string n, string f, string i, Color c, Type type, int cdc, bool showC, List<string> afts) {
 		tex2d = t;
 		name = n;
 		flavor = f;
 		info = i;
 		color = c;
+		spriteType = type;
+		consumableDefaultCount = cdc;
 		showCount = showC;
+	    allowedFloorTypes = afts;	
     }
     protected override void Start() {
 		if (tex2d == null) {
@@ -70,7 +78,7 @@ public class Flag : UIItem {
         UIManager.s.flagUIVars[GetType()].instances.Add(gameObject);
     }
     protected virtual bool IsUsable() {
-        return Player.s.alive && !(Player.s.modifiers.taken && Player.s.takenDisabledFlag == gameObject);
+        return Player.s.alive && !(Player.s.modifiers.taken && Player.s.takenDisabledFlag == gameObject) && allowedFloorTypes.Contains(Floor.s.floorType);
     }
     public virtual void UpdateUsable() {
         usable = IsUsable();
