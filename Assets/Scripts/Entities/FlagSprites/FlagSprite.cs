@@ -2,10 +2,8 @@ using UnityEngine;
 using Random = UnityEngine.Random;
 using UnityEngine.Rendering.Universal;
 using System;
-public class FlagSprite : VerticalObject
+public class FlagSprite : Entity
 {
-    [System.NonSerialized]
-    public Vector2Int coord;
     [System.NonSerialized]
     public Placeable parent;
     [System.NonSerialized]
@@ -27,9 +25,7 @@ public class FlagSprite : VerticalObject
 			Vector3 landingPos = transform.position + Floor.s.windDirection * Player.s.modifiers.windStrength * 1f;
             Vector2Int dropCoord = Floor.s.PosToCoord(landingPos);
             if (CoordAllowed(dropCoord.x, dropCoord.y)) {
-                coord = dropCoord;
-                Floor.s.flags[coord.x, coord.y] = gameObject;
-                transform.parent = Floor.s.tiles[coord.x, coord.y].transform;
+				Move(dropCoord.x, dropCoord.y, false);
 				if (Player.s.modifiers.windStrength != 0) {
 					LeanTween.move(gameObject, landingPos, 0.15f);
 				}
@@ -51,7 +47,7 @@ public class FlagSprite : VerticalObject
                 LeanTween.value(gameObject, (float f) => {light.intensity = f;}, light.intensity, 0f, .75f).setEase(LeanTweenType.easeInCubic);
                 LeanTween.rotate(gameObject, Random.Range(0, 360f) * Vector3.forward, .75f).setEase(LeanTweenType.easeInCubic).setOnComplete(() => {
                     state = "dropped";
-                    Destroy(gameObject);
+                   	Remove();
                     //show map layers and prints
                     Player.s.UpdateActiveMapLayers();
                     Player.s.UpdateActivePrints();
@@ -79,7 +75,7 @@ public class FlagSprite : VerticalObject
         sr.sortingLayerName = "Player";
         if (removesMines && Floor.s.mines[coord.x, coord.y] != null) {
             Player.s.UpdateMoney(Player.s.money + Player.s.modifiers.mineDefuseMult);
-            Destroy(Floor.s.mines[coord.x, coord.y]);
+            Floor.s.mines[coord.x, coord.y].GetComponent<MineSprite>().Remove();
         }
         if (Player.s.hasFlag(typeof(Reflection)) && GetType() != typeof(BaseSprite) && Floor.s.tiles[coord.x, coord.y].GetComponent<Puddle>() != null) {
             //reflection passive
@@ -89,11 +85,21 @@ public class FlagSprite : VerticalObject
 		//give tile momentum downward
 		Floor.s.tiles[coord.x, coord.y].GetComponent<Tile>().externalDepthImpulse += placeImpulse;	
     }
-    protected virtual bool CoordAllowed(int x, int y) { 
-        return Floor.s.within(x, y) && 
-                Floor.s.flags[x, y] == null && 
-                !(x == Player.s.coord.x && y == Player.s.coord.y) && 
-                Floor.s.tiles[x, y].GetComponent<ActionTile>() == null; 
+	public override void Move(int x, int y, bool reposition = true) {
+		base.Move(x, y, reposition);
+		if (coord.x != -1) {	
+			Floor.s.flags[coord.x, coord.y] = null;
+		}
+		Floor.s.flags[x, y] = gameObject;
+	}
+	public override void Remove() {
+		base.Remove();
+		if (coord.x != -1) {
+			Floor.s.flags[coord.x, coord.y] = null;
+		}
+	}
+    public override bool CoordAllowed(int x, int y) { 
+        return base.CoordAllowed(x, y) && Floor.s.flags[x, y] == null && !(x == Player.s.coord.x && y == Player.s.coord.y); 
     }
     protected static void TweenUnderDarken(float darken) {
         Shader.SetGlobalFloat(GameManager.s.UnderDarkenID, darken);

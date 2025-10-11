@@ -2,12 +2,11 @@ using UnityEngine;
 
 public class YouSprite : FlagSprite
 {
-    protected override void Start()
-    {
+    protected override void Start() {
         base.Start();
 		removesMines = false;
     }
-    protected override bool CoordAllowed(int x, int y) { 
+    public override bool CoordAllowed(int x, int y) { 
         return x == Player.s.coord.x && y == Player.s.coord.y; 
     }
     protected override void OnPlace() {

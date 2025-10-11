@@ -7,6 +7,7 @@ public class Floor : MonoBehaviour
 {
     public static Floor s;
     public GameObject[,] mines, tiles, flags;
+	public List<GameObject>[,] entities;
     [System.NonSerialized]
     public List<GameObject> backgroundTiles = new List<GameObject>();
     private ParticleSystem ambientDust;
@@ -52,7 +53,8 @@ public class Floor : MonoBehaviour
 				if (floor == 0) {
 					mine.AddComponent(typeof(Mine));
 				} else {
-					mine.AddComponent(Player.s.minesUnseen[Random.Range(0, Player.s.minesUnseen.Count)]);
+					//mine.AddComponent(Player.s.minesUnseen[Random.Range(0, Player.s.minesUnseen.Count)]);
+					mine.AddComponent(typeof(Mouse));
 				}
 			}, time + 1f);
 			time += 2.8f;
@@ -97,14 +99,15 @@ public class Floor : MonoBehaviour
 		UIManager.s.OrganizeFlags();
     }
     public void InitLayout(int newWidth, int newHeight, string newFloorType) {
-        //destroy previous floor
+        //destroy previous floor entities
         for (int i=0; i<width; i++) {
             for (int j=0; j<height; j++) {
                 Destroy(tiles[i, j]);
-                if (flags[i, j] != null) {
-                    Destroy(flags[i, j]);
-                }
+				Destroy(flags[i, j]);
                 Destroy(mines[i, j]);
+				foreach (GameObject e in entities[i, j]) {
+					Destroy(e);
+				}
             }
         }
         foreach (GameObject bt in backgroundTiles) {
@@ -114,9 +117,16 @@ public class Floor : MonoBehaviour
         width = newWidth;
         height = newHeight;
 
+		//renew entity arrays
         tiles = new GameObject[width, height];
         flags = new GameObject[width, height];
         mines = new GameObject[width, height];
+		entities = new List<GameObject>[width, height];
+		for (int i = 0; i < width; i++) {
+			for (int j = 0; j < height; j++) {
+				entities[i, j] = new List<GameObject>();
+			}
+		}
         backgroundTiles.Clear();
 
         for (int i=0; i<MaxSize() * MaxSize() * 1.25f; i++) {
@@ -264,11 +274,9 @@ public class Floor : MonoBehaviour
         }
     }
     public void PlaceMine(Type t, int x, int y) {
-        GameObject g = Instantiate(GameManager.s.mineSprite_p, tiles[x, y].transform);
-		g.transform.localPosition = Vector3.zero;
+        GameObject g = Instantiate(GameManager.s.mineSprite_p);
         MineSprite m = g.AddComponent(t) as MineSprite;
-        m.init(x, y);
-        mines[m.coord.x, m.coord.y] = g;
+		m.Move(x, y);
     }
     public void PlacePickupSprite(List<Type> pool, int spawnType, int p, int x, int y) {
         GameObject g = Instantiate(GameManager.s.flagSprite_p);

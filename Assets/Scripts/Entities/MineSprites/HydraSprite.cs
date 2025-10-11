@@ -1,7 +1,7 @@
 using UnityEngine;
 
 public class HydraSprite : MineSprite {
-    public override void trigger() {
+    public override void Trigger() {
         int left = 2;
         while (left != 0) {
             int dx = Random.Range(-1, 2);
@@ -11,6 +11,6 @@ public class HydraSprite : MineSprite {
                 Floor.s.PlaceMine(typeof(Mine), coord.x + dx, coord.y + dy); 
             }
         }
-        base.trigger();
+        base.Trigger();
     }
 }

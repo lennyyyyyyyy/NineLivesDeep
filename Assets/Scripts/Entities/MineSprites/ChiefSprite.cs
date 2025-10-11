@@ -4,8 +4,8 @@ using System.Linq;
 
 class ChiefSprite : MineSprite {
 	public static int range = 2;
-	public override void trigger() {
-		base.trigger();
+	public override void Trigger() {
+		base.Trigger();
 		//maybe make more efficient?
 		List<GameObject> signaledMines = new List<GameObject>();
 		foreach (GameObject mine in Floor.s.mines) {
@@ -19,7 +19,7 @@ class ChiefSprite : MineSprite {
 			Vector2 normalizedMoveDir = ((Vector2)(coord - mine.GetComponent<MineSprite>().coord)).normalized;
 			Vector2Int destCoord = mine.GetComponent<MineSprite>().coord + new Vector2Int((int)Mathf.Round(normalizedMoveDir.x), (int)Mathf.Round(normalizedMoveDir.y));
 			if (Floor.s.mineAvailable(destCoord.x, destCoord.y)) {
-				mine.GetComponent<MineSprite>().move(destCoord.x, destCoord.y);
+				mine.GetComponent<MineSprite>().Move(destCoord.x, destCoord.y);
 			}
 		}
 	}

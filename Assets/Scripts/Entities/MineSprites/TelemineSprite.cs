@@ -4,8 +4,8 @@ using System.Linq;
 
 public class TelemineSprite : MineSprite {
 	public static readonly float distSpread = 10f;
-	public override void trigger() {
-		base.trigger();
+	public override void Trigger() {
+		base.Trigger();
 		GameObject destinationTile;
 		if (Player.s.tilesUnvisited.Count != 0) {
 			//sort by distance

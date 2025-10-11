@@ -240,7 +240,7 @@ public class Player : VerticalObject
     }
     public void triggerMines() {
 		if (Player.s.alive && Floor.s.mines[coord.x, coord.y] != null) {
-			Floor.s.mines[coord.x, coord.y].GetComponent<MineSprite>().trigger();
+			Floor.s.mines[coord.x, coord.y].GetComponent<MineSprite>().Trigger();
 		}
     }
     public void discoverTiles() {
