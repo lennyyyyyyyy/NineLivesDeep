@@ -3,14 +3,11 @@ using Random = UnityEngine.Random;
 using System;
 using UnityEngine.Rendering.Universal;
 using TMPro;
-public class PickupSprite : VerticalObject {
+public class PickupSprite : Entity {
 	public static readonly int RANDOM = 0, TRIAL = 1, SHOP = 2;
     protected int price, spawnType;
 	[System.NonSerialized]
 	public int count = 0;
-    protected bool hovered = false;
-    [System.NonSerialized]
-    public Vector2Int coord;
     [System.NonSerialized]
     public Type parentType;
     protected Light2D light;
@@ -21,8 +18,12 @@ public class PickupSprite : VerticalObject {
         parentType = pType;
 		spawnType = sType;
         price = p;
-        coord = new Vector2Int(x, y);
+		Move(x, y);
     }
+	public override void Move(int x, int y, bool reposition = true) {
+		base.Move(x, y, reposition);
+		transform.localScale = droppedScale * Vector3.one;
+	}
     protected override void Start() {
         base.Start();
         marker = transform.Find("Marker").gameObject;
@@ -49,13 +50,6 @@ public class PickupSprite : VerticalObject {
 				tmpro.text = count.ToString();
 			}
         }
-        Floor.s.flags[coord.x, coord.y] = gameObject;
-        transform.parent = Floor.s.tiles[coord.x, coord.y].transform;
-        transform.localScale = droppedScale * Vector3.one;
-        transform.localPosition = Vector3.zero;
-        sr.sortingLayerName = "Player";
-        Player.s.destroyPrints();
-        Player.s.updatePrints();
     }
     protected override void Update() {
         base.Update();
@@ -63,34 +57,34 @@ public class PickupSprite : VerticalObject {
             UIManager.s.floatingHover(transform, hoveredScale, hoveredOffset, Vector3.zero);
         }
     }
-    protected virtual void OnMouseEnter() {
-        hovered = true;
+    protected override void OnMouseEnter() {
+		base.OnMouseEnter();
         hoveredOffset = Random.Range(0f, 1f);
         LeanTween.cancel(gameObject);
         LeanTween.cancel(light.gameObject);
         LeanTween.value(light.gameObject, (float f) => { light.intensity = f; }, light.intensity, 5f, 0.25f).setEase(LeanTweenType.easeInOutCubic);
     }
-    protected virtual void OnMouseExit() {
-        hovered = false;
+    protected override void OnMouseExit() {
+		base.OnMouseExit();
         LeanTween.cancel(gameObject);
         LeanTween.scale(gameObject, droppedScale * Vector3.one, 0.15f).setEase(LeanTweenType.easeInOutCubic);
         LeanTween.rotateLocal(gameObject, Vector3.zero, 0.15f).setEase(LeanTweenType.easeInOutCubic);
         LeanTween.cancel(light.gameObject);
         LeanTween.value(light.gameObject, (float f) => { light.intensity = f; }, light.intensity, 3f, 0.25f).setEase(LeanTweenType.easeInOutCubic);
     }
-    protected virtual void OnMouseDown() {
-        if (Player.s.money >= price) {
-            Player.s.UpdateMoney(Player.s.money - price);
-            GameObject g = Instantiate(GameManager.s.flag_p, transform.position, Quaternion.identity, UIManager.s.flagGroup.transform);
-            Flag f = g.AddComponent(parentType) as Flag;
-			// it this has a count then give the item the same count
-			if (tmpro.enabled) {
-				f.count = count;
-			}
-            Floor.s.flags[coord.x, coord.y] = null;
-            Destroy(gameObject);
-            Player.s.destroyPrints();
-            Player.s.updatePrints();
-        }
-    }
+	public override bool IsInteractable() {	
+		return base.IsInteractable() && Player.s.money >= price;
+	}
+	public override void Interact() {
+		Player.s.UpdateMoney(Player.s.money - price);
+		GameObject g = Instantiate(GameManager.s.flag_p, transform.position, Quaternion.identity, UIManager.s.flagGroup.transform);
+		Flag f = g.AddComponent(parentType) as Flag;
+		// it this has a count then give the item the same count
+		if (tmpro.enabled) {
+			f.count = count;
+		}
+		Remove();
+		Player.s.destroyPrints();
+		Player.s.updatePrints();
+	}
 }

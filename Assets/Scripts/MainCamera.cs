@@ -41,7 +41,7 @@ public class MainCamera : MonoBehaviour
 			transform.position = Vector3.Lerp(transform.position, targetPos, 1-Mathf.Pow(0.65f, Time.deltaTime/.15f));
 			updateZoom(Mathf.Lerp(Camera.main.orthographicSize, targetOrthographicSize, 1-Mathf.Pow(0.65f, Time.deltaTime/.15f)));
 		}
-		targetOrthographicSize = Mathf.Clamp(targetOrthographicSize + Input.mouseScrollDelta.y, 0.8f, Player.s.vision);
+		targetOrthographicSize = Mathf.Clamp(targetOrthographicSize + Input.mouseScrollDelta.y, 0.8f, Player.s.modifiers.vision);
 		//shake at varying intervals
 		shakeTimer -= Time.deltaTime;
 		if (shakeTimer <= 0) {

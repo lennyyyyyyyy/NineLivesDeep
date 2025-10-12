@@ -3,6 +3,10 @@ using UnityEngine;
 public class MineSprite : Entity {
     public Vector2Int coord;
     public bool detectable = true;
+	protected override void Start() {
+		base.Start();
+		obstacle = false;
+	}
     public virtual void Trigger() {
         Player.s.Die();
 		Remove();

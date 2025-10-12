@@ -7,10 +7,11 @@ public class YouSprite : FlagSprite
 		removesMines = false;
     }
     public override bool CoordAllowed(int x, int y) { 
-        return x == Player.s.coord.x && y == Player.s.coord.y; 
+        return Mathf.Abs(x - Player.s.coord.x) <= Player.s.modifiers.reviveRange && Mathf.Abs(y - Player.s.coord.y) <= Player.s.modifiers.reviveRange; 
     }
     protected override void OnPlace() {
         base.OnPlace();
+		Player.s.setCoord(coord.x, coord.y);
         Player.s.Revive();
     }
 }

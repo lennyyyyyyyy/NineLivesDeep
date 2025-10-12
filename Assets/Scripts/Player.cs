@@ -5,8 +5,8 @@ using TMPro;
 using System.Linq;
 
 public class Modifiers {
-	public float mineSpawnMult, mineDefuseMult, noTileChance, windStrength, windFluctuation, cameraShakeStrength, cameraShakePeriod;
-	public int floorExpansion, tempChangesUntilDeath;
+	public float mineSpawnMult, mineDefuseMult, noTileChance, windStrength, windFluctuation, cameraShakeStrength, cameraShakePeriod, vision;
+	public int floorExpansion, tempChangesUntilDeath, interactRange, discoverRange, reviveRange;
 	public bool wobbly, amnesia, watched, taken;
 	public void Reset() {
 		mineSpawnMult = 1;
@@ -17,6 +17,10 @@ public class Modifiers {
 		windFluctuation = 0.15f;
 		cameraShakeStrength = 0;
 		cameraShakePeriod = 0.4f;
+		vision = 2f;
+		interactRange = 1;
+		discoverRange = 0;
+		reviveRange = 0;
 		wobbly = false;
 		amnesia = false;
 		watched = false;
@@ -41,8 +45,6 @@ public class Player : VerticalObject
     public Vector2Int coord;
     public GameObject light, blood, feet;
     public GameObject[,] playerBits;
-    [System.NonSerialized]
-    public int discoverRange = 0;
     public bool trapped = false, alive = true;
     [System.NonSerialized]
     public Animator animator;
@@ -52,8 +54,6 @@ public class Player : VerticalObject
     [System.NonSerialized]
     public float money = 0;
     private float stepImpulse = 0.2f;
-    [System.NonSerialized]
-	public float vision = 2f;
 	public Modifiers modifiers = new Modifiers();
 	[System.NonSerialized]
 	public Vector2 lastMovement = Vector2.zero;
@@ -207,12 +207,16 @@ public class Player : VerticalObject
 				}
 			}
 		}
-        //filter out of bounds or on a flag
+        //filter out of bounds or on obstacle entity
         for (int i = filteredPrintLocs.Count - 1; i >= 0; i--) {
 			int printX = coord.x + filteredPrintLocs[i].x, printY = coord.y + filteredPrintLocs[i].y;
-            if (!Floor.s.within(printX, printY) ||
-				Floor.s.tiles[printX, printY] == null ||
-                Floor.s.flags[printX, printY] != null) {
+			bool remove = !Floor.s.within(printX, printY) || Floor.s.tiles[printX, printY] == null;
+			if (!remove) {
+				foreach (GameObject entity in Floor.s.entities[printX, printY]) {
+					remove |= entity.GetComponent<Entity>().obstacle;
+				}
+			}
+            if (remove) {
                 filteredPrintLocs.RemoveAt(i);
             }
         }
@@ -244,10 +248,10 @@ public class Player : VerticalObject
 		}
     }
     public void discoverTiles() {
-        for (int dx=-discoverRange; dx<=discoverRange; dx++) {
-            for (int dy=-discoverRange; dy<=discoverRange; dy++) {
+        for (int dx=-modifiers.discoverRange; dx<=modifiers.discoverRange; dx++) {
+            for (int dy=-modifiers.discoverRange; dy<=modifiers.discoverRange; dy++) {
                 if (Floor.s.within(coord.x + dx, coord.y + dy)) {
-                    discover(coord.x + dx, coord.y + dy);
+					discover(coord.x + dx, coord.y + dy);
                 }
             }
         }

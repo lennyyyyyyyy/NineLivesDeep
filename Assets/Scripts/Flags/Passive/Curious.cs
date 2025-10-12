@@ -1,8 +1,7 @@
 using UnityEngine;
 
-public class Aromatic : Passive
-{
+public class Curious : Passive {
 	public override void Modify(ref Modifiers modifiers) {
-		modifiers.discoverRange++;
+		modifiers.vision += 2;
 	}
 }

@@ -221,6 +221,9 @@ public class UIManager : MonoBehaviour
             {typeof(Collector), new FlagUIVars("collector", "Collector Flag", "Unlike Pokemon cards, high-tech mines are genuinely expensive to produce.", "The more advanced the mine, the more it's worth.")},
             {typeof(Reflection), new FlagUIVars("reflection", "Reflection Flag", "Use one get one free!", "Placing a non-base flag in a puddle gives you a base flag back.")},
             {typeof(Wildcat), new FlagUIVars("wildcat", "Wildcat Flag", "Born to be wild.", "Every five new grassy tiles you step in gives you an extra life.", true)},
+			{typeof(Curious), new FlagUIVars("curious", "Curious Flag", "Very wide-eyed.", "Increases vision distance.")},
+			{typeof(Astral), new FlagUIVars("astral", "Astral Flag", "Your body held you back.", "Respawn in a 3x3 area around where you died.")},
+			{typeof(Milk), new FlagUIVars("milk", "Milk Flag", "Gives you bigger bones.", "Increases interaction radius")},
             //map flags
             {typeof(Brain), new FlagUIVars("brain", "Brain Flag", "Turns out your puny little brain is also a flag.", "Senses the number of mines around you.", false, new List<string>{"minefield", "trial"})},
             {typeof(Vertical), new FlagUIVars("vertical", "Vertical Flag", "", "Gives the number of mines in your column.")},
