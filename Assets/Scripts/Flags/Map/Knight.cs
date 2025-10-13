@@ -9,7 +9,7 @@ class Knight : Map {
             int dx = dxs[k];
             int dy = dys[k];
             if (Floor.s.within(x + dx, y + dy)) {
-                count += (Floor.s.mines[x+dx, y+dy]!=null)?1:0;
+                count += (Floor.s.GetUniqueMine(x+dx, y+dy)!=null)?1:0;
             }
         }
         numbers[x, y].GetComponent<Number>().setNum(count);

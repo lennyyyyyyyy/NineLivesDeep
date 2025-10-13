@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class Tile : Parallax
 {
@@ -13,11 +14,36 @@ public class Tile : Parallax
     public float externalDepthImpulse = 0;
     protected BoxCollider2D collider;
 	public SpriteRenderer sr;
+	public List<GameObject> entities = new List<GameObject>();
     
 	protected static readonly int ThemeID = Shader.PropertyToID("_Theme");
 	
-    protected override void Start()
-    {
+	public GameObject GetUniqueFlag() {
+		foreach (GameObject g in entities) {
+			if (g.GetComponent<Flag>() != null) {
+				return g;
+			}
+		}
+		return null;
+	}
+	public GameObject GetUniqueMine() {
+		foreach (GameObject g in entities) {
+			if (g.GetComponent<MineSprite>() != null) {
+				return g;
+			}
+		}
+		return null;
+	}
+	public void AddEntity(GameObject g) {
+		if (g.GetComponent<Flag>() != null && GetUniqueFlag() != null) {
+			Debug.Log("Tried to add second flag to tile at " + coord.ToString());
+		} else if (g.GetComponent<MineSprite>() != null && GetUniqueMine() != null) {
+			Debug.Log("Tried to add second mine to tile at " + coord.ToString());
+		} else {
+			entities.Add(g);
+		}
+	}
+    protected override void Start() {
         base.Start();
         underTile = new GameObject("UnderTile");
         underTile.transform.parent = transform;

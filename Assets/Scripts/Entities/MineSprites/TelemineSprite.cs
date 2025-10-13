@@ -23,7 +23,7 @@ public class TelemineSprite : MineSprite {
 			destinationTile = Player.s.tilesVisited.ToList()[0];
 		}
 
-		Player.s.setCoord(destinationTile);	
+		Player.s.Move(destinationTile);	
 	}
 }
 		

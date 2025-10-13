@@ -5,7 +5,7 @@ class Manhattan : Map {
         int min = -1; 
         for (int i=0; i<Floor.s.width; i++) {
             for (int j=0; j<Floor.s.height; j++) {
-                if (Floor.s.mines[i, j] != null) {
+                if (Floor.s.GetUniqueMine(i, j) != null) {
                     if (min == -1) {
                         min = Mathf.Abs(i-x) + Mathf.Abs(j-y);
                     } else {

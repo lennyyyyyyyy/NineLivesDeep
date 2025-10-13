@@ -31,8 +31,7 @@ public class Modifiers {
 		Reset();
 	}
 }
-public class Player : VerticalObject
-{
+public class Player : Entity {
     public static Player s;
     [System.NonSerialized]
     public List<GameObject> prints = new List<GameObject>();
@@ -42,7 +41,6 @@ public class Player : VerticalObject
 	public List<Type> flagsUnseen, consumableFlagsUnseen, cursesUnseen, minesUnseen;
     public HashSet<GameObject> tilesVisited = new HashSet<GameObject>();
     public List<Vector2Int> printLocs;
-    public Vector2Int coord;
     public GameObject light, blood, feet;
     public GameObject[,] playerBits;
     public bool trapped = false, alive = true;
@@ -187,17 +185,15 @@ public class Player : VerticalObject
         }
         //bounce off rubber
         for (int i = 0; i < filteredPrintLocs.Count; i++) {
-
             Vector2Int bouncedPrintLoc = filteredPrintLocs[i];
             if (!Floor.s.within(coord.x + bouncedPrintLoc.x, coord.y + bouncedPrintLoc.y)) continue;
-            GameObject g = Floor.s.flags[coord.x + bouncedPrintLoc.x, coord.y + bouncedPrintLoc.y];
+            GameObject g = Floor.s.GetUniqueFlag(coord.x + bouncedPrintLoc.x, coord.y + bouncedPrintLoc.y);
             while (g != null && g.GetComponent<FlagSprite>() is RubberSprite) {
                 bouncedPrintLoc += filteredPrintLocs[i];
                 if (!Floor.s.within(coord.x + bouncedPrintLoc.x, coord.y + bouncedPrintLoc.y)) break;
-                g = Floor.s.flags[coord.x + bouncedPrintLoc.x, coord.y + bouncedPrintLoc.y];
+            	g = Floor.s.GetUniqueFlag(coord.x + bouncedPrintLoc.x, coord.y + bouncedPrintLoc.y);
             }
             filteredPrintLocs[i] = bouncedPrintLoc;
-
         }
 		//filter out same direction as last if wobbly curse is active
 		if (modifiers.wobbly) {
@@ -212,7 +208,7 @@ public class Player : VerticalObject
 			int printX = coord.x + filteredPrintLocs[i].x, printY = coord.y + filteredPrintLocs[i].y;
 			bool remove = !Floor.s.within(printX, printY) || Floor.s.tiles[printX, printY] == null;
 			if (!remove) {
-				foreach (GameObject entity in Floor.s.entities[printX, printY]) {
+				foreach (GameObject entity in Floor.s.GetEntities(printX, printY)) {
 					remove |= entity.GetComponent<Entity>().obstacle;
 				}
 			}
@@ -243,8 +239,8 @@ public class Player : VerticalObject
         }
     }
     public void triggerMines() {
-		if (Player.s.alive && Floor.s.mines[coord.x, coord.y] != null) {
-			Floor.s.mines[coord.x, coord.y].GetComponent<MineSprite>().Trigger();
+		if (Player.s.alive && Floor.s.GetUniqueMine(coord.x, coord.y) != null) {
+			Floor.s.GetUniqueMine(coord.x, coord.y).GetComponent<MineSprite>().Trigger();
 		}
     }
     public void discoverTiles() {
@@ -256,7 +252,45 @@ public class Player : VerticalObject
             }
         }
     } 
-    public void setCoord(int x, int y, bool animate = true) {
+    private void onFloorChange() {
+        tilesVisited.Clear();
+		tilesUnvisited.Clear();
+		foreach (GameObject tile in Floor.s.tiles) {
+			if (tile != null) {
+				tilesUnvisited.Add(tile);
+			}
+		}
+        Move(0, 0, true, false);
+        setTrapped(false);
+		tempChanges = 0;
+    }
+    void Awake() {
+        s = this;
+    }
+    protected override void Start() {
+        base.Start(); // get sprite renderer
+		obstacle = false;
+		marker = feet;
+        animator = GetComponent<Animator>();
+
+        // initialize player bits
+        texWidth = (int) sr.sprite.rect.width;
+        texHeight = (int) sr.sprite.rect.height;
+        playerBits = new GameObject[texWidth, texHeight];
+        for (int i=0; i<texWidth; i++) {
+            for (int j=0; j<texHeight; j++) {
+                playerBits[i, j] = Instantiate(GameManager.s.playerBit_p);
+                playerBits[i, j].GetComponent<PlayerBit>().Init(i, j);
+            }
+        }
+    }
+    protected override void Update() {
+        base.Update(); // vertical object order
+    }
+	public override void Move(int x, int y, bool reposition = true) {
+		Move(x, y, reposition, true);
+	}
+	public virtual void Move(int x, int y, bool reposition = true, bool animate = true) {
         if (animate) {
             if (x - coord.x > 0) {
                 transform.localScale = Vector3.one;
@@ -270,28 +304,22 @@ public class Player : VerticalObject
             } else {
                 animator.SetTrigger("jumpNeutralStart");
             }
-            coord = new Vector2Int(x, y);
+			base.Move(x, y, false);
             destroyPrints();
-            LeanTween.move(gameObject, Floor.s.CoordToPos(x, y), 0.5f).setEase(LeanTweenType.easeOutCubic).setOnComplete(() => {
+            LeanTween.moveLocal(gameObject, Vector3.zero, 0.5f).setEase(LeanTweenType.easeOutCubic).setOnComplete(() => {
                 animator.SetTrigger("jumpEnd");
                 updatePrints();
                 triggerMines();
                 discoverTiles();
                 if (Floor.s.tiles[x, y].GetComponent<ActionTile>() != null) {
 					Floor.s.tiles[x, y].GetComponent<ActionTile>().PerformAction();
-                } else {
-                    transform.parent = Floor.s.tiles[x, y].transform;
-                }
+                } 
                 Floor.s.tiles[x, y].GetComponent<Tile>().externalDepthImpulse += stepImpulse;
             }).setOnUpdate((float f) => {
                 GameManager.s.disturbShaders(feet.transform.position.x, feet.transform.position.y);
             });
         } else {
-            coord = new Vector2Int(x, y);
-            transform.parent = Floor.s.tiles[0, 0].transform;
-            transform.localPosition = Vector3.zero;
-            destroyPrints();
-            updatePrints();
+			base.Move(x, y, reposition);
             triggerMines();
             discoverTiles();
         }
@@ -309,45 +337,18 @@ public class Player : VerticalObject
 		}
         tilesVisited.Add(Floor.s.tiles[x, y]);
 		tilesUnvisited.Remove(Floor.s.tiles[x, y]);
-    }
-	public void setCoord(GameObject tile) {
-		setCoord(tile.GetComponent<Tile>().coord.x, tile.GetComponent<Tile>().coord.y);
 	}
-    private void onFloorChange() {
-        tilesVisited.Clear();
-		tilesUnvisited.Clear();
-		foreach (GameObject tile in Floor.s.tiles) {
-			if (tile != null) {
-				tilesUnvisited.Add(tile);
-			}
-		}
-        setCoord(0, 0, false);
-        setTrapped(false);
-		tempChanges = 0;
-    }
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Awake()
-    {
-        s = this;
-    }
-    protected override void Start() {
-        base.Start(); // get sprite renderer
-        animator = GetComponent<Animator>();
-
-        // initialize player bits
-        texWidth = (int) sr.sprite.rect.width;
-        texHeight = (int) sr.sprite.rect.height;
-        playerBits = new GameObject[texWidth, texHeight];
-        for (int i=0; i<texWidth; i++) {
-            for (int j=0; j<texHeight; j++) {
-                playerBits[i, j] = Instantiate(GameManager.s.playerBit_p);
-                playerBits[i, j].GetComponent<PlayerBit>().Init(i, j);
-            }
-        }
-    }
-    protected override void Update() {
-        base.Update(); // vertical object order
-    }
+	public virtual void Move(GameObject tile, bool reposition = true, bool animate = true) {
+		Move(tile.GetComponent<Tile>().coord.x, tile.GetComponent<Tile>().coord.y, reposition, animate);
+	}
+	public override void Remove() {
+		Floor.s.RemoveEntity(coord.x, coord.y, gameObject);
+		coord = new Vector2Int(-1, -1);
+		transform.parent = null;
+	}
+	public override bool CoordAllowed(int x, int y) {
+		return true;
+	}
     void OnEnable() {
         Floor.onFloorChange += onFloorChange;
     }

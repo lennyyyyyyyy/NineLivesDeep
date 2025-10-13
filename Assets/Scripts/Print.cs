@@ -28,7 +28,7 @@ public class Print : MonoBehaviour
         GetComponent<SpriteRenderer>().color = defaultColor;
     }
     private void OnMouseDownCustom() {
-        Player.s.setCoord(Player.s.coord.x + d.x, Player.s.coord.y + d.y);
+        Player.s.Move(Player.s.coord.x + d.x, Player.s.coord.y + d.y);
 		Player.s.lastMovement = d;
     }
     void Update()

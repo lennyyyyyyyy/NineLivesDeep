@@ -20,8 +20,8 @@ public class PickupSprite : Entity {
         price = p;
 		Move(x, y);
     }
-	public override void Move(int x, int y, bool reposition = true) {
-		base.Move(x, y, reposition);
+	public override void Move(GameObject tile, bool reposition = true) {
+		base.Move(tile, reposition);
 		transform.localScale = droppedScale * Vector3.one;
 	}
     protected override void Start() {

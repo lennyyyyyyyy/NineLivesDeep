@@ -73,9 +73,9 @@ public class FlagSprite : Entity
         Player.s.destroyPrints();
         Player.s.updatePrints();
         sr.sortingLayerName = "Player";
-        if (removesMines && Floor.s.mines[coord.x, coord.y] != null) {
+        if (removesMines && Floor.s.GetUniqueMine(coord.x, coord.y) != null) {
             Player.s.UpdateMoney(Player.s.money + Player.s.modifiers.mineDefuseMult);
-            Floor.s.mines[coord.x, coord.y].GetComponent<MineSprite>().Remove();
+            Floor.s.GetUniqueMine(coord.x, coord.y).GetComponent<MineSprite>().Remove();
         }
         if (Player.s.hasFlag(typeof(Reflection)) && GetType() != typeof(BaseSprite) && Floor.s.tiles[coord.x, coord.y].GetComponent<Puddle>() != null) {
             //reflection passive
@@ -85,21 +85,14 @@ public class FlagSprite : Entity
 		//give tile momentum downward
 		Floor.s.tiles[coord.x, coord.y].GetComponent<Tile>().externalDepthImpulse += placeImpulse;	
     }
-	public override void Move(int x, int y, bool reposition = true) {
-		base.Move(x, y, reposition);
-		if (coord.x != -1) {	
-			Floor.s.flags[coord.x, coord.y] = null;
-		}
-		Floor.s.flags[x, y] = gameObject;
+	public override void Move(GameObject tile, bool reposition = true) {
+		base.Move(tile, reposition);
 	}
 	public override void Remove() {
 		base.Remove();
-		if (coord.x != -1) {
-			Floor.s.flags[coord.x, coord.y] = null;
-		}
 	}
     public override bool CoordAllowed(int x, int y) { 
-        return base.CoordAllowed(x, y) && Floor.s.flags[x, y] == null && !(x == Player.s.coord.x && y == Player.s.coord.y); 
+        return base.CoordAllowed(x, y) && Floor.s.GetUniqueFlag(x, y) == null && !(x == Player.s.coord.x && y == Player.s.coord.y); 
     }
     protected static void TweenUnderDarken(float darken) {
         Shader.SetGlobalFloat(GameManager.s.UnderDarkenID, darken);

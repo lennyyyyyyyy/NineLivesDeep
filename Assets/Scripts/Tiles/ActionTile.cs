@@ -10,7 +10,7 @@ public class ActionTile : Tile
 	protected int amount = 1;
 	private Action ExitAction(string newFloorType, int newFloor) {
 		return () => { 
-			Player.s.transform.parent = null;
+			Player.s.Remove();
 			MainCamera.s.locked = true;
 			MainCamera.s.ExitMotion();
 			GameManager.s.DelayAction(() => {Floor.s.IntroAndCreateFloor(newFloorType, newFloor);}, 0.5f);

@@ -8,9 +8,12 @@ class ChiefSprite : MineSprite {
 		base.Trigger();
 		//maybe make more efficient?
 		List<GameObject> signaledMines = new List<GameObject>();
-		foreach (GameObject mine in Floor.s.mines) {
-			if (mine != null && Mathf.Abs(Player.s.coord.x - mine.GetComponent<MineSprite>().coord.x) <= range && Mathf.Abs(Player.s.coord.y - mine.GetComponent<MineSprite>().coord.y) <= range) {
-				signaledMines.Add(mine);
+		for (int i=-range; i<=range; i++) {
+			for (int j=-range; j<=range; j++) {
+				GameObject mine = Floor.s.GetUniqueMine(coord.x + i, coord.y + j);
+				if (mine != null && mine != this.gameObject) {
+					signaledMines.Add(mine);
+				}
 			}
 		}
 		GameManager.s.Shuffle(ref signaledMines);

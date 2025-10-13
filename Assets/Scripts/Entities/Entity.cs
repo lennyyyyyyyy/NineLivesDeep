@@ -5,27 +5,34 @@ public class Entity : VerticalObject {
     public Vector2Int coord = new Vector2Int(-1, -1);
 	public bool obstacle = true;
     protected bool hovered = false;
-	protected virtual void Start() {
+	protected override void Start() {
 		base.Start();
 		marker = gameObject;
 	}
-	public virtual void Move(int x, int y, bool reposition = true) {
+	public virtual void Move(GameObject tile, bool reposition = true) {
 		if (coord.x != -1) {
-			Floor.s.entities[coord.x, coord.y].Remove(gameObject);
+			tile.GetComponent<Tile>().entities.Remove(gameObject);
 		}
-		Floor.s.entities[x, y].Add(gameObject);
-		coord = new Vector2Int(x, y);
-		transform.parent = Floor.s.tiles[x, y].transform;
+		tile.GetComponent<Tile>().AddEntity(gameObject);
+		coord = tile.GetComponent<Tile>().coord;
+		Vector3 oldScale = transform.localScale;
+		transform.parent = tile.transform;
+		transform.localScale = oldScale;	
 		if (reposition) {
 			transform.localPosition = Vector3.zero;
 		}
         Player.s.destroyPrints();
         Player.s.updatePrints();
 	}
-	public virtual void Remove() {
-		if (coord.x != -1) {
-			Floor.s.entities[coord.x, coord.y].Remove(gameObject);
+	public virtual void Move(int x, int y, bool reposition = true) {
+		if (CoordAllowed(x, y)) {
+			Move(Floor.s.tiles[x, y], reposition);
+		} else {
+			Debug.Log("Tried to move entity to invalid coord " + x + ", " + y);
 		}
+	}
+	public virtual void Remove() {
+		Floor.s.RemoveEntity(coord.x, coord.y, gameObject);
 		Destroy(gameObject);
 	}
 	public virtual bool CoordAllowed(int x, int y) {

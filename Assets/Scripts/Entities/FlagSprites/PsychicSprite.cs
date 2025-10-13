@@ -20,7 +20,7 @@ public class PsychicSprite : FlagSprite
                 List<Vector2Int> nearestMines = new List<Vector2Int>();
                 for (int x = 0; x < Floor.s.width; x++) {
                     for (int y = 0; y < Floor.s.height; y++) {
-                        if (Floor.s.mines[x, y] != null) {
+                        if (Floor.s.GetUniqueMine(x, y) != null) {
                             Vector2Int difference = new Vector2Int(x - coord.x, y - coord.y);
                             if (nearestMines.Count == 0 || difference.magnitude == nearestMines[0].magnitude) {
                                 nearestMines.Add(difference);

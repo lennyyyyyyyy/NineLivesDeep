@@ -6,7 +6,7 @@ using System.Collections.Generic;
 public class Floor : MonoBehaviour
 {
     public static Floor s;
-    public GameObject[,] mines, tiles, flags;
+    public GameObject[,] tiles;
 	public List<GameObject>[,] entities;
     [System.NonSerialized]
     public List<GameObject> backgroundTiles = new List<GameObject>();
@@ -99,15 +99,10 @@ public class Floor : MonoBehaviour
 		UIManager.s.OrganizeFlags();
     }
     public void InitLayout(int newWidth, int newHeight, string newFloorType) {
-        //destroy previous floor entities
+        //destroy previous tiles
         for (int i=0; i<width; i++) {
             for (int j=0; j<height; j++) {
                 Destroy(tiles[i, j]);
-				Destroy(flags[i, j]);
-                Destroy(mines[i, j]);
-				foreach (GameObject e in entities[i, j]) {
-					Destroy(e);
-				}
             }
         }
         foreach (GameObject bt in backgroundTiles) {
@@ -117,16 +112,8 @@ public class Floor : MonoBehaviour
         width = newWidth;
         height = newHeight;
 
-		//renew entity arrays
+		//renew tile array
         tiles = new GameObject[width, height];
-        flags = new GameObject[width, height];
-        mines = new GameObject[width, height];
-		entities = new List<GameObject>[width, height];
-		for (int i = 0; i < width; i++) {
-			for (int j = 0; j < height; j++) {
-				entities[i, j] = new List<GameObject>();
-			}
-		}
         backgroundTiles.Clear();
 
         for (int i=0; i<MaxSize() * MaxSize() * 1.25f; i++) {
@@ -288,10 +275,42 @@ public class Floor : MonoBehaviour
         return x >= 0 && x < width && y >= 0 && y < height;
     }
     public bool mineAvailable(int x, int y) {
-        return tiles[x, y] != null && mines[x, y] == null && (x != Player.s.coord.x || y != Player.s.coord.y) && tiles[x, y].GetComponent<ActionTile>() == null;
+        return tiles[x, y] != null && GetUniqueMine(x, y) == null && (x != Player.s.coord.x || y != Player.s.coord.y) && tiles[x, y].GetComponent<ActionTile>() == null;
     }
 	public bool MineAvailableStart(int x, int y) {
 		return mineAvailable(x, y) && !(x == 0 && y == 0);
+	}
+	public GameObject GetUniqueFlag(int x, int y) {
+		if (within(x, y) && tiles[x, y] != null) {
+			return tiles[x, y].GetComponent<Tile>().GetUniqueFlag();
+		}
+		return null;
+	}
+	public GameObject GetUniqueMine(int x, int y) {
+		if (within(x, y) && tiles[x, y] != null) {
+			return tiles[x, y].GetComponent<Tile>().GetUniqueMine();
+		}
+		return null;
+	}
+	public List<GameObject> GetEntities(int x, int y) {	
+		if (within(x, y) && tiles[x, y] != null) {
+			return tiles[x, y].GetComponent<Tile>().entities;
+		}
+		return null;
+	}
+	public void AddEntity(int x, int y, GameObject g) {
+		if (within(x, y) && tiles[x, y] != null) {
+			tiles[x, y].GetComponent<Tile>().AddEntity(g);
+		} else {
+			Debug.Log("Tried to add entity to invalid tile at " + x + ", " + y);
+		}
+	}
+	public void RemoveEntity(int x, int y, GameObject g) {
+		if (within(x, y) && tiles[x, y] != null) {
+			tiles[x, y].GetComponent<Tile>().entities.Remove(g);
+		} else {
+			Debug.Log("Tried to remove entity from invalid tile at " + x + ", " + y);
+		}
 	}
     private void Awake() {
         s = this;
