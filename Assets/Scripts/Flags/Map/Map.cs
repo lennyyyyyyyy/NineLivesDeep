@@ -25,7 +25,6 @@ public class Map : Flag
     }
     protected virtual void Activate() {
         LeanTween.value(gameObject, (Vector3 v) => UIManager.s.updateSizeDelta(rt, v), rt.sizeDelta, new Vector2(100, 100), 0.1f).setEase(LeanTweenType.easeInOutCubic);
-
         active = true;
         foreach (GameObject number in numbers) {
 			if (number != null) {
@@ -35,7 +34,6 @@ public class Map : Flag
     }
     protected virtual void Deactivate() {
         LeanTween.value(gameObject, (Vector3 v) => UIManager.s.updateSizeDelta(rt, v), rt.sizeDelta, new Vector2(80, 80), 0.1f).setEase(LeanTweenType.easeInOutCubic);
-
         active = false;
         foreach (GameObject number in numbers) {
 			if (number != null) {
@@ -57,6 +55,15 @@ public class Map : Flag
         }
     }
     public virtual void OnDiscover(int x, int y) { }
+	public virtual bool TrySetNumber(int x, int y, int num) {
+		if (x >= 0 && x < numbers.GetLength(0) && y >= 0 && y < numbers.GetLength(1) && numbers[x, y] != null) {
+			numbers[x, y].GetComponent<Number>().setNum(num);
+			return true;
+		} else {
+			Debug.Log("Tried to set number at invalid coord " + x + ", " + y);
+			return false;
+		}
+	}
     public virtual void reset() {
         if (numbers != null) {
             foreach (GameObject n in numbers) {
@@ -76,10 +83,10 @@ public class Map : Flag
         }
     }
     protected virtual void OnEnable() {
-        Floor.onFloorChange += reset;
+        Floor.onFloorChangeAfterEntities += reset;
     }
     protected virtual void OnDisable() {
-        Floor.onFloorChange -= reset;
+        Floor.onFloorChangeAfterEntities -= reset;
     }
     protected override void Start() {
         base.Start();

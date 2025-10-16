@@ -287,56 +287,62 @@ public class Player : Entity {
     protected override void Update() {
         base.Update(); // vertical object order
     }
-	public override void Move(int x, int y, bool reposition = true) {
-		Move(x, y, reposition, true);
+	public override bool Move(int x, int y, bool reposition = true) {
+		return Move(x, y, reposition, true);
 	}
-	public virtual void Move(int x, int y, bool reposition = true, bool animate = true) {
-        if (animate) {
-            if (x - coord.x > 0) {
-                transform.localScale = Vector3.one;
-            } else if (x - coord.x < 0) {
-                transform.localScale = new Vector3(-1, 1, 1);
-            }
-            if (y - coord.y >= 0) {
-                animator.SetTrigger("jumpUpStart");
-            } else if (y - coord.y < 0) {
-                animator.SetTrigger("jumpDownStart");
-            } else {
-                animator.SetTrigger("jumpNeutralStart");
-            }
-			base.Move(x, y, false);
-            destroyPrints();
-            LeanTween.moveLocal(gameObject, Vector3.zero, 0.5f).setEase(LeanTweenType.easeOutCubic).setOnComplete(() => {
-                animator.SetTrigger("jumpEnd");
-                updatePrints();
-                triggerMines();
-                discoverTiles();
-                if (Floor.s.tiles[x, y].GetComponent<ActionTile>() != null) {
-					Floor.s.tiles[x, y].GetComponent<ActionTile>().PerformAction();
-                } 
-                Floor.s.tiles[x, y].GetComponent<Tile>().externalDepthImpulse += stepImpulse;
-            }).setOnUpdate((float f) => {
-                GameManager.s.disturbShaders(feet.transform.position.x, feet.transform.position.y);
-            });
-        } else {
-			base.Move(x, y, reposition);
-            triggerMines();
-            discoverTiles();
-        }
-        //wildcat passive
-        if (hasFlag(typeof(Wildcat)) && !tilesVisited.Contains(Floor.s.tiles[x, y]) && Floor.s.tiles[x, y].GetComponent<MossyTile>() != null) {
-            Flag w = UIManager.s.flagUIVars[typeof(Wildcat)].instances[0].GetComponent<Flag>();
-            w.UpdateCount(w.count-1);
-        }
-		//fragile curse passive
-		if (Floor.s.tiles[x, y].GetComponent<MossyTile>() != null || Floor.s.tiles[x, y].GetComponent<Puddle>() != null) {
-			tempChanges++;
-			if (tempChanges >= modifiers.tempChangesUntilDeath) {
-				Die();
+	public virtual bool Move(int x, int y, bool reposition = true, bool animate = true) {
+		if (CoordAllowed(x, y)) {
+			if (animate) {
+				if (x - coord.x > 0) {
+					transform.localScale = Vector3.one;
+				} else if (x - coord.x < 0) {
+					transform.localScale = new Vector3(-1, 1, 1);
+				}
+				if (y - coord.y >= 0) {
+					animator.SetTrigger("jumpUpStart");
+				} else if (y - coord.y < 0) {
+					animator.SetTrigger("jumpDownStart");
+				} else {
+					animator.SetTrigger("jumpNeutralStart");
+				}
+				base.Move(x, y, false);
+				destroyPrints();
+				LeanTween.moveLocal(gameObject, Vector3.zero, 0.5f).setEase(LeanTweenType.easeOutCubic).setOnComplete(() => {
+					animator.SetTrigger("jumpEnd");
+					updatePrints();
+					triggerMines();
+					discoverTiles();
+					if (Floor.s.tiles[x, y].GetComponent<ActionTile>() != null) {
+						Floor.s.tiles[x, y].GetComponent<ActionTile>().PerformAction();
+					} 
+					Floor.s.tiles[x, y].GetComponent<Tile>().externalDepthImpulse += stepImpulse;
+				}).setOnUpdate((float f) => {
+					GameManager.s.disturbShaders(feet.transform.position.x, feet.transform.position.y);
+				});
+			} else {
+				base.Move(x, y, reposition);
+				triggerMines();
+				discoverTiles();
 			}
+			//wildcat passive
+			if (hasFlag(typeof(Wildcat)) && !tilesVisited.Contains(Floor.s.tiles[x, y]) && Floor.s.tiles[x, y].GetComponent<MossyTile>() != null) {
+				Flag w = UIManager.s.flagUIVars[typeof(Wildcat)].instances[0].GetComponent<Flag>();
+				w.UpdateCount(w.count-1);
+			}
+			//fragile curse passive
+			if (Floor.s.tiles[x, y].GetComponent<MossyTile>() != null || Floor.s.tiles[x, y].GetComponent<Puddle>() != null) {
+				tempChanges++;
+				if (tempChanges >= modifiers.tempChangesUntilDeath) {
+					Die();
+				}
+			}
+			tilesVisited.Add(Floor.s.tiles[x, y]);
+			tilesUnvisited.Remove(Floor.s.tiles[x, y]);
+			return true;
+		} else {
+			Debug.Log("Tried to move player to invalid coord " + x + ", " + y);
+			return false;
 		}
-        tilesVisited.Add(Floor.s.tiles[x, y]);
-		tilesUnvisited.Remove(Floor.s.tiles[x, y]);
 	}
 	public virtual void Move(GameObject tile, bool reposition = true, bool animate = true) {
 		Move(tile.GetComponent<Tile>().coord.x, tile.GetComponent<Tile>().coord.y, reposition, animate);
@@ -350,9 +356,9 @@ public class Player : Entity {
 		return true;
 	}
     void OnEnable() {
-        Floor.onFloorChange += onFloorChange;
+        Floor.onFloorChangeAfterEntities += onFloorChange;
     }
     void OnDisable() {
-        Floor.onFloorChange -= onFloorChange;
+        Floor.onFloorChangeAfterEntities -= onFloorChange;
     }
 }

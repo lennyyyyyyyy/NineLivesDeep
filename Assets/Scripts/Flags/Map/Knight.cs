@@ -12,7 +12,7 @@ class Knight : Map {
                 count += (Floor.s.GetUniqueMine(x+dx, y+dy)!=null)?1:0;
             }
         }
-        numbers[x, y].GetComponent<Number>().setNum(count);
+		TrySetNumber(x, y, count);
     }
     protected override void Start() {
         base.Start();

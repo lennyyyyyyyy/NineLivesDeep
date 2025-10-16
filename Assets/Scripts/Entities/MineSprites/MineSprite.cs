@@ -13,6 +13,8 @@ public class MineSprite : Entity {
     }
 	public override void Move(GameObject tile, bool reposition = true) {
 		base.Move(tile, reposition);
+		Player.s.triggerMines();
+		Player.s.discoverTiles();
 	}
 	public override void Remove() {
 		base.Remove();

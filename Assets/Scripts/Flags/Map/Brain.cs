@@ -12,7 +12,7 @@ public class Brain : Map
                 }
             }
         }
-        numbers[x, y].GetComponent<Number>().setNum(count);
+		TrySetNumber(x, y, count);
     }
     protected override void Start() {
         base.Start();

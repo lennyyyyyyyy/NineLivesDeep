@@ -14,7 +14,7 @@ class Manhattan : Map {
                 }
             }
         }
-        numbers[x, y].GetComponent<Number>().setNum(min);
+		TrySetNumber(x, y, min);
     }
     protected override void Start() {
         base.Start();

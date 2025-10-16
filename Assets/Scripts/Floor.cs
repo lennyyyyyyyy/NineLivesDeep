@@ -16,7 +16,7 @@ public class Floor : MonoBehaviour
     public int floor, width, height;
     [System.NonSerialized]
     public string floorType = "none";
-    public static Action onFloorChange, onNewMinefield;
+    public static Action onFloorChangeBeforeEntities, onFloorChangeAfterEntities, onNewMinefield;
     public float tileExternalPower = 0.65f, tileDampingPower = 0.65f, tileAdjacentDragPower = 0.5f;
 	[System.NonSerialized]
 	public int floorDeathCount = 0;
@@ -24,6 +24,7 @@ public class Floor : MonoBehaviour
 	[System.NonSerialized]
 	public Vector3 windDirection;
 	public void IntroAndCreateFloor(string newFloorType, int newFloor) {
+		// FLOOR TRANSITION FIRST STEP - INTRO SEQUENCE
 		floorType = newFloorType;
 		floor = newFloor;
 
@@ -72,6 +73,7 @@ public class Floor : MonoBehaviour
 			time += 2.8f;
 		}
 
+		// FLOOR TRANSITION SECOND STEP - DESTROY THE PREVIOUS FLOOR AND RENEW ARRAYS
         GameManager.s.DelayAction(() => {
 			if (floorType == "minefield") {
 				InitMinefield();
@@ -80,26 +82,30 @@ public class Floor : MonoBehaviour
 			} else if (floorType == "trial") {
 				InitTrial();
 			}
-			onFloorChange?.Invoke();
+			
+			// FLOOR TRANSITION FOURTH STEP - BUILD NEW FLOOR
+			onFloorChangeAfterEntities?.Invoke();	
+			
+			floorDeathCount = 0;
+			PositionTilesUnbuilt();
+
+			float time = 0f;
+			GameManager.s.DelayAction(() => {
+				BuildTiles(2f, 2f);
+				MainCamera.s.ZoomTo(12.5f, 1f);	
+			}, time);
+			time += 3.8f;
+			GameManager.s.DelayAction(() => { MainCamera.s.locked = false; }, time);
+
+			Player.s.takenDisabledFlag = Player.s.flags[Random.Range(0, Player.s.flags.Count)];
+			UIManager.s.OrganizeFlags();
+
         }, time);
 	}	
-    public void FloorChange() {
-		floorDeathCount = 0;
-        PositionTilesUnbuilt();
-
-		float time = 0f;
-		GameManager.s.DelayAction(() => {
-			BuildTiles(2f, 2f);
-			MainCamera.s.ZoomTo(12.5f, 1f);	
-		}, time);
-		time += 3.8f;
-		GameManager.s.DelayAction(() => { MainCamera.s.locked = false; }, time);
-
-		Player.s.takenDisabledFlag = Player.s.flags[Random.Range(0, Player.s.flags.Count)];
-		UIManager.s.OrganizeFlags();
-    }
     public void InitLayout(int newWidth, int newHeight, string newFloorType) {
-        //destroy previous tiles
+		// FLOOR TRANSITION SECOND STEP - DESTROY THE PREVIOUS FLOOR AND RENEW ARRAYS
+		
+		//destroy previous tiles
         for (int i=0; i<width; i++) {
             for (int j=0; j<height; j++) {
                 Destroy(tiles[i, j]);
@@ -125,6 +131,9 @@ public class Floor : MonoBehaviour
 		ParticleSystem.EmissionModule em = ambientDust.emission;
         em.rateOverTime = width * height / 3f;
 		windZone.endRange = MaxSize() * 0.75f;
+		
+		// FLOOR TRANSITION THIRD STEP - CREATE TILES, ENTITIES, AND MINES
+		onFloorChangeBeforeEntities?.Invoke();
     }
     public void InitMinefield() {
         InitLayout(2 * floor + 7 + Player.s.modifiers.floorExpansion, 2 * floor + 7 + Player.s.modifiers.floorExpansion, "minefield");
@@ -137,16 +146,16 @@ public class Floor : MonoBehaviour
 			exitX = width-1;
 			exitY = Random.Range(0, height);
 		}
-        PlaceTile(GameManager.s.tile_exit_p, exitX, exitY).GetComponent<ActionTile>().Init(ActionTile.EXITTOSHOP);
-		PlaceTile(GameManager.s.tile_p, 0, 0);
+        ReplaceTile(GameManager.s.tile_exit_p, exitX, exitY).GetComponent<ActionTile>().Init(ActionTile.EXITTOSHOP);
+		ReplaceTile(GameManager.s.tile_p, 0, 0);
         foreach (Vector2Int v in Raincloud.rainCoords) {
-            PlaceTile(GameManager.s.tile_puddle_p, v.x, v.y);
+            ReplaceTile(GameManager.s.tile_puddle_p, v.x, v.y);
         }
 		//random chance for trial entrance
 		if (Random.value < trialChance) {
 			int x = Random.Range(0, width), y = Random.Range(0, height);
 			if (tiles[x, y] == null) {
-				GameObject t = PlaceTile(GameManager.s.tile_exit_p, x, y);
+				GameObject t = ReplaceTile(GameManager.s.tile_exit_p, x, y);
 				t.GetComponent<ActionTile>().Init(ActionTile.EXITTOTRIAL);
 			}
 		}
@@ -157,18 +166,18 @@ public class Floor : MonoBehaviour
 					if (Random.value < 1f - Player.s.modifiers.noTileChance) {
                     	float tileRand = Random.value;
                     	if (tileRand < 0.05f) {
-                    	    PlaceTile(GameManager.s.tile_puddle_p, i, j);
+                    	    ReplaceTile(GameManager.s.tile_puddle_p, i, j);
                     	} else if (tileRand < 0.1f) {
-                    	    PlaceTile(GameManager.s.tile_mossy_p, i, j);
+                    	    ReplaceTile(GameManager.s.tile_mossy_p, i, j);
                     	} else {
-                    	    PlaceTile(GameManager.s.tile_p, i, j);
+                    	    ReplaceTile(GameManager.s.tile_p, i, j);
                     	}
 					}
                 }
 				//generate mines
-                if (MineAvailableStart(i, j)) {
-                    float rand = Random.value;
-                    float mineMult = tiles[i, j].GetComponent<Tile>().mineMult * Player.s.modifiers.mineSpawnMult;
+				if (PrelimMineSpawnCheck(i, j)) {
+					float rand = Random.value;
+					float mineMult = tiles[i, j].GetComponent<Tile>().mineMult * Player.s.modifiers.mineSpawnMult;
 					float totalMineChance = mineMult * (0.1f + 0.05f * floor);
 					for (int index = 0; index < Player.s.mines.Count; index++) {
 						Mine mine = Player.s.mines[index].GetComponent<Mine>();
@@ -185,11 +194,11 @@ public class Floor : MonoBehaviour
     }
     public void InitShop() {
         InitLayout(6, 2, "shop");
-        PlaceTile(GameManager.s.tile_exit_p, 5, 0).GetComponent<ActionTile>().Init(ActionTile.EXITTOMINEFIELD);
+        ReplaceTile(GameManager.s.tile_exit_p, 5, 0).GetComponent<ActionTile>().Init(ActionTile.EXITTOMINEFIELD);
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
                 if (tiles[i, j] == null) {
-                    PlaceTile(GameManager.s.tile_p, i, j);
+                    ReplaceTile(GameManager.s.tile_p, i, j);
                 }
             }
         }
@@ -202,13 +211,13 @@ public class Floor : MonoBehaviour
 	public void InitTrial() {
 		InitLayout(floor + 7 + Player.s.modifiers.floorExpansion, floor + 7 + Player.s.modifiers.floorExpansion, "trial");
 		
-		PlaceTile(GameManager.s.tile_exit_p, width-2, height-2).GetComponent<ActionTile>().Init(ActionTile.GIVETRIALREWARD);
-		PlaceTile(GameManager.s.tile_exit_p, width-1, height-1).GetComponent<ActionTile>().Init(ActionTile.EXITTOSHOP);
+		ReplaceTile(GameManager.s.tile_exit_p, width-2, height-2).GetComponent<ActionTile>().Init(ActionTile.GIVETRIALREWARD);
+		ReplaceTile(GameManager.s.tile_exit_p, width-1, height-1).GetComponent<ActionTile>().Init(ActionTile.EXITTOSHOP);
 		for (int i = 0; i < width-1; i++) {
 			for (int j = 0; j < height-1; j++) {
 				if (tiles[i, j] == null) {
-					PlaceTile(GameManager.s.tile_p, i, j);
-					if (MineAvailableStart(i, j) && Random.value < 0.2 * Player.s.modifiers.mineSpawnMult) {
+					ReplaceTile(GameManager.s.tile_p, i, j);
+					if (PrelimMineSpawnCheck(i, j) && Random.value < 0.2 * Player.s.modifiers.mineSpawnMult) {
 						PlaceMine(typeof(MineSprite), i, j);
 					}
 				}
@@ -231,11 +240,44 @@ public class Floor : MonoBehaviour
         }
         return new Vector2Int(-1, -1);
     }
-    public GameObject PlaceTile(GameObject prefab, int i, int j) {
-        tiles[i, j] = Instantiate(prefab, transform);
-        tiles[i, j].GetComponent<Tile>().coord = new Vector2Int(i, j);
-		return tiles[i, j];
-    }
+    public GameObject ReplaceTile(GameObject prefab, int x, int y) {
+		if (tiles[x, y] != null) {
+			tiles[x, y].GetComponent<Tile>().Unbuild(0.5f);
+		}
+        tiles[x, y] = Instantiate(prefab, transform);
+        tiles[x, y].GetComponent<Tile>().coord = new Vector2Int(x, y);
+		tiles[x, y].GetComponent<Tile>().PositionUnbuilt();
+		tiles[x, y].GetComponent<Tile>().Build(0.5f);
+		Player.s.destroyPrints();
+		Player.s.updatePrints();
+		Player.s.discoverTiles();
+		return tiles[x, y];
+	}
+	public void SwapTiles(int x1, int y1, int x2, int y2) {
+		GameObject temp = tiles[x1, y1];
+		tiles[x1, y1] = tiles[x2, y2];
+		tiles[x2, y2] = temp;
+		if (tiles[x1, y1] != null) {
+			tiles[x1, y1].GetComponent<Tile>().coord = new Vector2Int(x1, y1);
+			tiles[x1, y1].GetComponent<Tile>().Build(0.5f);
+		}
+		if (tiles[x2, y2] != null) {
+			tiles[x2, y2].GetComponent<Tile>().coord = new Vector2Int(x2, y2);
+			tiles[x2, y2].GetComponent<Tile>().Build(0.5f);
+		}
+		Player.s.destroyPrints();
+		Player.s.updatePrints();
+		Player.s.discoverTiles();
+	}
+	public void RemoveTile(int x, int y) {
+		if (tiles[x, y] != null) {
+			tiles[x, y].GetComponent<Tile>().Unbuild(0.5f);
+			tiles[x, y] = null;
+		}
+		Player.s.destroyPrints();
+		Player.s.updatePrints();
+		Player.s.discoverTiles();
+	}
     public void PositionTilesUnbuilt() {
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
@@ -260,10 +302,16 @@ public class Floor : MonoBehaviour
             GameManager.s.DelayAction(() => { tile.Build(buildDuration); }, totalDuration * i / tileList.Count);
         }
     }
-    public void PlaceMine(Type t, int x, int y) {
+    public GameObject PlaceMine(Type t, int x, int y) {
         GameObject g = Instantiate(GameManager.s.mineSprite_p);
         MineSprite m = g.AddComponent(t) as MineSprite;
-		m.Move(x, y);
+		if (m.Move(x, y)) {
+			return g;
+		} else {
+			Destroy(g);
+			return null;
+		}
+		return g;
     }
     public void PlacePickupSprite(List<Type> pool, int spawnType, int p, int x, int y) {
         GameObject g = Instantiate(GameManager.s.flagSprite_p);
@@ -274,11 +322,8 @@ public class Floor : MonoBehaviour
     public bool within(int x, int y) {
         return x >= 0 && x < width && y >= 0 && y < height;
     }
-    public bool mineAvailable(int x, int y) {
-        return tiles[x, y] != null && GetUniqueMine(x, y) == null && (x != Player.s.coord.x || y != Player.s.coord.y) && tiles[x, y].GetComponent<ActionTile>() == null;
-    }
-	public bool MineAvailableStart(int x, int y) {
-		return mineAvailable(x, y) && !(x == 0 && y == 0);
+	public bool PrelimMineSpawnCheck(int x, int y) {
+		return (x != 0 || y != 0) && tiles[x, y] != null;
 	}
 	public GameObject GetUniqueFlag(int x, int y) {
 		if (within(x, y) && tiles[x, y] != null) {
@@ -314,7 +359,6 @@ public class Floor : MonoBehaviour
 	}
     private void Awake() {
         s = this;
-        onFloorChange += FloorChange;
     }
 	private void Start() {
 		ambientDust = GetComponent<ParticleSystem>();

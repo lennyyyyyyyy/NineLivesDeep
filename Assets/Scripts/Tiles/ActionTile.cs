@@ -29,7 +29,7 @@ public class ActionTile : Tile
 		} else if (actionCode == GIVETRIALREWARD) {
 			m = UIManager.s.tileTrialMat;
 			action = () => {
-				Tile t = Floor.s.PlaceTile(GameManager.s.tile_p, Floor.s.width-1, Floor.s.height-2).GetComponent<Tile>();
+				Tile t = Floor.s.ReplaceTile(GameManager.s.tile_p, Floor.s.width-1, Floor.s.height-2).GetComponent<Tile>();
 				t.PositionUnbuilt();
 				t.Build(2f);
 				if (Floor.s.floorDeathCount > 0) {

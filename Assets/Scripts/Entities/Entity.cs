@@ -24,11 +24,13 @@ public class Entity : VerticalObject {
         Player.s.destroyPrints();
         Player.s.updatePrints();
 	}
-	public virtual void Move(int x, int y, bool reposition = true) {
+	public virtual bool Move(int x, int y, bool reposition = true) {
 		if (CoordAllowed(x, y)) {
 			Move(Floor.s.tiles[x, y], reposition);
+			return true;
 		} else {
 			Debug.Log("Tried to move entity to invalid coord " + x + ", " + y);
+			return false;
 		}
 	}
 	public virtual void Remove() {

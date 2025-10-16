@@ -7,7 +7,7 @@ public class Vertical : Map
         for (int j = 0; j < Floor.s.height; j++) {
             count += (Floor.s.GetUniqueMine(x, j)!=null)?1:0;
         }
-        numbers[x, y].GetComponent<Number>().setNum(count);
+		TrySetNumber(x, y, count);
     }
     protected override void Start() {
         base.Start();

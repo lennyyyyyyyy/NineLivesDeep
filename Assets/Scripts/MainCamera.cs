@@ -21,8 +21,6 @@ public class MainCamera : MonoBehaviour
         LeanTween.move(gameObject, Player.s.transform.position, 0.5f).setEase(LeanTweenType.easeInOutCubic);
 		ZoomTo(0.01f, 0.5f);
     }
-    private void onFloorChange() {
-    }
 	public void SetupFloorIntro() {
         UIManager.s.ppv.weight = 0;
         GameManager.s.DelayActionFrames(() => {
@@ -49,10 +47,4 @@ public class MainCamera : MonoBehaviour
 			shakeTimer = Player.s.modifiers.cameraShakePeriod * Random.Range(0.5f, 1.5f);
 		}
 	}
-    private void OnEnable() {
-        Floor.onFloorChange += onFloorChange;
-    }
-    private void OnDisable() {
-        Floor.onFloorChange -= onFloorChange;
-    }
 }

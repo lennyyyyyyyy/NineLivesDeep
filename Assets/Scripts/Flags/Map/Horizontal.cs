@@ -7,7 +7,7 @@ public class Horizontal : Map
         for (int i = 0; i < Floor.s.width; i++) {
             count += (Floor.s.GetUniqueMine(i, y)!=null)?1:0;
         }
-        numbers[x, y].GetComponent<Number>().setNum(count);
+		TrySetNumber(x, y, count);
     }
     protected override void Start() {
         base.Start();

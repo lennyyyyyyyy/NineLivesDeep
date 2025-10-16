@@ -21,9 +21,7 @@ class ChiefSprite : MineSprite {
 		foreach (GameObject mine in signaledMines) {
 			Vector2 normalizedMoveDir = ((Vector2)(coord - mine.GetComponent<MineSprite>().coord)).normalized;
 			Vector2Int destCoord = mine.GetComponent<MineSprite>().coord + new Vector2Int((int)Mathf.Round(normalizedMoveDir.x), (int)Mathf.Round(normalizedMoveDir.y));
-			if (Floor.s.mineAvailable(destCoord.x, destCoord.y)) {
-				mine.GetComponent<MineSprite>().Move(destCoord.x, destCoord.y);
-			}
+			mine.GetComponent<MineSprite>().Move(destCoord.x, destCoord.y);
 		}
 	}
 }

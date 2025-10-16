@@ -80,10 +80,19 @@ public class Tile : Parallax
         underTile.GetComponent<Parallax>().depth = depth + 0.02f;
     }
     public virtual void PositionUnbuilt() {
+		LeanTween.cancel(gameObject);
         targetDepth = 1.5f;
         referencePos = new Vector3(-Floor.s.width/2f + coord.x + 0.5f, -Floor.s.height/2f + coord.y + 0.5f, 0).normalized + Quaternion.Euler(0, 0, 90 * Random.Range(0, 4)) * new Vector3(0, 40, 0);
     }
+	public virtual void Unbuild(float duration) {
+		LeanTween.cancel(gameObject);
+		LeanTween.value(gameObject, (float f) => {targetDepth = f;}, targetDepth, 1.5f, duration).setEase(LeanTweenType.easeInOutQuint);
+		LeanTween.value(gameObject, (Vector3 v) => {referencePos = v;}, referencePos, referencePos + Quaternion.Euler(0, 0, 90 * Random.Range(0, 4)) * new Vector3(0, 40, 0), duration).setEase(LeanTweenType.easeInOutQuint).setOnComplete(() => {
+			Destroy(gameObject);
+		});
+	}
     public virtual void Build(float duration) {
+		LeanTween.cancel(gameObject);
         LeanTween.value(gameObject, (float f) => {targetDepth = f;}, targetDepth, 1f, duration).setEase(LeanTweenType.easeInOutQuint);
         LeanTween.value(gameObject, (Vector3 v) => {referencePos = v;}, referencePos, new Vector3(-Floor.s.width/2f + coord.x + 0.5f, -Floor.s.height/2f + coord.y + 0.5f, 0), duration).setEase(LeanTweenType.easeInOutQuint);
     }
