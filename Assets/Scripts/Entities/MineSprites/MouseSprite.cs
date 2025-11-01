@@ -12,8 +12,8 @@ public class MouseSprite : MineSprite {
         for (int i=0; i<4; i++) {
             int dx = new int[]{-1, 1, 0, 0}[i];
             int dy = new int[]{0, 0, -1, 1}[i];
-			if (CoordAllowed(coord.x + dx, coord.y + dy)) {
-                neighbors.Add(new Vector2Int(coord.x + dx, coord.y + dy));
+			if (CoordAllowed(GetCoord().x + dx, GetCoord().y + dy)) {
+                neighbors.Add(new Vector2Int(GetCoord().x + dx, GetCoord().y + dy));
             }
         }
         if (neighbors.Count > 0) {

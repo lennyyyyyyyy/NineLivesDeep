@@ -9,7 +9,7 @@ public class Print : MonoBehaviour
     private Vector3 defaultRotation;
     private Collider2D c;
     public void init(int dx, int dy) {
-        transform.parent = Floor.s.tiles[Player.s.coord.x + dx, Player.s.coord.y + dy].transform;
+        transform.parent = Floor.s.GetTile(Player.s.GetCoord().x + dx, Player.s.GetCoord().y + dy).transform;
         transform.localScale = Vector3.one * defaultScale;
         transform.localPosition = Vector3.zero;
         d = new Vector2Int(dx, dy);
@@ -28,7 +28,7 @@ public class Print : MonoBehaviour
         GetComponent<SpriteRenderer>().color = defaultColor;
     }
     private void OnMouseDownCustom() {
-        Player.s.Move(Player.s.coord.x + d.x, Player.s.coord.y + d.y);
+        Player.s.Move(Player.s.GetCoord().x + d.x, Player.s.GetCoord().y + d.y);
 		Player.s.lastMovement = d;
     }
     void Update()

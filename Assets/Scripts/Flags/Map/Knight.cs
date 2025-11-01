@@ -8,11 +8,11 @@ class Knight : Map {
         for (int k=0; k<8; k++) {
             int dx = dxs[k];
             int dy = dys[k];
-            if (Floor.s.within(x + dx, y + dy)) {
+            if (Floor.s.TileExistsAt(x + dx, y + dy)) {
                 count += (Floor.s.GetUniqueMine(x+dx, y+dy)!=null)?1:0;
             }
         }
-		TrySetNumber(x, y, count);
+		SetNumber(x, y, count);
     }
     protected override void Start() {
         base.Start();

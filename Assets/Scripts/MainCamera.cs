@@ -34,7 +34,7 @@ public class MainCamera : MonoBehaviour
     }
 	private void Update() {
 		if (!locked) {	
-			Vector3 playerPos = Floor.s.CoordToPos(Player.s.coord.x, Player.s.coord.y);
+			Vector3 playerPos = Floor.s.CoordToPos(Player.s.GetCoord().x, Player.s.GetCoord().y);
    			Vector3 targetPos = playerPos - .25f * playerPos.normalized * Camera.main.orthographicSize + cameraShakeOffset;
 			transform.position = Vector3.Lerp(transform.position, targetPos, 1-Mathf.Pow(0.65f, Time.deltaTime/.15f));
 			updateZoom(Mathf.Lerp(Camera.main.orthographicSize, targetOrthographicSize, 1-Mathf.Pow(0.65f, Time.deltaTime/.15f)));

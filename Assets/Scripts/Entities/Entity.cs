@@ -1,20 +1,30 @@
 using UnityEngine;
 
 public class Entity : VerticalObject {
-    [System.NonSerialized]
-    public Vector2Int coord = new Vector2Int(-1, -1);
 	public bool obstacle = true;
     protected bool hovered = false;
 	protected override void Start() {
 		base.Start();
-		marker = gameObject;
+	}
+	public virtual GameObject GetTile() {
+		if (transform.parent != null && transform.parent.GetComponent<Tile>() != null) {
+			return transform.parent.gameObject;
+		} else {
+			return null;
+		}
+	}
+	public virtual Vector2Int GetCoord() {
+		if (GetTile() != null) {
+			return GetTile().GetComponent<Tile>().coord;
+		} else {
+			return Floor.INVALID_COORD;
+		}
 	}
 	public virtual void Move(GameObject tile, bool reposition = true) {
-		if (coord.x != -1) {
-			tile.GetComponent<Tile>().entities.Remove(gameObject);
+		if (transform.parent != null && transform.parent.GetComponent<Tile>() != null) {
+			transform.parent.GetComponent<Tile>().entities.Remove(gameObject);
 		}
 		tile.GetComponent<Tile>().AddEntity(gameObject);
-		coord = tile.GetComponent<Tile>().coord;
 		Vector3 oldScale = transform.localScale;
 		transform.parent = tile.transform;
 		transform.localScale = oldScale;	
@@ -26,7 +36,7 @@ public class Entity : VerticalObject {
 	}
 	public virtual bool Move(int x, int y, bool reposition = true) {
 		if (CoordAllowed(x, y)) {
-			Move(Floor.s.tiles[x, y], reposition);
+			Move(Floor.s.GetTile(x, y), reposition);
 			return true;
 		} else {
 			Debug.Log("Tried to move entity to invalid coord " + x + ", " + y);
@@ -34,11 +44,13 @@ public class Entity : VerticalObject {
 		}
 	}
 	public virtual void Remove() {
-		Floor.s.RemoveEntity(coord.x, coord.y, gameObject);
+		if (GetTile() != null) {
+			GetTile().GetComponent<Tile>().entities.Remove(gameObject);
+		}
 		Destroy(gameObject);
 	}
 	public virtual bool CoordAllowed(int x, int y) {
-		return Floor.s.within(x, y) && Floor.s.tiles[x, y] != null && Floor.s.tiles[x, y].GetComponent<ActionTile>() == null; 
+		return Floor.s.TileExistsAt(x, y) && Floor.s.GetTile(x, y).GetComponent<ActionTile>() == null; 
 	}
     protected virtual void OnMouseEnter() {
 		hovered = true;
@@ -47,7 +59,7 @@ public class Entity : VerticalObject {
 		hovered = false;
 	}
 	public virtual bool IsInteractable() {
-		return Mathf.Abs(coord.x - Player.s.coord.x) <= Player.s.modifiers.interactRange && Mathf.Abs(coord.y - Player.s.coord.y) <= Player.s.modifiers.interactRange;
+		return Mathf.Abs(GetCoord().x - Player.s.GetCoord().x) <= Player.s.modifiers.interactRange && Mathf.Abs(GetCoord().y - Player.s.GetCoord().y) <= Player.s.modifiers.interactRange;
 	}
 	public virtual void Interact() {
 	}

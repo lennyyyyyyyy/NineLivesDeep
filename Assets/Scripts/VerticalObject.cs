@@ -3,10 +3,14 @@ using UnityEngine;
 public class VerticalObject : MonoBehaviour
 {
     public GameObject marker;
-    [System.NonSerialized]
     public SpriteRenderer sr;
     protected virtual void Start() {
-        sr = GetComponent<SpriteRenderer>();
+		if (sr == null) {
+			sr = GetComponent<SpriteRenderer>();
+		}
+		if (marker == null) {
+			marker = gameObject;
+		}
     }
     protected virtual void Update()
     {

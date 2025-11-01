@@ -3,18 +3,16 @@ using UnityEngine;
 class Manhattan : Map {
     public override void OnDiscover(int x, int y) {
         int min = -1; 
-        for (int i=0; i<Floor.s.width; i++) {
-            for (int j=0; j<Floor.s.height; j++) {
-                if (Floor.s.GetUniqueMine(i, j) != null) {
-                    if (min == -1) {
-                        min = Mathf.Abs(i-x) + Mathf.Abs(j-y);
-                    } else {
-                        min = Mathf.Min(min, Mathf.Abs(i-x) + Mathf.Abs(j-y));
-                    }
-                }
-            }
+		foreach (GameObject t in Floor.s.tiles.Values) {
+			if (t.GetComponent<Tile>().GetUniqueMine() != null) {
+				if (min == -1) {
+					min = Mathf.Abs(t.GetComponent<Tile>().coord.x-x) + Mathf.Abs(t.GetComponent<Tile>().coord.y-y);
+				} else {
+					min = Mathf.Min(min, Mathf.Abs(t.GetComponent<Tile>().coord.x-x) + Mathf.Abs(t.GetComponent<Tile>().coord.y-y));
+				}
+			}
         }
-		TrySetNumber(x, y, min);
+		SetNumber(x, y, min);
     }
     protected override void Start() {
         base.Start();

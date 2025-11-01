@@ -6,8 +6,8 @@ using System.Collections.Generic;
 public class Floor : MonoBehaviour
 {
     public static Floor s;
-    public GameObject[,] tiles;
-	public List<GameObject>[,] entities;
+	public static readonly Vector2Int INVALID_COORD = new Vector2Int(-100, -100);
+    public Dictionary<Vector2Int, GameObject> tiles = new Dictionary<Vector2Int, GameObject>();
     [System.NonSerialized]
     public List<GameObject> backgroundTiles = new List<GameObject>();
     private ParticleSystem ambientDust;
@@ -23,6 +23,7 @@ public class Floor : MonoBehaviour
 	public float trialChance = 0.5f;
 	[System.NonSerialized]
 	public Vector3 windDirection;
+	
 	public void IntroAndCreateFloor(string newFloorType, int newFloor) {
 		// FLOOR TRANSITION FIRST STEP - INTRO SEQUENCE
 		floorType = newFloorType;
@@ -108,7 +109,7 @@ public class Floor : MonoBehaviour
 		//destroy previous tiles
         for (int i=0; i<width; i++) {
             for (int j=0; j<height; j++) {
-                Destroy(tiles[i, j]);
+                Destroy(GetTile(i, j));
             }
         }
         foreach (GameObject bt in backgroundTiles) {
@@ -119,7 +120,7 @@ public class Floor : MonoBehaviour
         height = newHeight;
 
 		//renew tile array
-        tiles = new GameObject[width, height];
+        tiles.Clear();
         backgroundTiles.Clear();
 
         for (int i=0; i<MaxSize() * MaxSize() * 1.25f; i++) {
@@ -154,7 +155,7 @@ public class Floor : MonoBehaviour
 		//random chance for trial entrance
 		if (Random.value < trialChance) {
 			int x = Random.Range(0, width), y = Random.Range(0, height);
-			if (tiles[x, y] == null) {
+			if (!TileExistsAt(x, y)) {
 				GameObject t = ReplaceTile(GameManager.s.tile_exit_p, x, y);
 				t.GetComponent<ActionTile>().Init(ActionTile.EXITTOTRIAL);
 			}
@@ -162,7 +163,7 @@ public class Floor : MonoBehaviour
         
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
-                if (tiles[i, j] == null) {
+                if (!TileExistsAt(i, j)) {
 					if (Random.value < 1f - Player.s.modifiers.noTileChance) {
                     	float tileRand = Random.value;
                     	if (tileRand < 0.05f) {
@@ -172,12 +173,19 @@ public class Floor : MonoBehaviour
                     	} else {
                     	    ReplaceTile(GameManager.s.tile_p, i, j);
                     	}
+
+						// put misc entities
+						float entityRand = Random.value;
+						if (entityRand < 0.3f) {
+							GameObject g = Instantiate(GameManager.s.crank_p);
+							g.GetComponent<Crank>().Move(i, j);
+						}
 					}
                 }
 				//generate mines
 				if (PrelimMineSpawnCheck(i, j)) {
 					float rand = Random.value;
-					float mineMult = tiles[i, j].GetComponent<Tile>().mineMult * Player.s.modifiers.mineSpawnMult;
+					float mineMult = GetTile(i, j).GetComponent<Tile>().mineMult * Player.s.modifiers.mineSpawnMult;
 					float totalMineChance = mineMult * (0.1f + 0.05f * floor);
 					for (int index = 0; index < Player.s.mines.Count; index++) {
 						Mine mine = Player.s.mines[index].GetComponent<Mine>();
@@ -197,7 +205,7 @@ public class Floor : MonoBehaviour
         ReplaceTile(GameManager.s.tile_exit_p, 5, 0).GetComponent<ActionTile>().Init(ActionTile.EXITTOMINEFIELD);
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
-                if (tiles[i, j] == null) {
+                if (!TileExistsAt(i, j)) {
                     ReplaceTile(GameManager.s.tile_p, i, j);
                 }
             }
@@ -215,7 +223,7 @@ public class Floor : MonoBehaviour
 		ReplaceTile(GameManager.s.tile_exit_p, width-1, height-1).GetComponent<ActionTile>().Init(ActionTile.EXITTOSHOP);
 		for (int i = 0; i < width-1; i++) {
 			for (int j = 0; j < height-1; j++) {
-				if (tiles[i, j] == null) {
+				if (!TileExistsAt(i, j)) {
 					ReplaceTile(GameManager.s.tile_p, i, j);
 					if (PrelimMineSpawnCheck(i, j) && Random.value < 0.2 * Player.s.modifiers.mineSpawnMult) {
 						PlaceMine(typeof(MineSprite), i, j);
@@ -228,8 +236,14 @@ public class Floor : MonoBehaviour
         return Mathf.Max(width, height);
     }
     public Vector3 CoordToPos(int x, int y) {
-        return tiles[x, y].GetComponent<Tile>().referencePos;
+		if (TileExistsAt(x, y)) {
+			return GetTile(x, y).GetComponent<Tile>().referencePos;
+		}
+		return CoordToIdealPos(x, y);
     }
+	public Vector3 CoordToIdealPos(int x, int y) {
+		return new Vector3(-width/2f + x + 0.5f, -height/2f + y + 0.5f, 0);
+	}
     public Vector2Int PosToCoord(Vector3 v) {
         Collider2D[] cs = Physics2D.OverlapPointAll(new Vector2(v.x, v.y));
         foreach (Collider2D c in cs) {
@@ -238,41 +252,51 @@ public class Floor : MonoBehaviour
                 return t.coord;
             }
         }
-        return new Vector2Int(-1, -1);
+        return INVALID_COORD;
     }
     public GameObject ReplaceTile(GameObject prefab, int x, int y) {
-		if (tiles[x, y] != null) {
-			tiles[x, y].GetComponent<Tile>().Unbuild(0.5f);
+		if (TileExistsAt(x, y)) {
+			GetTile(x, y).GetComponent<Tile>().Unbuild(0.5f);
 		}
-        tiles[x, y] = Instantiate(prefab, transform);
-        tiles[x, y].GetComponent<Tile>().coord = new Vector2Int(x, y);
-		tiles[x, y].GetComponent<Tile>().PositionUnbuilt();
-		tiles[x, y].GetComponent<Tile>().Build(0.5f);
+        Tile t = SetTile(x, y, Instantiate(prefab, transform)).GetComponent<Tile>();
+		t.PositionUnbuilt();
+		t.Build(0.5f);
 		Player.s.destroyPrints();
 		Player.s.updatePrints();
 		Player.s.discoverTiles();
-		return tiles[x, y];
+		return GetTile(x, y);
+	}
+	public void MoveTiles(List<Vector2Int> fromCoords, List<Vector2Int> toCoords) {
+		Dictionary<Vector2Int, GameObject> relevantTiles = new Dictionary<Vector2Int, GameObject>();
+		for (int i = 0; i < fromCoords.Count; i++) {
+			relevantTiles[fromCoords[i]] = GetTile(fromCoords[i].x, fromCoords[i].y);
+			relevantTiles[toCoords[i]] = GetTile(toCoords[i].x, toCoords[i].y);
+		}
+		foreach (Vector2Int coord in relevantTiles.Keys) {
+			SetTile(coord.x, coord.y, null);
+		}
+		for (int i = 0; i < fromCoords.Count; i++) {
+			SetTile(toCoords[i].x, toCoords[i].y, relevantTiles[fromCoords[i]]);
+		}
+		foreach (Vector2Int coord in relevantTiles.Keys) {
+			if (relevantTiles[coord] != null) {
+				relevantTiles[coord].GetComponent<Tile>().Build(0.5f);
+			}
+		}
+		Player.s.destroyPrints();
+		GameManager.s.DelayAction(() => {
+			Player.s.updatePrints();
+			Player.s.discoverTiles();
+		}, 0.5f);
 	}
 	public void SwapTiles(int x1, int y1, int x2, int y2) {
-		GameObject temp = tiles[x1, y1];
-		tiles[x1, y1] = tiles[x2, y2];
-		tiles[x2, y2] = temp;
-		if (tiles[x1, y1] != null) {
-			tiles[x1, y1].GetComponent<Tile>().coord = new Vector2Int(x1, y1);
-			tiles[x1, y1].GetComponent<Tile>().Build(0.5f);
-		}
-		if (tiles[x2, y2] != null) {
-			tiles[x2, y2].GetComponent<Tile>().coord = new Vector2Int(x2, y2);
-			tiles[x2, y2].GetComponent<Tile>().Build(0.5f);
-		}
-		Player.s.destroyPrints();
-		Player.s.updatePrints();
-		Player.s.discoverTiles();
+		MoveTiles(new List<Vector2Int>() { new Vector2Int(x1, y1), new Vector2Int(x2, y2) },
+				  new List<Vector2Int>() { new Vector2Int(x2, y2), new Vector2Int(x1, y1) });
 	}
 	public void RemoveTile(int x, int y) {
-		if (tiles[x, y] != null) {
-			tiles[x, y].GetComponent<Tile>().Unbuild(0.5f);
-			tiles[x, y] = null;
+		if (TileExistsAt(x, y)) {
+			GetTile(x, y).GetComponent<Tile>().Unbuild(0.5f);
+			SetTile(x, y, null);
 		}
 		Player.s.destroyPrints();
 		Player.s.updatePrints();
@@ -281,8 +305,8 @@ public class Floor : MonoBehaviour
     public void PositionTilesUnbuilt() {
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
-				if (tiles[i, j] != null) {
-	                tiles[i, j].GetComponent<Tile>().PositionUnbuilt();
+				if (TileExistsAt(i, j)) {
+	                GetTile(i, j).GetComponent<Tile>().PositionUnbuilt();
 				}
             }
         }
@@ -291,8 +315,8 @@ public class Floor : MonoBehaviour
         List<Tile> tileList = new List<Tile>();
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
-				if (tiles[i, j] != null) {
-                	tileList.Add(tiles[i, j].GetComponent<Tile>());
+				if (TileExistsAt(i, j)) {
+                	tileList.Add(GetTile(i, j).GetComponent<Tile>());
                 } 
             }
         }
@@ -319,40 +343,58 @@ public class Floor : MonoBehaviour
         ps.Init(pool[Random.Range(0, pool.Count)], spawnType, p, x, y);
         Player.s.NoticeFlag(ps.parentType);
     }
-    public bool within(int x, int y) {
-        return x >= 0 && x < width && y >= 0 && y < height;
+    public bool TileExistsAt(int x, int y) {
+        return tiles.ContainsKey(new Vector2Int(x, y));
     }
+	public GameObject GetTile(int x, int y) {
+		return TileExistsAt(x, y) ? tiles[new Vector2Int(x, y)] : null;
+	}
+	public GameObject SetTile(int x, int y, GameObject tile) {
+		if (TileExistsAt(x, y)) {
+			tiles[new Vector2Int(x, y)].GetComponent<Tile>().coord = INVALID_COORD;
+		}
+		if (tile == null) {
+			tiles.Remove(new Vector2Int(x, y));
+		} else {
+			tiles[new Vector2Int(x, y)] = tile;
+			tile.GetComponent<Tile>().coord = new Vector2Int(x, y);
+		}
+		return tile;
+	}
 	public bool PrelimMineSpawnCheck(int x, int y) {
-		return (x != 0 || y != 0) && tiles[x, y] != null;
+		return (x != 0 || y != 0) && GetTile(x, y) != null;
 	}
 	public GameObject GetUniqueFlag(int x, int y) {
-		if (within(x, y) && tiles[x, y] != null) {
-			return tiles[x, y].GetComponent<Tile>().GetUniqueFlag();
+		if (TileExistsAt(x, y)) {
+			return GetTile(x, y).GetComponent<Tile>().GetUniqueFlag();
 		}
 		return null;
 	}
 	public GameObject GetUniqueMine(int x, int y) {
-		if (within(x, y) && tiles[x, y] != null) {
-			return tiles[x, y].GetComponent<Tile>().GetUniqueMine();
+		if (TileExistsAt(x, y)) {
+			return GetTile(x, y).GetComponent<Tile>().GetUniqueMine();
 		}
 		return null;
 	}
 	public List<GameObject> GetEntities(int x, int y) {	
-		if (within(x, y) && tiles[x, y] != null) {
-			return tiles[x, y].GetComponent<Tile>().entities;
+		if (TileExistsAt(x, y)) {
+			return GetTile(x, y).GetComponent<Tile>().entities;
 		}
 		return null;
 	}
+	// note helper - use Entity.Move() instead
 	public void AddEntity(int x, int y, GameObject g) {
-		if (within(x, y) && tiles[x, y] != null) {
-			tiles[x, y].GetComponent<Tile>().AddEntity(g);
+		if (TileExistsAt(x, y)) {
+			GetTile(x, y).GetComponent<Tile>().AddEntity(g);
 		} else {
 			Debug.Log("Tried to add entity to invalid tile at " + x + ", " + y);
 		}
 	}
+	// note helper - use Entity.Remove() instead
 	public void RemoveEntity(int x, int y, GameObject g) {
-		if (within(x, y) && tiles[x, y] != null) {
-			tiles[x, y].GetComponent<Tile>().entities.Remove(g);
+		if (TileExistsAt(x, y)) {
+			GetTile(x, y).GetComponent<Tile>().entities.Remove(g);
+			g.transform.parent = null;
 		} else {
 			Debug.Log("Tried to remove entity from invalid tile at " + x + ", " + y);
 		}

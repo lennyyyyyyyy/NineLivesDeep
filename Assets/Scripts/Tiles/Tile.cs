@@ -68,8 +68,8 @@ public class Tile : Parallax
         float adjacentDrag = 0;
         int adjacentTiles = 0;
         foreach ((int dx, int dy) in new (int, int)[] { (1,0), (-1,0), (0,1), (0,-1) }) {
-            if (Floor.s.within(coord.x + dx, coord.y + dy) && Floor.s.tiles[coord.x + dx, coord.y + dy] != null) {
-                adjacentDrag += Floor.s.tiles[coord.x + dx, coord.y + dy].GetComponent<Tile>().depth - depth;
+            if (Floor.s.TileExistsAt(coord.x + dx, coord.y + dy)) {
+                adjacentDrag += Floor.s.GetTile(coord.x + dx, coord.y + dy).GetComponent<Tile>().depth - depth;
                 adjacentTiles++;
             }
         }
@@ -82,7 +82,7 @@ public class Tile : Parallax
     public virtual void PositionUnbuilt() {
 		LeanTween.cancel(gameObject);
         targetDepth = 1.5f;
-        referencePos = new Vector3(-Floor.s.width/2f + coord.x + 0.5f, -Floor.s.height/2f + coord.y + 0.5f, 0).normalized + Quaternion.Euler(0, 0, 90 * Random.Range(0, 4)) * new Vector3(0, 40, 0);
+        referencePos = Floor.s.CoordToIdealPos(coord.x, coord.y).normalized + Quaternion.Euler(0, 0, 90 * Random.Range(0, 4)) * new Vector3(0, 40, 0);
     }
 	public virtual void Unbuild(float duration) {
 		LeanTween.cancel(gameObject);
@@ -92,9 +92,13 @@ public class Tile : Parallax
 		});
 	}
     public virtual void Build(float duration) {
-		LeanTween.cancel(gameObject);
-        LeanTween.value(gameObject, (float f) => {targetDepth = f;}, targetDepth, 1f, duration).setEase(LeanTweenType.easeInOutQuint);
-        LeanTween.value(gameObject, (Vector3 v) => {referencePos = v;}, referencePos, new Vector3(-Floor.s.width/2f + coord.x + 0.5f, -Floor.s.height/2f + coord.y + 0.5f, 0), duration).setEase(LeanTweenType.easeInOutQuint);
+		if (coord == Floor.INVALID_COORD) {
+			Unbuild(duration);
+		} else {
+			LeanTween.cancel(gameObject);
+			LeanTween.value(gameObject, (float f) => {targetDepth = f;}, targetDepth, 1f, duration).setEase(LeanTweenType.easeInOutQuint);
+			LeanTween.value(gameObject, (Vector3 v) => {referencePos = v;}, referencePos, Floor.s.CoordToIdealPos(coord.x, coord.y), duration).setEase(LeanTweenType.easeInOutQuint);
+		}
     }
     public virtual void PutUnder() {
         GameManager.s.SetGameLayerRecursive(gameObject, LayerMask.NameToLayer("Under"));

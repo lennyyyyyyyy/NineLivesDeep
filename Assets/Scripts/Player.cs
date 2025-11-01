@@ -48,7 +48,9 @@ public class Player : Entity {
     public Animator animator;
     [System.NonSerialized]
     public int texWidth, texHeight;
-    public static Action OnDie, OnRevive, OnAliveChange;
+    public static Action OnDie, OnRevive, OnAliveChange, OnUpdateSecondaryMapActive;
+	[System.NonSerialized]
+	public bool secondaryMapActive = true;
     [System.NonSerialized]
     public float money = 0;
     private float stepImpulse = 0.2f;
@@ -101,7 +103,7 @@ public class Player : Entity {
 		Floor.s.floorDeathCount++;
         alive = false;
         OnAliveChange?.Invoke();
-        UpdateActiveMapLayers();
+        UpdateSecondaryMapActive();
         UpdateActivePrints();
         OnDie?.Invoke();
         sr.enabled = false;
@@ -112,32 +114,21 @@ public class Player : Entity {
             sr.enabled = true; 
             alive = true;
             OnAliveChange?.Invoke();
-            UpdateActiveMapLayers();
+            UpdateSecondaryMapActive();
             UpdateActivePrints();
 			tempChanges = 0;
 			triggerMines();
         }, GameManager.s.deathReviveDuration);
     }
-    public void UpdateActiveMapLayers() {
-        bool active = alive;
+    public void UpdateSecondaryMapActive() {
+        secondaryMapActive = alive;
         foreach (GameObject g in flags) {
             Flag flag = g.GetComponent<Flag>();
             if (flag is Placeable) {
-                active &= (flag as Placeable).sprite == null || (flag as Placeable).sprite.GetComponent<FlagSprite>().state == "dropped";
+                secondaryMapActive &= (flag as Placeable).sprite == null || (flag as Placeable).sprite.GetComponent<FlagSprite>().state == "dropped";
             }
         }
-        foreach (GameObject g in flags) {
-            Flag flag = g.GetComponent<Flag>();
-            if (flag is Map) {
-                Map m = flag as Map;
-                active &= m.active;
-                foreach (GameObject n in m.numbers) {
-					if (n != null) {
-                    	n.active = active;
-					}
-                }
-            }
-        }
+		OnUpdateSecondaryMapActive?.Invoke();
     }
     public void UpdateActivePrints() {
         bool active = alive;
@@ -186,12 +177,12 @@ public class Player : Entity {
         //bounce off rubber
         for (int i = 0; i < filteredPrintLocs.Count; i++) {
             Vector2Int bouncedPrintLoc = filteredPrintLocs[i];
-            if (!Floor.s.within(coord.x + bouncedPrintLoc.x, coord.y + bouncedPrintLoc.y)) continue;
-            GameObject g = Floor.s.GetUniqueFlag(coord.x + bouncedPrintLoc.x, coord.y + bouncedPrintLoc.y);
+            if (!Floor.s.TileExistsAt(GetCoord().x + bouncedPrintLoc.x, GetCoord().y + bouncedPrintLoc.y)) continue;
+            GameObject g = Floor.s.GetUniqueFlag(GetCoord().x + bouncedPrintLoc.x, GetCoord().y + bouncedPrintLoc.y);
             while (g != null && g.GetComponent<FlagSprite>() is RubberSprite) {
                 bouncedPrintLoc += filteredPrintLocs[i];
-                if (!Floor.s.within(coord.x + bouncedPrintLoc.x, coord.y + bouncedPrintLoc.y)) break;
-            	g = Floor.s.GetUniqueFlag(coord.x + bouncedPrintLoc.x, coord.y + bouncedPrintLoc.y);
+                if (!Floor.s.TileExistsAt(GetCoord().x + bouncedPrintLoc.x, GetCoord().y + bouncedPrintLoc.y)) break;
+            	g = Floor.s.GetUniqueFlag(GetCoord().x + bouncedPrintLoc.x, GetCoord().y + bouncedPrintLoc.y);
             }
             filteredPrintLocs[i] = bouncedPrintLoc;
         }
@@ -205,8 +196,8 @@ public class Player : Entity {
 		}
         //filter out of bounds or on obstacle entity
         for (int i = filteredPrintLocs.Count - 1; i >= 0; i--) {
-			int printX = coord.x + filteredPrintLocs[i].x, printY = coord.y + filteredPrintLocs[i].y;
-			bool remove = !Floor.s.within(printX, printY) || Floor.s.tiles[printX, printY] == null;
+			int printX = GetCoord().x + filteredPrintLocs[i].x, printY = GetCoord().y + filteredPrintLocs[i].y;
+			bool remove = !Floor.s.TileExistsAt(printX, printY);
 			if (!remove) {
 				foreach (GameObject entity in Floor.s.GetEntities(printX, printY)) {
 					remove |= entity.GetComponent<Entity>().obstacle;
@@ -239,15 +230,15 @@ public class Player : Entity {
         }
     }
     public void triggerMines() {
-		if (Player.s.alive && Floor.s.GetUniqueMine(coord.x, coord.y) != null) {
-			Floor.s.GetUniqueMine(coord.x, coord.y).GetComponent<MineSprite>().Trigger();
+		if (Player.s.alive && Floor.s.GetUniqueMine(GetCoord().x, GetCoord().y) != null) {
+			Floor.s.GetUniqueMine(GetCoord().x, GetCoord().y).GetComponent<MineSprite>().Trigger();
 		}
     }
     public void discoverTiles() {
         for (int dx=-modifiers.discoverRange; dx<=modifiers.discoverRange; dx++) {
             for (int dy=-modifiers.discoverRange; dy<=modifiers.discoverRange; dy++) {
-                if (Floor.s.within(coord.x + dx, coord.y + dy)) {
-					discover(coord.x + dx, coord.y + dy);
+                if (Floor.s.TileExistsAt(GetCoord().x + dx, GetCoord().y + dy)) {
+					discover(GetCoord().x + dx, GetCoord().y + dy);
                 }
             }
         }
@@ -255,7 +246,7 @@ public class Player : Entity {
     private void onFloorChange() {
         tilesVisited.Clear();
 		tilesUnvisited.Clear();
-		foreach (GameObject tile in Floor.s.tiles) {
+		foreach (GameObject tile in Floor.s.tiles.Values) {
 			if (tile != null) {
 				tilesUnvisited.Add(tile);
 			}
@@ -293,14 +284,14 @@ public class Player : Entity {
 	public virtual bool Move(int x, int y, bool reposition = true, bool animate = true) {
 		if (CoordAllowed(x, y)) {
 			if (animate) {
-				if (x - coord.x > 0) {
+				if (x - GetCoord().x > 0) {
 					transform.localScale = Vector3.one;
-				} else if (x - coord.x < 0) {
+				} else if (x - GetCoord().x < 0) {
 					transform.localScale = new Vector3(-1, 1, 1);
 				}
-				if (y - coord.y >= 0) {
+				if (y - GetCoord().y >= 0) {
 					animator.SetTrigger("jumpUpStart");
-				} else if (y - coord.y < 0) {
+				} else if (y - GetCoord().y < 0) {
 					animator.SetTrigger("jumpDownStart");
 				} else {
 					animator.SetTrigger("jumpNeutralStart");
@@ -312,10 +303,10 @@ public class Player : Entity {
 					updatePrints();
 					triggerMines();
 					discoverTiles();
-					if (Floor.s.tiles[x, y].GetComponent<ActionTile>() != null) {
-						Floor.s.tiles[x, y].GetComponent<ActionTile>().PerformAction();
+					if (Floor.s.GetTile(x, y).GetComponent<ActionTile>() != null) {
+						Floor.s.GetTile(x, y).GetComponent<ActionTile>().PerformAction();
 					} 
-					Floor.s.tiles[x, y].GetComponent<Tile>().externalDepthImpulse += stepImpulse;
+					Floor.s.GetTile(x, y).GetComponent<Tile>().externalDepthImpulse += stepImpulse;
 				}).setOnUpdate((float f) => {
 					GameManager.s.disturbShaders(feet.transform.position.x, feet.transform.position.y);
 				});
@@ -325,19 +316,19 @@ public class Player : Entity {
 				discoverTiles();
 			}
 			//wildcat passive
-			if (hasFlag(typeof(Wildcat)) && !tilesVisited.Contains(Floor.s.tiles[x, y]) && Floor.s.tiles[x, y].GetComponent<MossyTile>() != null) {
+			if (hasFlag(typeof(Wildcat)) && !tilesVisited.Contains(Floor.s.GetTile(x, y)) && Floor.s.GetTile(x, y).GetComponent<MossyTile>() != null) {
 				Flag w = UIManager.s.flagUIVars[typeof(Wildcat)].instances[0].GetComponent<Flag>();
 				w.UpdateCount(w.count-1);
 			}
 			//fragile curse passive
-			if (Floor.s.tiles[x, y].GetComponent<MossyTile>() != null || Floor.s.tiles[x, y].GetComponent<Puddle>() != null) {
+			if (Floor.s.GetTile(x, y).GetComponent<MossyTile>() != null || Floor.s.GetTile(x, y).GetComponent<Puddle>() != null) {
 				tempChanges++;
 				if (tempChanges >= modifiers.tempChangesUntilDeath) {
 					Die();
 				}
 			}
-			tilesVisited.Add(Floor.s.tiles[x, y]);
-			tilesUnvisited.Remove(Floor.s.tiles[x, y]);
+			tilesVisited.Add(Floor.s.GetTile(x, y));
+			tilesUnvisited.Remove(Floor.s.GetTile(x, y));
 			return true;
 		} else {
 			Debug.Log("Tried to move player to invalid coord " + x + ", " + y);
@@ -348,9 +339,7 @@ public class Player : Entity {
 		Move(tile.GetComponent<Tile>().coord.x, tile.GetComponent<Tile>().coord.y, reposition, animate);
 	}
 	public override void Remove() {
-		Floor.s.RemoveEntity(coord.x, coord.y, gameObject);
-		coord = new Vector2Int(-1, -1);
-		transform.parent = null;
+		Floor.s.RemoveEntity(GetCoord().x, GetCoord().y, gameObject);
 	}
 	public override bool CoordAllowed(int x, int y) {
 		return true;

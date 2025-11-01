@@ -35,7 +35,7 @@ public class FlagSprite : Entity
                     //disturb shaders when it hits the ground
                     GameManager.s.disturbShaders(transform.position.x, transform.position.y);
                     //show map layers and prints
-                    Player.s.UpdateActiveMapLayers();
+                    Player.s.UpdateSecondaryMapActive();
                     Player.s.UpdateActivePrints();
                 });
                 OnPlace();
@@ -49,17 +49,13 @@ public class FlagSprite : Entity
                     state = "dropped";
                    	Remove();
                     //show map layers and prints
-                    Player.s.UpdateActiveMapLayers();
+                    Player.s.UpdateSecondaryMapActive();
                     Player.s.UpdateActivePrints();
                 });
             }
             //reset tiles
-            for (int i=0; i<Floor.s.width; i++) {
-                for (int j=0; j<Floor.s.height; j++) {
-					if (Floor.s.tiles[i, j] != null) {
-                    	Floor.s.tiles[i, j].GetComponent<Tile>().PutOver();
-					}
-                }
+			foreach (GameObject tile in Floor.s.tiles.Values) {
+				tile.GetComponent<Tile>().PutOver();
             }
             //brighten under
             LeanTween.cancel(GameManager.s.underDarkenTarget);
@@ -73,17 +69,17 @@ public class FlagSprite : Entity
         Player.s.destroyPrints();
         Player.s.updatePrints();
         sr.sortingLayerName = "Player";
-        if (removesMines && Floor.s.GetUniqueMine(coord.x, coord.y) != null) {
+        if (removesMines && Floor.s.GetUniqueMine(GetCoord().x, GetCoord().y) != null) {
             Player.s.UpdateMoney(Player.s.money + Player.s.modifiers.mineDefuseMult);
-            Floor.s.GetUniqueMine(coord.x, coord.y).GetComponent<MineSprite>().Remove();
+            Floor.s.GetUniqueMine(GetCoord().x, GetCoord().y).GetComponent<MineSprite>().Remove();
         }
-        if (Player.s.hasFlag(typeof(Reflection)) && GetType() != typeof(BaseSprite) && Floor.s.tiles[coord.x, coord.y].GetComponent<Puddle>() != null) {
+        if (Player.s.hasFlag(typeof(Reflection)) && GetType() != typeof(BaseSprite) && GetTile().GetComponent<Puddle>() != null) {
             //reflection passive
             Flag b = UIManager.s.flagUIVars[typeof(Base)].instances[0].GetComponent<Flag>();
             b.UpdateCount(b.count+1);
         }
 		//give tile momentum downward
-		Floor.s.tiles[coord.x, coord.y].GetComponent<Tile>().externalDepthImpulse += placeImpulse;	
+		GetTile().GetComponent<Tile>().externalDepthImpulse += placeImpulse;	
     }
 	public override void Move(GameObject tile, bool reposition = true) {
 		base.Move(tile, reposition);
@@ -92,7 +88,7 @@ public class FlagSprite : Entity
 		base.Remove();
 	}
     public override bool CoordAllowed(int x, int y) { 
-        return base.CoordAllowed(x, y) && Floor.s.GetUniqueFlag(x, y) == null && !(x == Player.s.coord.x && y == Player.s.coord.y); 
+        return base.CoordAllowed(x, y) && Floor.s.GetUniqueFlag(x, y) == null && !(x == Player.s.GetCoord().x && y == Player.s.GetCoord().y); 
     }
     protected static void TweenUnderDarken(float darken) {
         Shader.SetGlobalFloat(GameManager.s.UnderDarkenID, darken);
@@ -113,15 +109,13 @@ public class FlagSprite : Entity
         // update parent usable state
         UIManager.s.OrganizeFlags();
         //hide map layers and prints
-        Player.s.UpdateActiveMapLayers();
+        Player.s.UpdateSecondaryMapActive();
         Player.s.UpdateActivePrints();
         //hide bad tiles
-        for (int i=0; i<Floor.s.width; i++) {
-            for (int j=0; j<Floor.s.height; j++) {
-                if (Floor.s.tiles[i, j] != null && !CoordAllowed(i, j)) {
-                    Floor.s.tiles[i, j].GetComponent<Tile>().PutUnder();
+        foreach (GameObject tile in Floor.s.tiles.Values) {
+                if (!CoordAllowed(tile.GetComponent<Tile>().coord.x, tile.GetComponent<Tile>().coord.y)) {
+                    tile.GetComponent<Tile>().PutUnder();
                 }
-            }
         }
         //darken under
         LeanTween.cancel(GameManager.s.underDarkenTarget);

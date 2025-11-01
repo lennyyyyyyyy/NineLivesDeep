@@ -7,12 +7,12 @@ public class Brain : Map
         int count = 0;
         for (int dx=-1; dx<=1; dx++) {
             for (int dy=-1; dy<=1; dy++) {
-                if (Floor.s.within(x + dx, y + dy)) {
+                if (Floor.s.TileExistsAt(x + dx, y + dy)) {
                     count += (Floor.s.GetUniqueMine(x+dx, y+dy)!=null && (Floor.s.GetUniqueMine(x+dx, y+dy).GetComponent<MineSprite>().detectable || hasAromatic))?1:0;
                 }
             }
         }
-		TrySetNumber(x, y, count);
+		SetNumber(x, y, count);
     }
     protected override void Start() {
         base.Start();

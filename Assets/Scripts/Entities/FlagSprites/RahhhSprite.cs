@@ -11,9 +11,7 @@ public class RahhhSprite : FlagSprite
         base.OnPlace();
         for (int dx=-1; dx<=1; dx++) {
             for (int dy=-1; dy<=1; dy++) {
-                if (Floor.s.within(coord.x + dx, coord.y + dy)) {
-                    Player.s.discover(coord.x + dx, coord.y + dy);
-                }
+				Player.s.discover(GetCoord().x + dx, GetCoord().y + dy);
             }
         }
     }

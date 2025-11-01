@@ -10,14 +10,12 @@ public class Parallax : MonoBehaviour
     public virtual void SetDepth(float newDepth) {
         depth = newDepth;
     }
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    protected virtual void Start()
-    {
+
+    protected virtual void Start() {
         sortWithDepth.Add(GetComponent<SpriteRenderer>());
     }
-    // Update is called once per frame
-    protected virtual void Update()
-    {
+
+    protected virtual void Update() {
         float cameraDistance = Camera.main.orthographicSize / 3.75f;
         Vector3 offset = referencePos - MainCamera.s.transform.position;
 

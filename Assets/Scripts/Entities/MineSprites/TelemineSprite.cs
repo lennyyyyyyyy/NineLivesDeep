@@ -9,7 +9,7 @@ public class TelemineSprite : MineSprite {
 		GameObject destinationTile;
 		if (Player.s.tilesUnvisited.Count != 0) {
 			//sort by distance
-			List<GameObject> tilesUnvisitedSorted = Player.s.tilesUnvisited.OrderBy(tile => Vector2.Distance(Player.s.coord, tile.GetComponent<Tile>().coord)).ToList();
+			List<GameObject> tilesUnvisitedSorted = Player.s.tilesUnvisited.OrderBy(tile => Vector2.Distance(Player.s.GetCoord(), tile.GetComponent<Tile>().coord)).ToList();
 			float r = Random.value;
 			destinationTile = tilesUnvisitedSorted[0];
 			//choose destination using probability falloff dist

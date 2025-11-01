@@ -8,7 +8,7 @@ public class HydraSprite : MineSprite {
             int dy = Random.Range(-1, 2);
             if (dx != 0 || dy != 0) {
                 left--;
-                Floor.s.PlaceMine(typeof(Mine), coord.x + dx, coord.y + dy); 
+                Floor.s.PlaceMine(typeof(Mine), GetCoord().x + dx, GetCoord().y + dy); 
             }
         }
         base.Trigger();
