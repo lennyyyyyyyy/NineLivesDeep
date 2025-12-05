@@ -2,11 +2,8 @@
 using UnityEngine;
 
 public class AddTooltip : MonoBehaviour {
-	public bool setDefaults = false;
-	public string name, flavor, info;
-	public Color color;
-	public bool showPrice;
-	public int price;
+	public bool setDefaultData = false;
+	public TooltipData data;
 	public bool addHoverEffect;
 	[System.NonSerialized]
 	public GameObject tooltip;
@@ -14,15 +11,15 @@ public class AddTooltip : MonoBehaviour {
 	protected Material savedMaterial;
 
 	protected virtual void Start() {
-		if (setDefaults) {
-			Init(name, flavor, info, color, showPrice, price);
+		if (setDefaultData) {
+			SetData(data);
 		}
 		SaveMaterial();
 	}
 	protected virtual void Update() {}
-	public virtual void Init(string n, string f, string i, Color c, bool sp=false, int p=0) {
+	public virtual void SetData(TooltipData tooltipData) {
         tooltip = Instantiate(GameManager.s.tooltip_p, UIManager.s.tooltipGroup.transform);
-        tooltip.GetComponent<Tooltip>().Init(n, f, i, c, sp, p);
+        tooltip.GetComponent<Tooltip>().SetData(tooltipData);
         tooltip.active = false;
 	}
 	protected virtual void SaveMaterial() {}

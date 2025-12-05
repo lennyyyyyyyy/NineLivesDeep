@@ -1,7 +1,7 @@
 using UnityEngine; 
 using System;
 
-class Mine : UIItem {
+public class Mine : UIItem {
 	public Type spriteType;
 	protected virtual void init(Texture2D t, string n, string f, string i, Color c, Type sType) {
 		init(t, n, f, i, c);

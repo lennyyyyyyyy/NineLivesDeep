@@ -5,11 +5,9 @@ public class UIItem : MonoBehaviour {
 	[System.NonSerialized]
 	public RectTransform rt;
 	protected Texture2D tex2d;
-	protected string name, flavor, info;
-	protected Color color;
 	protected AddTooltipUI addTooltip;
-    protected virtual void init(Texture2D t, string n, string f, string i, Color c) {
-		tex2d = t;
+    protected virtual void init(Texture2D tex2d, string n, string f, string i, Color c) {
+		this.tex2d = tex2d;
 		name = n;
 		flavor = f;
 		info = i;

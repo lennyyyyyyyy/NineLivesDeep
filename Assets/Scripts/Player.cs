@@ -36,8 +36,14 @@ public class Player : Entity {
     [System.NonSerialized]
     public List<GameObject> prints = new List<GameObject>();
     [System.NonSerialized]
-    public List<GameObject> flags = new List<GameObject>(), notFlags = new List<GameObject>(), mines = new List<GameObject>(), tilesUnvisited = new List<GameObject>();
-    public HashSet<Type> flagsSeen = new HashSet<Type>(), cursesSeen = new HashSet<Type>(), minesSeen = new HashSet<Type>(); // not in use but holding on to these
+    public List<GameObject> flags = new List<GameObject>(), 
+		   				    notFlags = new List<GameObject>(), 
+							curses = new List<GameObject>(),
+							mines = new List<GameObject>(),
+							tilesUnvisited = new List<GameObject>();
+    public HashSet<Type> flagsSeen = new HashSet<Type>(), 
+		   				 cursesSeen = new HashSet<Type>(),
+						 minesSeen = new HashSet<Type>(); // not in use but holding on to these
 	public List<Type> flagsUnseen, consumableFlagsUnseen, cursesUnseen, minesUnseen;
     public HashSet<GameObject> tilesVisited = new HashSet<GameObject>();
     public List<Vector2Int> printLocs;
@@ -61,21 +67,40 @@ public class Player : Entity {
 	[System.NonSerialized]
 	public GameObject takenDisabledFlag;
 
+    void Awake() {
+        s = this;
+    }
+    protected override void Start() {
+        base.Start(); 
+		obstacle = false; // for Entity
+		marker = feet; // for VerticalObject
+
+		// initialize unseen flag lists
+		flagsUnseen = UIManager.s.allFlagTypes.ToList();
+		consumableFlagsUnseen = UIManager.s.allFlagTypes.Where(type => typeof(Consumable).IsAssignableFrom(type)).ToList();
+		cursesUnseen = UIManager.s.allCurseTypes.ToList();
+		minesUnseen = UIManager.s.allMineTypes.ToList();
+		
+        animator = GetComponent<Animator>();
+
+        // initialize player bits
+        texWidth = (int) sr.sprite.rect.width;
+        texHeight = (int) sr.sprite.rect.height;
+        playerBits = new GameObject[texWidth, texHeight];
+        for (int i=0; i<texWidth; i++) {
+            for (int j=0; j<texHeight; j++) {
+                playerBits[i, j] = Instantiate(GameManager.s.playerBit_p);
+                playerBits[i, j].GetComponent<PlayerBit>().Init(i, j);
+            }
+        }
+    }
+    protected override void Update() {
+        base.Update(); // vertical object order
+    }
     public bool hasFlag(Type type) {
         return UIManager.s.flagUIVars[type].instances.Count > 0;
     }
     public void setTrapped(bool b) {
-        // if (b) {
-        //     if (trapped) {
-        //         //die instantly
-        //     } else {
-        //         sr.sprite = UIManager.s.player_trapped;
-        //     }
-
-        // } else {
-        //     sr.sprite = UIManager.s.player;
-        // }
-        // trapped = b;
     }
 	public void RecalculateModifiers() {
 		modifiers.Reset();
@@ -254,29 +279,6 @@ public class Player : Entity {
         Move(0, 0, true, false);
         setTrapped(false);
 		tempChanges = 0;
-    }
-    void Awake() {
-        s = this;
-    }
-    protected override void Start() {
-        base.Start(); // get sprite renderer
-		obstacle = false;
-		marker = feet;
-        animator = GetComponent<Animator>();
-
-        // initialize player bits
-        texWidth = (int) sr.sprite.rect.width;
-        texHeight = (int) sr.sprite.rect.height;
-        playerBits = new GameObject[texWidth, texHeight];
-        for (int i=0; i<texWidth; i++) {
-            for (int j=0; j<texHeight; j++) {
-                playerBits[i, j] = Instantiate(GameManager.s.playerBit_p);
-                playerBits[i, j].GetComponent<PlayerBit>().Init(i, j);
-            }
-        }
-    }
-    protected override void Update() {
-        base.Update(); // vertical object order
     }
 	public override bool Move(int x, int y, bool reposition = true) {
 		return Move(x, y, reposition, true);
