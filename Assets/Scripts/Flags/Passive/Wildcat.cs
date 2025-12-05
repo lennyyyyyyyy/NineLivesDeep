@@ -9,7 +9,7 @@ class Wildcat : Passive {
     public override void UpdateCount(int newCount) {
         if (newCount == 0) {
             count = 5;
-            Flag y = UIManager.s.flagUIVars[typeof(You)].instances[0].GetComponent<Flag>();
+            Flag y = UIManager.s.uiTypeToData[typeof(You)].instances[0].GetComponent<Flag>();
             y.UpdateCount(y.count+1);
             
         } else {

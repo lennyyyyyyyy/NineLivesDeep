@@ -75,7 +75,7 @@ public class FlagSprite : Entity
         }
         if (Player.s.hasFlag(typeof(Reflection)) && GetType() != typeof(BaseSprite) && GetTile().GetComponent<Puddle>() != null) {
             //reflection passive
-            Flag b = UIManager.s.flagUIVars[typeof(Base)].instances[0].GetComponent<Flag>();
+            Flag b = UIManager.s.uiTypeToData[typeof(Base)].instances[0].GetComponent<Flag>();
             b.UpdateCount(b.count+1);
         }
 		//give tile momentum downward
@@ -98,9 +98,10 @@ public class FlagSprite : Entity
 
         sr = GetComponent<SpriteRenderer>();
         light = GetComponentInChildren<Light2D>();
-        if (parentType == null) parentType = UIManager.s.spriteToFlag[GetType()];
-        sr.sprite = UIManager.s.flagUIVars[parentType].sprite;
-        light.color = UIManager.s.flagUIVars[parentType].color;
+        if (parentType == null) parentType = UIManager.s.spriteTypeToUIType[GetType()];
+		FlagData parentFlagData = UIManager.s.uiTypeToData[parentType] as FlagData;
+        sr.sprite = parentFlagData.sprite;
+        light.color = parentFlagData.tooltipData.color;
 
         marker = transform.Find("Marker").gameObject;
         // init random properties
@@ -113,19 +114,16 @@ public class FlagSprite : Entity
         Player.s.UpdateActivePrints();
         //hide bad tiles
         foreach (GameObject tile in Floor.s.tiles.Values) {
-                if (!CoordAllowed(tile.GetComponent<Tile>().coord.x, tile.GetComponent<Tile>().coord.y)) {
-                    tile.GetComponent<Tile>().PutUnder();
-                }
+			if (!CoordAllowed(tile.GetComponent<Tile>().coord.x, tile.GetComponent<Tile>().coord.y)) {
+				tile.GetComponent<Tile>().PutUnder();
+			}
         }
         //darken under
         LeanTween.cancel(GameManager.s.underDarkenTarget);
         LeanTween.value(GameManager.s.underDarkenTarget, TweenUnderDarken, Shader.GetGlobalFloat(GameManager.s.UnderDarkenID), 0.1f, overToUnderDuration).setEase(LeanTweenType.easeInOutCubic);
         
-        if (UIManager.s.flagUIVars.ContainsKey(parentType)) {
-            GetComponent<AddTooltipScene>().Init(UIManager.s.flagUIVars[parentType].name, 
-                                                UIManager.s.flagUIVars[parentType].flavor, 
-                                                UIManager.s.flagUIVars[parentType].info,
-                                                UIManager.s.flagUIVars[parentType].color);
+        if (UIManager.s.uiTypeToData.ContainsKey(parentType)) {
+            GetComponent<AddTooltipScene>().SetData(parentFlagData.tooltipData, true);
         }
     }
     protected override void Update() {

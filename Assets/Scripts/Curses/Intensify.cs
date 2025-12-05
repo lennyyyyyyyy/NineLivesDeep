@@ -1,25 +1,29 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 
 public class Intensify : Curse {
-	public static Dictionary<GameObject, GameObject> intensifiedCurses = new Dictionary<GameObject, GameObject>(); 
-	private GameObject intensifiedCurse;
+	private Curse intensifiedCurse;
 	private void SwitchIntensifiedCurse() {
+		if (intensifiedCurse != null) {
+			intensifiedCurse.intensified = false;
+		}
+		
 		List<GameObject> options = new List<GameObject>(Player.s.curses);
-		options.Remove(gameObject);
-		intensifiedCurse = options[Random.Range(0, options.Count)];
+		options = options.Where(curse => curse.GetComponent<Intensify>() == null).ToList();
+		intensifiedCurse = options[Random.Range(0, options.Count)].GetComponent<Curse>();
+		intensifiedCurse.intensified = true;
 
-		// update the static list
-		intensifiedCurses.Remove(gameObject);
-		intensifiedCurses.Add(gameObject, intensifiedCurse);
+		tooltipData.flavor =  "Currently intensifying " + intensifiedCurse.tooltipData.name;
+		SetData(tooltipData: tooltipData);	
 
 		Player.s.RecalculateModifiers();
 	}
 	private void OnEnable() {
-		Floor.onFloorChangeBeforeEntities += SwitchIntensifiedCurse;
+		Floor.onFloorChangeBeforeNewLayout += SwitchIntensifiedCurse;
 	}
 	private void OnDisable() {
-		Floor.onFloorChangeBeforeEntities -= SwitchIntensifiedCurse;
+		Floor.onFloorChangeBeforeNewLayout -= SwitchIntensifiedCurse;
 	}
 }
 

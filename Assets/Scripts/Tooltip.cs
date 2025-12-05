@@ -26,23 +26,39 @@ public class TooltipData {
 }
 
 public class Tooltip : MonoBehaviour {
+	public bool setInitialData = false;
+	public TooltipData tooltipData;
+
     public TMP_Text name, flavor, info, price;
     public GameObject mineIcon;
-	[System.NonSerialized]
-	public TooltipData data;
     private static float padding = 0.01f, power = 0.75f;
     private static Vector3 lastTooltipPos = Vector3.zero;
     private Vector3 targetPosition;
-    public void SetData(TooltipData data) {
-		this.data = data;
-        name.text = data.name;
-        flavor.text = data.flavor;
-        info.text = data.info;
-		price.text = showPrice ? (data.price == 0 ? "Free!" : "x" + data.price.ToString()) : "";
-		mineIcon.GetComponent<Image>().enabled = data.showPrice;
+	
+	private void Start() {
+		if (setInitialData) {
+			SetData(tooltipData);
+		}
+	}
+    private void Update() {
+        transform.position = Vector3.Lerp(transform.position, targetPosition, 1 - Mathf.Pow(1 - power, Time.deltaTime / .15f));
+        lastTooltipPos = transform.position;
+    }
+	public void SetInitialData(TooltipData tooltipData) {
+		setInitialData = true;
+		this.tooltipData = tooltipData;
+	}
+    public void SetData(TooltipData tooltipData) {
+		SetInitialData(tooltipData);
+		
+        name.text = tooltipData.name;
+        flavor.text = tooltipData.flavor;
+        info.text = tooltipData.info;
+		price.text = tooltipData.showPrice ? (tooltipData.price == 0 ? "Free!" : "x" + tooltipData.price.ToString()) : "";
+		mineIcon.GetComponent<Image>().enabled = tooltipData.showPrice;
 
-		name.color = flavor.color = info.color = price.color = data.color;
-        GetComponent<Outline>().effectColor = data.color;
+		name.color = flavor.color = info.color = price.color = tooltipData.color;
+        GetComponent<Outline>().effectColor = tooltipData.color;
         LayoutRebuilder.ForceRebuildLayoutImmediate(transform as RectTransform);
     }
     public void Position(float x, float y, float width) {
@@ -65,9 +81,5 @@ public class Tooltip : MonoBehaviour {
             info.alignment = TMPro.TextAlignmentOptions.Left;
             name.gameObject.transform.SetAsFirstSibling();
         }
-    }
-    public void Update() {
-        transform.position = Vector3.Lerp(transform.position, targetPosition, 1 - Mathf.Pow(1 - power, Time.deltaTime / .15f));
-        lastTooltipPos = transform.position;
     }
 }

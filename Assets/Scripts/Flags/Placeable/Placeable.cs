@@ -5,10 +5,20 @@ using System;
 public class Placeable : Flag {
     [System.NonSerialized]
     public GameObject sprite;
+    protected override void Start() {
+        base.Start();
+
+		EventTrigger trigger;
+		EventTrigger.Entry entry;
+		trigger = GetComponent<EventTrigger>() == null ? gameObject.AddComponent<EventTrigger>() : GetComponent<EventTrigger>();
+        entry = new EventTrigger.Entry{eventID = EventTriggerType.PointerDown};
+        entry.callback.AddListener((data) => { OnPointerDown((PointerEventData)data); });
+        trigger.triggers.Add(entry);
+    }
     protected virtual void OnPointerDown(PointerEventData data) {
         if (usable) {
             sprite = Instantiate(GameManager.s.flagSprite_p, Camera.main.ScreenToWorldPoint(Input.mousePosition), Quaternion.identity);
-            sprite.AddComponent(spriteType);
+            sprite.AddComponent(placeableSpriteType);
             sprite.GetComponent<FlagSprite>().parent = this;
             base.OnPointerExit(null);
         }
@@ -19,12 +29,5 @@ public class Placeable : Flag {
     public override void UpdateCount(int newCount) {
         base.UpdateCount(newCount);
         UpdateUsable();
-    }
-    protected override void Start()
-    {
-        base.Start();
-        entry = new EventTrigger.Entry{eventID = EventTriggerType.PointerDown};
-        entry.callback.AddListener((data) => { OnPointerDown((PointerEventData)data); });
-        trigger.triggers.Add(entry);
     }
 }

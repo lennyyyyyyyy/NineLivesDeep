@@ -75,12 +75,6 @@ public class Player : Entity {
 		obstacle = false; // for Entity
 		marker = feet; // for VerticalObject
 
-		// initialize unseen flag lists
-		flagsUnseen = UIManager.s.allFlagTypes.ToList();
-		consumableFlagsUnseen = UIManager.s.allFlagTypes.Where(type => typeof(Consumable).IsAssignableFrom(type)).ToList();
-		cursesUnseen = UIManager.s.allCurseTypes.ToList();
-		minesUnseen = UIManager.s.allMineTypes.ToList();
-		
         animator = GetComponent<Animator>();
 
         // initialize player bits
@@ -97,8 +91,14 @@ public class Player : Entity {
     protected override void Update() {
         base.Update(); // vertical object order
     }
+	public void InitializeUnseenFlags() {
+		flagsUnseen = UIManager.s.allFlagTypes.ToList();
+		consumableFlagsUnseen = UIManager.s.allFlagTypes.Where(type => typeof(Consumable).IsAssignableFrom(type)).ToList();
+		cursesUnseen = UIManager.s.allCurseTypes.ToList();
+		minesUnseen = UIManager.s.allMineTypes.ToList();
+	}
     public bool hasFlag(Type type) {
-        return UIManager.s.flagUIVars[type].instances.Count > 0;
+        return UIManager.s.uiTypeToData[type].instances.Count > 0;
     }
     public void setTrapped(bool b) {
     }
@@ -319,7 +319,7 @@ public class Player : Entity {
 			}
 			//wildcat passive
 			if (hasFlag(typeof(Wildcat)) && !tilesVisited.Contains(Floor.s.GetTile(x, y)) && Floor.s.GetTile(x, y).GetComponent<MossyTile>() != null) {
-				Flag w = UIManager.s.flagUIVars[typeof(Wildcat)].instances[0].GetComponent<Flag>();
+				Flag w = UIManager.s.uiTypeToData[typeof(Wildcat)].instances[0].GetComponent<Flag>();
 				w.UpdateCount(w.count-1);
 			}
 			//fragile curse passive

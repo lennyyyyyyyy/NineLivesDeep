@@ -30,22 +30,23 @@ public class PickupSprite : Entity {
         sr = GetComponent<SpriteRenderer>();
         light = GetComponentInChildren<Light2D>();
 		tmpro = GetComponentInChildren<TMP_Text>();
-        if (parentType != null && UIManager.s.flagUIVars.ContainsKey(parentType)) {
-            sr.sprite = UIManager.s.flagUIVars[parentType].sprite;
-            light.color = UIManager.s.flagUIVars[parentType].color;
-            GetComponent<AddTooltipScene>().Init(UIManager.s.flagUIVars[parentType].name, 
-                                                UIManager.s.flagUIVars[parentType].flavor, 
-                                                UIManager.s.flagUIVars[parentType].info,
-                                                UIManager.s.flagUIVars[parentType].color, true, price);
+        if (parentType != null && UIManager.s.uiTypeToData.ContainsKey(parentType)) {
+			FlagData parentFlagData = UIManager.s.uiTypeToData[parentType] as FlagData;
+            sr.sprite = parentFlagData.sprite;
+            light.color = parentFlagData.tooltipData.color;
+            GetComponent<AddTooltipScene>().SetData(new TooltipData(parentFlagData.tooltipData.name, parentFlagData.tooltipData.flavor, parentFlagData.tooltipData.info,
+																    color: parentFlagData.tooltipData.color,
+																    showPrice: true,
+																    price: price), true);
 			//consumable count numbers based on the way it spawns
 			if (typeof(Consumable).IsAssignableFrom(parentType)) {
 				tmpro.enabled = true;
 				if (spawnType == RANDOM) {
 					count = 1;
 				} else if (spawnType == TRIAL) {
-					count = Random.Range(Mathf.Max(1, UIManager.s.flagUIVars[parentType].consumableDefaultCount/3 - 1), UIManager.s.flagUIVars[parentType].consumableDefaultCount/3 + 2);
+					count = Random.Range(Mathf.Max(1, parentFlagData.consumableDefaultCount/3 - 1), parentFlagData.consumableDefaultCount/3 + 2);
 				} else if (spawnType == SHOP) {
-					count = UIManager.s.flagUIVars[parentType].consumableDefaultCount;
+					count = parentFlagData.consumableDefaultCount;
 				}
 				tmpro.text = count.ToString();
 			}

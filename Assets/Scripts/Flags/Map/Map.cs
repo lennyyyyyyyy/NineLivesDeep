@@ -1,13 +1,22 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using System.Collections.Generic;
-public class Map : Flag
-{
+public class Map : Flag {
     [System.NonSerialized]
     public Dictionary<Vector2Int, GameObject> numbers = new Dictionary<Vector2Int, GameObject>();
     [System.NonSerialized]
     public bool active = false;
 
+    protected override void Start() {
+        base.Start();
+
+		EventTrigger trigger;
+		EventTrigger.Entry entry;
+		trigger = GetComponent<EventTrigger>() == null ? gameObject.AddComponent<EventTrigger>() : GetComponent<EventTrigger>();
+        entry = new EventTrigger.Entry{eventID = EventTriggerType.PointerClick};
+        entry.callback.AddListener((data) => { OnPointerClick((PointerEventData)data); });
+        trigger.triggers.Add(entry);
+    }
     protected override void OnPointerEnter(PointerEventData data) {
 		base.OnPointerEnter(data);
         if (active) {
@@ -91,12 +100,6 @@ public class Map : Flag
     protected virtual void OnDisable() {
         Floor.onFloorChangeAfterEntities -= reset;
 		Player.OnUpdateSecondaryMapActive -= UpdateSecondaryActive;
-    }
-    protected override void Start() {
-        base.Start();
-        entry = new EventTrigger.Entry{eventID = EventTriggerType.PointerClick};
-        entry.callback.AddListener((data) => { OnPointerClick((PointerEventData)data); });
-        trigger.triggers.Add(entry);
     }
     protected override bool IsUsable() {
         return base.IsUsable();

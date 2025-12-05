@@ -16,7 +16,7 @@ public class Floor : MonoBehaviour
     public int floor, width, height;
     [System.NonSerialized]
     public string floorType = "none";
-    public static Action onFloorChangeBeforeEntities, onFloorChangeAfterEntities, onNewMinefield;
+    public static Action onFloorChangeBeforeNewLayout, onFloorChangeBeforeEntities, onFloorChangeAfterEntities, onNewMinefield;
     public float tileExternalPower = 0.65f, tileDampingPower = 0.65f, tileAdjacentDragPower = 0.5f;
 	[System.NonSerialized]
 	public int floorDeathCount = 0;
@@ -52,30 +52,31 @@ public class Floor : MonoBehaviour
 			}, time);
 			GameManager.s.DelayAction(() => {
 				GameObject mine = Instantiate(GameManager.s.mine_p, Vector3.zero, Quaternion.identity, UIManager.s.GAMEUI.transform);
-				if (floor == 0) {
-					mine.AddComponent(typeof(Mine));
-				} else {
-					//mine.AddComponent(Player.s.minesUnseen[Random.Range(0, Player.s.minesUnseen.Count)]);
-					mine.AddComponent(typeof(Mouse));
-				}
+				mine.AddComponent(Player.s.minesUnseen[Random.Range(0, Player.s.minesUnseen.Count)]);
 			}, time + 1f);
 			time += 2.8f;
 		}
 
-		if (floorType == "minefield" && floor % 3 == 0) {
+		//if (floorType == "minefield" && floor % 3 == 0) {
+		if (floorType == "minefield") {
 			GameManager.s.DelayAction(() => {
 				UIManager.s.InstantiateBubble(Vector3.zero, "CURSED", new Color(0.5f, 0, 0), 2f, 2f);
 			}, time);
 			GameManager.s.DelayAction(() => {
 				GameObject curse = Instantiate(GameManager.s.curse_p, Vector3.zero, Quaternion.identity, UIManager.s.GAMEUI.transform);
-				curse.AddComponent(Player.s.cursesUnseen[Random.Range(0, Player.s.cursesUnseen.Count)]);
-				//curse.AddComponent(typeof(Taken));
+				if (floor == 0) {
+					curse.AddComponent(typeof(Expansion));
+				} else {
+					curse.AddComponent(typeof(Intensify));
+				}
+				//curse.AddComponent(Player.s.cursesUnseen[Random.Range(0, Player.s.cursesUnseen.Count)]);
 			}, time + 1f);
 			time += 2.8f;
 		}
 
 		// FLOOR TRANSITION SECOND STEP - DESTROY THE PREVIOUS FLOOR AND RENEW ARRAYS
         GameManager.s.DelayAction(() => {
+			onFloorChangeBeforeNewLayout?.Invoke();
 			if (floorType == "minefield") {
 				InitMinefield();
 			} else if (floorType == "shop") {
@@ -176,7 +177,7 @@ public class Floor : MonoBehaviour
 
 						// put misc entities
 						float entityRand = Random.value;
-						if (entityRand < 0.3f) {
+						if (entityRand < 0.05f) {
 							GameObject g = Instantiate(GameManager.s.crank_p);
 							g.GetComponent<Crank>().Move(i, j);
 						}
@@ -331,11 +332,9 @@ public class Floor : MonoBehaviour
         MineSprite m = g.AddComponent(t) as MineSprite;
 		if (m.Move(x, y)) {
 			return g;
-		} else {
-			Destroy(g);
-			return null;
 		}
-		return g;
+		Destroy(g);
+		return null;
     }
     public void PlacePickupSprite(List<Type> pool, int spawnType, int p, int x, int y) {
         GameObject g = Instantiate(GameManager.s.flagSprite_p);
