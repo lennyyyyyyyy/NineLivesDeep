@@ -79,7 +79,7 @@ public class Map : Flag {
 			GameObject n = numbers[new Vector2Int(x, y)] = Instantiate(GameManager.s.number_p, Floor.s.transform);
 			n.transform.position = Floor.s.CoordToIdealPos(x, y); 
 			n.transform.localScale = Vector3.one;
-			n.GetComponent<Number>().Init();
+			n.GetComponent<Number>().Init(this, new Vector2Int(x, y));
 			n.GetComponent<Number>().SetNum(num);
 			if (active) {
 				n.GetComponent<Number>().Enter();
@@ -87,11 +87,16 @@ public class Map : Flag {
 			}
 		}
 	}
+	public virtual void RemoveNumber(int x, int y) {
+		if (NumberExistsAt(x, y)) {
+			Destroy(numbers[new Vector2Int(x, y)]);
+			numbers.Remove(new Vector2Int(x, y));
+		}
+	}
     public virtual void reset() {
 		foreach (GameObject n in numbers.Values) {
 			Destroy(n);
 		}
-		numbers.Clear();
     }
     protected virtual void OnEnable() {
         Floor.onFloorChangeAfterEntities += reset;

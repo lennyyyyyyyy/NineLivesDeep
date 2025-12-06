@@ -2,7 +2,11 @@ using UnityEngine;
 
 class Wobbly : Curse {
 	public override void Modify(ref Modifiers modifiers) {
-		modifiers.wobbly = true;
+		if (intensified) {
+			modifiers.moveDirectionDisableDuration += 2;
+		} else {
+			modifiers.moveDirectionDisableDuration += 1;
+		}
 	}
 }
 

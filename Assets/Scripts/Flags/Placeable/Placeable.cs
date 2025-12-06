@@ -18,8 +18,9 @@ public class Placeable : Flag {
     protected virtual void OnPointerDown(PointerEventData data) {
         if (usable) {
             sprite = Instantiate(GameManager.s.flagSprite_p, Camera.main.ScreenToWorldPoint(Input.mousePosition), Quaternion.identity);
-            sprite.AddComponent(placeableSpriteType);
-            sprite.GetComponent<FlagSprite>().parent = this;
+            FlagSprite flagSprite = sprite.AddComponent(placeableSpriteType) as FlagSprite;
+			FlagData flagData = UIManager.s.uiTypeToData[GetType()] as FlagData;
+			flagSprite.SetInitialData(this); 
             base.OnPointerExit(null);
         }
     }

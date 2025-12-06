@@ -5,26 +5,48 @@ using TMPro;
 using System.Linq;
 
 public class Modifiers {
-	public float mineSpawnMult, mineDefuseMult, noTileChance, windStrength, windFluctuation, cameraShakeStrength, cameraShakePeriod, vision;
-	public int floorExpansion, tempChangesUntilDeath, interactRange, discoverRange, reviveRange;
-	public bool wobbly, amnesia, watched, taken;
+	public float mineSpawnMult, 
+		         mineDefuseMult,
+				 noTileChance,
+				 windStrength,
+				 windFluctuation,
+				 cameraShakeStrength,
+				 cameraShakePeriod,
+				 vision,
+				 mapNumberDisappearChancePerSecond,
+				 watchedMineJumpTime,
+				 watchedMineJumpChancePerSecond,
+				 cataractConfuseChance;
+	public int floorExpansion,
+		       tempChangesUntilDeath,
+			   interactRange,
+			   discoverRange,
+			   reviveRange,
+			   moveDirectionDisableDuration,
+			   takenCurseCount;
+	public bool watched;
+	public HashSet<Type> amnesiaUITypes;	
 	public void Reset() {
 		mineSpawnMult = 1;
 		mineDefuseMult = 1;
 		floorExpansion = 0;
 		noTileChance = 0.1f;
 		windStrength = 0;
-		windFluctuation = 0.15f;
+		windFluctuation = 0.4f;
 		cameraShakeStrength = 0;
-		cameraShakePeriod = 0.4f;
+		cameraShakePeriod = 1f;
 		vision = 2f;
 		interactRange = 1;
 		discoverRange = 0;
 		reviveRange = 0;
-		wobbly = false;
-		amnesia = false;
+		moveDirectionDisableDuration = 0;
+		takenCurseCount = 0;
+		amnesiaUITypes = new HashSet<Type>();
+		cataractConfuseChance = 0f;
+		mapNumberDisappearChancePerSecond = 0;
 		watched = false;
-		taken = false;
+		watchedMineJumpTime = 0f;
+		watchedMineJumpChancePerSecond = 0f;
 		tempChangesUntilDeath = (int) 2e9;
 	}
 	public Modifiers() {
@@ -33,6 +55,11 @@ public class Modifiers {
 }
 public class Player : Entity {
     public static Player s;
+    public static Action OnDie, OnRevive, OnAliveChange, OnUpdateSecondaryMapActive;
+	//consts
+    private float stepImpulse = 0.2f;
+	public int maxMoveHistory = 10;
+
     [System.NonSerialized]
     public List<GameObject> prints = new List<GameObject>();
     [System.NonSerialized]
@@ -54,18 +81,16 @@ public class Player : Entity {
     public Animator animator;
     [System.NonSerialized]
     public int texWidth, texHeight;
-    public static Action OnDie, OnRevive, OnAliveChange, OnUpdateSecondaryMapActive;
 	[System.NonSerialized]
 	public bool secondaryMapActive = true;
     [System.NonSerialized]
     public float money = 0;
-    private float stepImpulse = 0.2f;
 	public Modifiers modifiers = new Modifiers();
 	[System.NonSerialized]
-	public Vector2 lastMovement = Vector2.zero;
+	public List<Vector2Int> moveHistory = new List<Vector2Int>();
 	private int tempChanges = 0;
 	[System.NonSerialized]
-	public GameObject takenDisabledFlag;
+	public float watchedMineJumpTimer = 0f;
 
     void Awake() {
         s = this;
@@ -90,6 +115,9 @@ public class Player : Entity {
     }
     protected override void Update() {
         base.Update(); // vertical object order
+		if (modifiers.watched) {
+			watchedMineJumpTimer += Time.deltaTime;
+		}
     }
 	public void InitializeUnseenFlags() {
 		flagsUnseen = UIManager.s.allFlagTypes.ToList();
@@ -211,11 +239,11 @@ public class Player : Entity {
             }
             filteredPrintLocs[i] = bouncedPrintLoc;
         }
-		//filter out same direction as last if wobbly curse is active
-		if (modifiers.wobbly) {
-			for (int i = filteredPrintLocs.Count - 1; i >= 0; i--) {
-				if (Vector2.Dot(lastMovement.normalized, ((Vector2) filteredPrintLocs[i]).normalized) > 0.99f) {
-					filteredPrintLocs.RemoveAt(i);
+		//filter out disabled moves from wobbly
+		for (int i = moveHistory.Count - 1; i >= Mathf.Max(0, moveHistory.Count - modifiers.moveDirectionDisableDuration); i--) {
+			for (int j = filteredPrintLocs.Count - 1; j >= 0; j--) {
+				if (Vector2.Dot(((Vector2) moveHistory[i]).normalized, ((Vector2) filteredPrintLocs[j]).normalized) > 0.99f) {
+					filteredPrintLocs.RemoveAt(j);
 				}
 			}
 		}
@@ -331,6 +359,10 @@ public class Player : Entity {
 			}
 			tilesVisited.Add(Floor.s.GetTile(x, y));
 			tilesUnvisited.Remove(Floor.s.GetTile(x, y));
+			//watched curse reset
+			if (modifiers.watched) {
+				watchedMineJumpTimer = 0f;
+			}
 			return true;
 		} else {
 			Debug.Log("Tried to move player to invalid coord " + x + ", " + y);

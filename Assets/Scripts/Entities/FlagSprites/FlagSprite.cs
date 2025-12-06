@@ -2,21 +2,75 @@ using UnityEngine;
 using Random = UnityEngine.Random;
 using UnityEngine.Rendering.Universal;
 using System;
-public class FlagSprite : Entity
-{
-    [System.NonSerialized]
-    public Placeable parent;
-    [System.NonSerialized]
-    public Type parentType;
+
+public class FlagSprite : CorrespondingSprite {
+	public Placeable parent;
+
     public static float droppedScale = 0.6f, heldPower = .8f, heldOffset, heldPeriod, overToUnderDuration = 0.5f;
     [System.NonSerialized]
     public string state = "held";
     protected Light2D light;
-	protected bool removesMines = true;
-    protected SpriteRenderer sr;
 	protected float placeImpulse = 0.2f;
-    public virtual void Init(Type pType) {
-        parentType = pType;
+
+    protected override void Start() {
+        light = GetComponentInChildren<Light2D>();
+        marker = transform.Find("Marker").gameObject;
+
+        base.Start();
+
+        // init random properties
+        heldOffset = Random.Range(0f, 1f);
+        heldPeriod = 0.65f + 0.15f * Random.Range(-1f, 1f);
+        // update parent usable state
+        UIManager.s.OrganizeFlags();
+        //hide map layers and prints
+        Player.s.UpdateSecondaryMapActive();
+        Player.s.UpdateActivePrints();
+        //hide bad tiles
+        foreach (GameObject tile in Floor.s.tiles.Values) {
+			if (!CoordAllowed(tile.GetComponent<Tile>().coord.x, tile.GetComponent<Tile>().coord.y)) {
+				tile.GetComponent<Tile>().PutUnder();
+			}
+        }
+        //darken under
+        LeanTween.cancel(GameManager.s.underDarkenTarget);
+        LeanTween.value(GameManager.s.underDarkenTarget, TweenUnderDarken, Shader.GetGlobalFloat(GameManager.s.UnderDarkenID), 0.1f, overToUnderDuration).setEase(LeanTweenType.easeInOutCubic);
+    }
+    protected override void Update() {
+        base.Update();
+        if (state == "held") {
+            UIManager.s.floatingHover(transform, 0.8f, 0, transform.localEulerAngles, 0.05f, heldOffset, heldPeriod, heldPower);
+
+            float idleAngle = 5f * Mathf.Sin((heldPeriod*Time.time + heldOffset)*(2*Mathf.PI));
+            Vector3 swingDirection =   1f * new Vector3(-transform.up.x * transform.up.y, 1 - Mathf.Pow(transform.up.y, 2), 0) // gravity pulling center of mass
+                                     + 3f * (1 - 1 / (0.07f * UIManager.s.mouseVelocity.magnitude + 1)) * UIManager.s.mouseVelocity.normalized // pulling force by mouse
+                                     + 1 * transform.up; // inertia force
+            transform.localEulerAngles = new Vector3(transform.localEulerAngles.x, 
+                                                    transform.localEulerAngles.y, 
+                                                    Mathf.LerpAngle(transform.localEulerAngles.z, Quaternion.LookRotation(Vector3.forward, swingDirection).eulerAngles.z + idleAngle, 1 - Mathf.Pow(1 - heldPower, Time.deltaTime / .15f)));
+            transform.position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            //disturb shaders when moving and holding flag
+            if (UIManager.s.mouseVelocity.magnitude > 0) {
+                GameManager.s.disturbShaders(transform.position.x, transform.position.y);
+            }
+            //OnMouseUp bug
+            if (!UnityEngine.InputSystem.Mouse.current.leftButton.isPressed) {
+                OnMouseUp();
+            }
+        }
+    }
+	public virtual void SetInitialData(Placeable parent) {
+		setInitialData = true;
+		this.parent = parent;
+		base.SetInitialData(parent.GetType());
+	}
+	protected override void ApplyInitialData() {
+		base.ApplyInitialData();
+		light.color = tooltipData.color;
+	}
+	public virtual void SetData(Placeable parent) {
+		SetInitialData(parent);
+		ApplyInitialData();
     }
     protected virtual void OnMouseUp() {
         if (state == "held") {
@@ -69,7 +123,8 @@ public class FlagSprite : Entity
         Player.s.destroyPrints();
         Player.s.updatePrints();
         sr.sortingLayerName = "Player";
-        if (removesMines && Floor.s.GetUniqueMine(GetCoord().x, GetCoord().y) != null) {
+		FlagData parentFlagData = UIManager.s.uiTypeToData[correspondingUIType] as FlagData;
+        if (parentFlagData.placeableRemovesMines && Floor.s.GetUniqueMine(GetCoord().x, GetCoord().y) != null) {
             Player.s.UpdateMoney(Player.s.money + Player.s.modifiers.mineDefuseMult);
             Floor.s.GetUniqueMine(GetCoord().x, GetCoord().y).GetComponent<MineSprite>().Remove();
         }
@@ -92,61 +147,5 @@ public class FlagSprite : Entity
     }
     protected static void TweenUnderDarken(float darken) {
         Shader.SetGlobalFloat(GameManager.s.UnderDarkenID, darken);
-    }
-    protected override void Start() {
-        base.Start();
-
-        sr = GetComponent<SpriteRenderer>();
-        light = GetComponentInChildren<Light2D>();
-        if (parentType == null) parentType = UIManager.s.spriteTypeToUIType[GetType()];
-		FlagData parentFlagData = UIManager.s.uiTypeToData[parentType] as FlagData;
-        sr.sprite = parentFlagData.sprite;
-        light.color = parentFlagData.tooltipData.color;
-
-        marker = transform.Find("Marker").gameObject;
-        // init random properties
-        heldOffset = Random.Range(0f, 1f);
-        heldPeriod = 0.65f + 0.15f * Random.Range(-1f, 1f);
-        // update parent usable state
-        UIManager.s.OrganizeFlags();
-        //hide map layers and prints
-        Player.s.UpdateSecondaryMapActive();
-        Player.s.UpdateActivePrints();
-        //hide bad tiles
-        foreach (GameObject tile in Floor.s.tiles.Values) {
-			if (!CoordAllowed(tile.GetComponent<Tile>().coord.x, tile.GetComponent<Tile>().coord.y)) {
-				tile.GetComponent<Tile>().PutUnder();
-			}
-        }
-        //darken under
-        LeanTween.cancel(GameManager.s.underDarkenTarget);
-        LeanTween.value(GameManager.s.underDarkenTarget, TweenUnderDarken, Shader.GetGlobalFloat(GameManager.s.UnderDarkenID), 0.1f, overToUnderDuration).setEase(LeanTweenType.easeInOutCubic);
-        
-        if (UIManager.s.uiTypeToData.ContainsKey(parentType)) {
-            GetComponent<AddTooltipScene>().SetData(parentFlagData.tooltipData, true);
-        }
-    }
-    protected override void Update() {
-        base.Update();
-        if (state == "held") {
-            UIManager.s.floatingHover(transform, 0.8f, 0, transform.localEulerAngles, 0.05f, heldOffset, heldPeriod, heldPower);
-
-            float idleAngle = 5f * Mathf.Sin((heldPeriod*Time.time + heldOffset)*(2*Mathf.PI));
-            Vector3 swingDirection =   1f * new Vector3(-transform.up.x * transform.up.y, 1 - Mathf.Pow(transform.up.y, 2), 0) // gravity pulling center of mass
-                                     + 3f * (1 - 1 / (0.07f * UIManager.s.mouseVelocity.magnitude + 1)) * UIManager.s.mouseVelocity.normalized // pulling force by mouse
-                                     + 1 * transform.up; // inertia force
-            transform.localEulerAngles = new Vector3(transform.localEulerAngles.x, 
-                                                    transform.localEulerAngles.y, 
-                                                    Mathf.LerpAngle(transform.localEulerAngles.z, Quaternion.LookRotation(Vector3.forward, swingDirection).eulerAngles.z + idleAngle, 1 - Mathf.Pow(1 - heldPower, Time.deltaTime / .15f)));
-            transform.position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            //disturb shaders when moving and holding flag
-            if (UIManager.s.mouseVelocity.magnitude > 0) {
-                GameManager.s.disturbShaders(transform.position.x, transform.position.y);
-            }
-            //OnMouseUp bug
-            if (!UnityEngine.InputSystem.Mouse.current.leftButton.isPressed) {
-                OnMouseUp();
-            }
-        }
     }
 }

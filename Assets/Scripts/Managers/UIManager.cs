@@ -41,6 +41,7 @@ public class UIItemData {
 }
 public class FlagData : UIItemData {
     public Type placeableSpriteType;
+	public bool placeableRemovesMines = true;
 	public int consumableDefaultCount = 0; 
 	public bool showCount = false;
 	public List<string> allowedFloorTypes = new List<string>() {"minefield"};
@@ -48,10 +49,12 @@ public class FlagData : UIItemData {
 				      string resourceName, 
 					  TooltipData tooltipData, 
 					  Type placeableSpriteType = null,
+					  bool? placeableRemovesMines = null,
 					  int? consumableDefaultCount = null,
 					  bool? showCount = null,
 					  List<string> allowedFloorTypes = null) : base(uiType, "flag", resourceName, tooltipData) {
 		this.placeableSpriteType = placeableSpriteType ?? this.placeableSpriteType;
+		this.placeableRemovesMines = placeableRemovesMines ?? this.placeableRemovesMines;
 		this.consumableDefaultCount = consumableDefaultCount ?? this.consumableDefaultCount;
 		this.showCount = showCount ?? (placeableSpriteType != null || consumableDefaultCount != null);
 		this.allowedFloorTypes = allowedFloorTypes ?? this.allowedFloorTypes;	
@@ -99,6 +102,8 @@ public class UIManager : MonoBehaviour
     public List<GameObject> paws = new List<GameObject>();
     [System.NonSerialized]
     public Material alphaEdgeBlueMat, tileNormalMat, tileExitMat, tileTrialMat, tilePuddleMat, tileMossyMat;
+	[System.NonSerialized]
+	public Sprite mineDebugSprite;
     public Volume ppv;
     [System.NonSerialized]
     public VolumeProfile ppvp;
@@ -120,6 +125,7 @@ public class UIManager : MonoBehaviour
 					     placeableSpriteType: typeof(RubberSprite)),
 			new FlagData(typeof(You), "you", new TooltipData("You Flag", "For use in the worst case scenario", "Revive yourself whenever you die"),
 					     placeableSpriteType: typeof(YouSprite),
+						 placeableRemovesMines: false,
 						 allowedFloorTypes: new List<string>{"minefield", "trial"}),
 			new FlagData(typeof(Raincloud), "raincloud", new TooltipData("Raincloud Flag", "The tiles are actually pretty porous.", "Guarantees a puddle at the same coordinates on all following floors."),
 					     placeableSpriteType: typeof(RaincloudSprite)),
@@ -152,17 +158,17 @@ public class UIManager : MonoBehaviour
 			new FlagData(typeof(Shovel), "shovel", new TooltipData("Shovel Flag", "An upgrade for your tiny claws.", "ONE TIME USE - Immeditaely skip to the start of the next floor."),
 						 consumableDefaultCount: 1),
 			//curses
-			new CurseData(typeof(Watched), "watched", new TooltipData("Watched", "They lie in wait...", "Staying still for too long may cause a nearby mine to jump on you and explode")),
-			new CurseData(typeof(Windy), "windy", new TooltipData("Windy", "The ventilation is surprisingly good here.", "Flags may blow and land somewhere else when placed.")),
+			new CurseData(typeof(Watched), "watched", new TooltipData("Watched", "They lie in wait...", "Mines jump on you, if you're too still.")),
+			new CurseData(typeof(Windy), "windy", new TooltipData("Windy", "The ventilation is surprisingly good here.", "Flags may blow and land somewhere else when let go.")),
 			new CurseData(typeof(Taxed), "taxed", new TooltipData("Taxed", "Can't hide from the IRS.", "More mines, less value")),
 			new CurseData(typeof(Expansion), "expansion", new TooltipData("Expansion", "The unknowable will of the tiles.", "All floors become larger.")),
 			new CurseData(typeof(Decrepit), "decrepit", new TooltipData("Decrepit", "This place is falling apart. Probably the explosions.", "More holes.")),
-			new CurseData(typeof(Fragile), "fragile", new TooltipData("Fragile", "You've got sensitive skin.", "Walking into grass or water five times within a single life kills you. Resets on new floors.")),
-			new CurseData(typeof(Taken), "taken", new TooltipData("Taken", "It must be those thieving rats.", "One random flag is disabled on every minefield.")),
+			new CurseData(typeof(Fragile), "fragile", new TooltipData("Fragile", "You've got sensitive skin.", "Walking into grass or water enough kills you, eventually. Resets on new floors.")),
+			new CurseData(typeof(Taken), "taken", new TooltipData("Taken", "Currently disabling nothing.", "Takes flags away on every minefield.")),
 			new CurseData(typeof(Intensify), "intensify", new TooltipData("Intensify", "Currently intensifying nothing.", "One random curse is heightened every floor.")),
-			new CurseData(typeof(Amnesia), "amnesia", new TooltipData("Amnesia", "Hope you remember the way out.", "Tooltips disappear from held flags. Map numbers have a slight chance to disappear.")),
-			new CurseData(typeof(Wobbly), "wobbly", new TooltipData("Wobbly", "They fried your cerebellum lil bro", "You can no longer perform the same direction movement twice in a row.")),
-			new CurseData(typeof(Cataracts), "cataracts", new TooltipData("Cataracts", "50% blind, 100% annoyed.", "All dropped flags will be confused for other flags; equipped flags are fine.")),
+			new CurseData(typeof(Amnesia), "amnesia", new TooltipData("Amnesia", "Why are you here again?", "Tooltips disappear from items. Map numbers have a chance to disappear.")),
+			new CurseData(typeof(Wobbly), "wobbly", new TooltipData("Wobbly", "They fried your cerebellum lil bro", "You can't walk straight.")),
+			new CurseData(typeof(Cataracts), "cataracts", new TooltipData("Cataracts", "Staring longer isn't going to help.", "Flags are sometimes confused for other flags, when on the ground.")),
 			new CurseData(typeof(Shaky), "shaky", new TooltipData("Shaky", "Something's on your nerves.", "The camera shakes and moves unpredictably.")),
 			//mines
 			new MineData(typeof(Mine), "mine", new TooltipData("Mine", "Boom.", "Standard mine. Explodes when stepped on."), typeof(MineSprite)),
@@ -180,6 +186,7 @@ public class UIManager : MonoBehaviour
 		tileTrialMat = LoadResourceSafe<Material>("Materials/TileTrial");
 		tilePuddleMat = LoadResourceSafe<Material>("Materials/TilePuddle");
 		tileMossyMat = LoadResourceSafe<Material>("Materials/TileMossy");
+		mineDebugSprite = LoadResourceSafe<Sprite>("Textures/mine_debug");
         ppvp = LoadResourceSafe<VolumeProfile>("PPVoluemeProfile");
     }
     private void Start() {
@@ -253,19 +260,29 @@ public class UIManager : MonoBehaviour
 		Player.s.RecalculateModifiers();
     }
 	public void OrganizeNotFlags() {
-		//sort in the right order
-		List<GameObject> sortedNotFlags = new List<GameObject>() { MineUIItem.s.gameObject };
-		foreach (GameObject notFlag in Player.s.notFlags) {
-			if (notFlag.GetComponent<UIItem>() is Curse) {
-				sortedNotFlags.Add(notFlag);
-			}
+		//counting sort in the right order
+		List<GameObject>[] sortedNotFlags = new List<GameObject>[4];
+		for (int i = 0; i < 4; i++) {
+			sortedNotFlags[i] = new List<GameObject>();
 		}
 		foreach (GameObject notFlag in Player.s.notFlags) {
-			if (notFlag.GetComponent<UIItem>() is Mine) {
-				sortedNotFlags.Add(notFlag);
+			UIItem uiItem = notFlag.GetComponent<UIItem>();
+			if (uiItem is MineUIItem) {
+				sortedNotFlags[0].Add(notFlag);
+			} else if (uiItem is Intensify){
+				sortedNotFlags[1].Add(notFlag);
+			} else if (uiItem is Curse) {
+				sortedNotFlags[2].Add(notFlag);
+			} else if (uiItem is Mine) {
+				sortedNotFlags[3].Add(notFlag);
 			}
 		}
-		Player.s.notFlags = sortedNotFlags;
+		Player.s.notFlags.Clear();
+		for (int i = 0; i < sortedNotFlags.Length; i++) {
+			foreach (GameObject g in sortedNotFlags[i]) {
+				Player.s.notFlags.Add(g);
+			}
+		}
 		//then move items in their places
         bool variableSpacing = Player.s.notFlags.Count * 100 > (UIManager.s.canvas.transform as RectTransform).rect.height;
         for (int i = 0; i < Player.s.notFlags.Count; i++) {

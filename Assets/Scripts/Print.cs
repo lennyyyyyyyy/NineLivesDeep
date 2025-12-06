@@ -29,7 +29,10 @@ public class Print : MonoBehaviour
     }
     private void OnMouseDownCustom() {
         Player.s.Move(Player.s.GetCoord().x + d.x, Player.s.GetCoord().y + d.y);
-		Player.s.lastMovement = d;
+		Player.s.moveHistory.Add(d);
+		while (Player.s.moveHistory.Count > Player.s.maxMoveHistory) {
+			Player.s.moveHistory.RemoveAt(0);
+		}
     }
     void Update()
     {

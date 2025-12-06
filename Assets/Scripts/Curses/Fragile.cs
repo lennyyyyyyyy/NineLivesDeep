@@ -2,7 +2,11 @@ using UnityEngine;
 
 class Fragile : Curse {
 	public override void Modify(ref Modifiers modifiers) {
-		modifiers.tempChangesUntilDeath = 5;
+		if (intensified) {
+			modifiers.tempChangesUntilDeath = 10;
+		} else {
+			modifiers.tempChangesUntilDeath = 5;
+		}
 	}
 }
 

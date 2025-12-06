@@ -1,10 +1,26 @@
 using UnityEngine;
 
 public class MineSprite : Entity {
-    public bool detectable = true;
 	protected override void Start() {
 		base.Start();
-		obstacle = false;
+	}
+	protected override void Update() {
+		base.Update();
+		// watched mine jumping on player
+		Vector2Int playerCoord = Player.s.GetCoord();
+		Vector2Int mineCoord = GetCoord();
+		if (Player.s.alive &&
+			Player.s.modifiers.watched &&
+			Player.s.watchedMineJumpTimer > Player.s.modifiers.watchedMineJumpTime &&
+			Mathf.Abs(playerCoord.x - mineCoord.x) <= 1 &&
+			Mathf.Abs(playerCoord.y - mineCoord.y) <= 1 &&
+			Random.value < 1 - Mathf.Pow(1 - Player.s.modifiers.watchedMineJumpChancePerSecond, Time.deltaTime)) {
+			Move(Player.s.GetTile());
+		}
+			
+	}	
+	protected override void SetDefaultData() {
+		SetData(sprite: UIManager.s.mineDebugSprite, obstacle: false);
 	}
     public virtual void Trigger() {
         Player.s.Die();

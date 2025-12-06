@@ -238,7 +238,7 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
@@ -326,13 +326,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 46b0699334f6c40599e022db3bfeedcf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  setDefaults: 0
-  name: Test
-  flavor: This is a test
-  info: testtesttest
-  color: {r: 0, g: 0, b: 0, a: 0}
-  showPrice: 1
-  price: 10
+  setInitialData: 0
+  tooltipData:
+    name: 
+    flavor: 
+    info: 
+    color: {r: 0, g: 0, b: 0, a: 0}
+    showPrice: 0
+    price: 0
   addHoverEffect: 0
 --- !u!1 &8478628397025943720
 GameObject:

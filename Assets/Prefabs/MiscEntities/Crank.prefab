@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &5447653835205238338
+--- !u!1 &5592911073765413415
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,39 +8,63 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 7558209820420396270}
-  - component: {fileID: 6393265075645113389}
-  - component: {fileID: 4075447229540626043}
-  - component: {fileID: 8982964279793542241}
+  - component: {fileID: 7667304941788110848}
+  - component: {fileID: 8614567772615401043}
+  - component: {fileID: 7370670841578914609}
+  - component: {fileID: 5856222860116396954}
   m_Layer: 0
-  m_Name: CrankSprite
+  m_Name: Crank
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &7558209820420396270
+--- !u!4 &7667304941788110848
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5447653835205238338}
+  m_GameObject: {fileID: 5592911073765413415}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.205, y: 0.391, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 7667304941788110848}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!212 &6393265075645113389
+--- !u!114 &8614567772615401043
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5592911073765413415}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0d44867a8da84b03b05e399aa4cf8bc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  marker: {fileID: 5592911073765413415}
+  sr: {fileID: 0}
+  setInitialData: 1
+  sprite: {fileID: 7121960792398154069, guid: b49b6f15c9375465cac54d40618ee701, type: 3}
+  tooltipData:
+    name: Crank
+    flavor: I'm cranking it!
+    info: Rotates the ring of tiles around the crank.
+    color: {r: 1, g: 1, b: 1, a: 1}
+    showPrice: 0
+    price: 0
+  obstacle: 1
+--- !u!212 &7370670841578914609
 SpriteRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5447653835205238338}
+  m_GameObject: {fileID: 5592911073765413415}
   m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
@@ -83,39 +107,19 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 0.59375, y: 0.8125}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &4075447229540626043
-MonoBehaviour:
+--- !u!61 &5856222860116396954
+BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5447653835205238338}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 46b0699334f6c40599e022db3bfeedcf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  setDefaults: 1
-  name: Crank
-  flavor: I'm cranking it!
-  info: Rotates the ring of adjacent tiles around it circularly.
-  color: {r: 1, g: 1, b: 1, a: 1}
-  showPrice: 0
-  price: 0
-  addHoverEffect: 1
---- !u!60 &8982964279793542241
-PolygonCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5447653835205238338}
+  m_GameObject: {fileID: 5592911073765413415}
   m_Enabled: 1
   serializedVersion: 3
   m_Density: 1
@@ -139,84 +143,19 @@ PolygonCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0.28125, y: 0.375}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.59375, y: 0.8125}
-    newSize: {x: 1, y: 1}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0.5625, y: 0.75}
+    newSize: {x: 0.59375, y: 0.8125}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Points:
-    m_Paths:
-    - - {x: -0.109375, y: -0.375}
-      - {x: -0.109375, y: -0.0625}
-      - {x: -0.078125, y: -0.03125}
-      - {x: 0.265625, y: -0.03125}
-      - {x: 0.296875, y: 0}
-      - {x: 0.296875, y: 0.40625}
-      - {x: 0.140625, y: 0.40625}
-      - {x: 0.078125, y: 0.34375}
-      - {x: 0.078125, y: 0.25}
-      - {x: 0.140625, y: 0.1875}
-      - {x: 0.140625, y: 0.15625}
-      - {x: -0.234375, y: 0.15625}
-      - {x: -0.296875, y: 0.09375}
-      - {x: -0.296875, y: -0.375}
-      - {x: -0.265625, y: -0.40625}
-      - {x: -0.140625, y: -0.40625}
-  m_UseDelaunayMesh: 0
---- !u!1 &5592911073765413415
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 7667304941788110848}
-  - component: {fileID: 8614567772615401043}
-  m_Layer: 0
-  m_Name: Crank
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &7667304941788110848
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5592911073765413415}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 7558209820420396270}
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8614567772615401043
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5592911073765413415}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d0d44867a8da84b03b05e399aa4cf8bc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  marker: {fileID: 0}
-  sr: {fileID: 6393265075645113389}
-  obstacle: 1
+  m_Size: {x: 0.5625, y: 0.75}
+  m_EdgeRadius: 0

@@ -3,8 +3,17 @@ using TMPro;
 
 public class Number : MonoBehaviour
 {
+	protected Map map;
+	protected Vector2Int coord;
 	protected TMP_Text text;
-    public void Init() {
+	private void Update() {
+		if (Random.value < 1 - Mathf.Pow(1 - Player.s.modifiers.mapNumberDisappearChancePerSecond, Time.deltaTime)) {
+			Destroy(gameObject);
+		}
+	}
+    public void Init(Map map, Vector2Int coord) {
+		this.map = map;
+		this.coord = coord;
 		text = GetComponent<TMP_Text>();
         text.enabled = false;
     }
@@ -20,4 +29,7 @@ public class Number : MonoBehaviour
     public void Exit() {
         text.enabled = false;
     }
+	private void OnDestroy() {
+		map.RemoveNumber(coord.x, coord.y);
+	}
 }

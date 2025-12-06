@@ -1,10 +1,43 @@
 using UnityEngine;
 
 public class Entity : VerticalObject {
+	public bool setInitialData = false;
+	public Sprite sprite;
+	public TooltipData tooltipData;
 	public bool obstacle = true;
-    protected bool hovered = false;
+
+	protected AddTooltipScene addTooltip;
+	protected SpriteRenderer spriteRenderer;
+
+	protected bool hovered = false;
+	
 	protected override void Start() {
 		base.Start();
+
+		addTooltip = (GetComponent<AddTooltipScene>() == null ? gameObject.AddComponent(typeof(AddTooltipScene)) as AddTooltipScene : GetComponent<AddTooltipScene>());
+		spriteRenderer = GetComponent<SpriteRenderer>();
+
+		if (setInitialData) {
+			ApplyInitialData();
+		} else {
+			SetDefaultData();
+		}
+	}
+	public virtual void SetInitialData(Sprite? sprite = null, TooltipData tooltipData = null, bool? obstacle = null) {
+		setInitialData = true;
+		this.sprite = sprite ?? this.sprite;
+		this.tooltipData = tooltipData ?? this.tooltipData;
+		this.obstacle = obstacle ?? this.obstacle;
+	}
+	protected virtual void ApplyInitialData() {
+		sr.sprite = this.sprite;
+		addTooltip.SetData(this.tooltipData, true);
+	}
+	public virtual void SetData(Sprite? sprite = null, TooltipData tooltipData = null, bool? obstacle = null) {
+		SetInitialData(sprite, tooltipData, obstacle);
+		ApplyInitialData();
+	}
+	protected virtual void SetDefaultData() {
 	}
 	public virtual GameObject GetTile() {
 		if (transform.parent != null && transform.parent.GetComponent<Tile>() != null) {
@@ -52,16 +85,16 @@ public class Entity : VerticalObject {
 	public virtual bool CoordAllowed(int x, int y) {
 		return Floor.s.TileExistsAt(x, y) && Floor.s.GetTile(x, y).GetComponent<ActionTile>() == null; 
 	}
-    protected virtual void OnMouseEnter() {
-		hovered = true;
-	}
-	protected virtual void OnMouseExit() {
-		hovered = false;
-	}
 	public virtual bool IsInteractable() {
 		return Mathf.Abs(GetCoord().x - Player.s.GetCoord().x) <= Player.s.modifiers.interactRange && Mathf.Abs(GetCoord().y - Player.s.GetCoord().y) <= Player.s.modifiers.interactRange;
 	}
 	public virtual void Interact() {
+	}
+	protected virtual void OnMouseEnter() {
+		hovered = true;
+	}
+	protected virtual void OnMouseExit() {
+		hovered = false;
 	}
 	protected virtual void OnMouseDown() {
 		if (IsInteractable()) {

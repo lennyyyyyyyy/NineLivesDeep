@@ -64,11 +64,9 @@ public class Floor : MonoBehaviour
 			}, time);
 			GameManager.s.DelayAction(() => {
 				GameObject curse = Instantiate(GameManager.s.curse_p, Vector3.zero, Quaternion.identity, UIManager.s.GAMEUI.transform);
-				if (floor == 0) {
-					curse.AddComponent(typeof(Expansion));
-				} else {
-					curse.AddComponent(typeof(Intensify));
-				}
+				curse.AddComponent(typeof(Cataracts));
+				curse = Instantiate(GameManager.s.curse_p, Vector3.zero, Quaternion.identity, UIManager.s.GAMEUI.transform);
+				curse.AddComponent(typeof(Intensify));
 				//curse.AddComponent(Player.s.cursesUnseen[Random.Range(0, Player.s.cursesUnseen.Count)]);
 			}, time + 1f);
 			time += 2.8f;
@@ -90,19 +88,13 @@ public class Floor : MonoBehaviour
 			
 			floorDeathCount = 0;
 			PositionTilesUnbuilt();
-
-			float time = 0f;
-			GameManager.s.DelayAction(() => {
-				BuildTiles(2f, 2f);
-				MainCamera.s.ZoomTo(12.5f, 1f);	
-			}, time);
-			time += 3.8f;
-			GameManager.s.DelayAction(() => { MainCamera.s.locked = false; }, time);
-
-			Player.s.takenDisabledFlag = Player.s.flags[Random.Range(0, Player.s.flags.Count)];
+			BuildTiles(2f, 2f);
+			MainCamera.s.ZoomTo(12.5f, 1f);	
 			UIManager.s.OrganizeFlags();
-
         }, time);
+		time += 3.8f;
+
+		GameManager.s.DelayAction(() => { MainCamera.s.locked = false; }, time);
 	}	
     public void InitLayout(int newWidth, int newHeight, string newFloorType) {
 		// FLOOR TRANSITION SECOND STEP - DESTROY THE PREVIOUS FLOOR AND RENEW ARRAYS
@@ -129,10 +121,10 @@ public class Floor : MonoBehaviour
         }
 
 		ParticleSystem.ShapeModule sh = ambientDust.shape;
-        sh.scale = new Vector3(width*1.5f, height*1.5f, 1);
+        sh.scale = new Vector3(width, height, 1) * 1.5f * (1 + Player.s.modifiers.windStrength / 3f);
 		ParticleSystem.EmissionModule em = ambientDust.emission;
-        em.rateOverTime = width * height / 3f;
-		windZone.endRange = MaxSize() * 0.75f;
+        em.rateOverTime = sh.scale.x * sh.scale.y * (1 + Player.s.modifiers.windStrength / 3f) / 3f;
+		windZone.endRange = Mathf.Max(sh.scale.x, sh.scale.y) * 0.75f;
 		
 		// FLOOR TRANSITION THIRD STEP - CREATE TILES, ENTITIES, AND MINES
 		onFloorChangeBeforeEntities?.Invoke();
@@ -212,10 +204,10 @@ public class Floor : MonoBehaviour
             }
         }
 
-        PlacePickupSprite(Player.s.flagsUnseen, PickupSprite.SHOP, 0, 1, 1);
-        PlacePickupSprite(Player.s.flagsUnseen, PickupSprite.SHOP, 15, 2, 1);
-        PlacePickupSprite(Player.s.flagsUnseen, PickupSprite.SHOP, 15, 3, 1);
-        PlacePickupSprite(Player.s.flagsUnseen, PickupSprite.SHOP, 15, 4, 1);
+        PlacePickupSprite(Player.s.flagsUnseen, PickupSprite.SpawnType.SHOP, 0, new Vector2Int(1, 1));
+        PlacePickupSprite(Player.s.flagsUnseen, PickupSprite.SpawnType.SHOP, 15, new Vector2Int(2, 1));
+        PlacePickupSprite(Player.s.flagsUnseen, PickupSprite.SpawnType.SHOP, 15, new Vector2Int(3, 1));
+        PlacePickupSprite(Player.s.flagsUnseen, PickupSprite.SpawnType.SHOP, 15, new Vector2Int(4, 1));
     }
 	public void InitTrial() {
 		InitLayout(floor + 7 + Player.s.modifiers.floorExpansion, floor + 7 + Player.s.modifiers.floorExpansion, "trial");
@@ -336,11 +328,11 @@ public class Floor : MonoBehaviour
 		Destroy(g);
 		return null;
     }
-    public void PlacePickupSprite(List<Type> pool, int spawnType, int p, int x, int y) {
+    public void PlacePickupSprite(List<Type> pool, PickupSprite.SpawnType spawnType, int price, Vector2Int spawnCoord) {
         GameObject g = Instantiate(GameManager.s.flagSprite_p);
         PickupSprite ps = g.AddComponent(typeof(PickupSprite)) as PickupSprite;
-        ps.Init(pool[Random.Range(0, pool.Count)], spawnType, p, x, y);
-        Player.s.NoticeFlag(ps.parentType);
+        ps.SetInitialData(pool[Random.Range(0, pool.Count)], price, spawnType, spawnCoord);
+        Player.s.NoticeFlag(ps.correspondingUIType);
     }
     public bool TileExistsAt(int x, int y) {
         return tiles.ContainsKey(new Vector2Int(x, y));
@@ -407,8 +399,8 @@ public class Floor : MonoBehaviour
 	}
 	private void Update() {
 		windDirection = Quaternion.AngleAxis(Mathf.PerlinNoise(Player.s.modifiers.windFluctuation * Time.time, 0) * 1000f, Vector3.forward) * Vector3.right;
-		windZone.directionX = windDirection.x * Player.s.modifiers.windStrength;
-		windZone.directionY = windDirection.y * Player.s.modifiers.windStrength;
+		windZone.directionX = windDirection.x * Player.s.modifiers.windStrength * 1.5f;
+		windZone.directionY = windDirection.y * Player.s.modifiers.windStrength * 1.5f;
 	}
     private void STARTToGAME() {
         GameManager.s.DelayAction(() => {IntroAndCreateFloor("minefield", 0);}, 1f);

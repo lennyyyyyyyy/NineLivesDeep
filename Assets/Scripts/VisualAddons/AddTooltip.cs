@@ -4,7 +4,7 @@ using UnityEngine;
 public class AddTooltip : MonoBehaviour {
 	public bool setInitialData = false;
 	public TooltipData tooltipData;
-	public bool addHoverEffect;
+	public bool addHoverEffect = true;
 
 	[System.NonSerialized]
 	public GameObject tooltip;
@@ -13,35 +13,41 @@ public class AddTooltip : MonoBehaviour {
 
 	protected virtual void Start() {
 		if (setInitialData) {
-			SetData(tooltipData, addHoverEffect);
+			ApplyInitialData();
 		}
 		SaveMaterial();
 	}
 	protected virtual void Update() {}
-	public virtual void SetInitialData(TooltipData tooltipData, bool addHoverEffect) {
+	public virtual void SetInitialData(TooltipData tooltipData = null, bool? addHoverEffect = null) {
 		setInitialData = true;
-		this.tooltipData = tooltipData;
-		this.addHoverEffect = addHoverEffect;
+		this.tooltipData = tooltipData ?? this.tooltipData;
+		this.addHoverEffect = addHoverEffect ?? this.addHoverEffect;
 	}
-	public virtual void SetData(TooltipData tooltipData, bool addHoverEffect) {
-		this.tooltipData = tooltipData;
-		this.addHoverEffect = addHoverEffect;
+	protected virtual void ApplyInitialData() {
+		if (tooltipData == null) {
+			Destroy(tooltip);
+			return;
+		}
 
 		if (tooltip == null) {
 			tooltip = Instantiate(GameManager.s.tooltip_p, UIManager.s.tooltipGroup.transform);
 		}
-        tooltip.GetComponent<Tooltip>().SetData(tooltipData);
-        tooltip.active = false;
+		tooltip.GetComponent<Tooltip>().SetData(tooltipData);
+		tooltip.active = false;
+	}
+	public virtual void SetData(TooltipData tooltipData = null, bool? addHoverEffect = null) {
+		SetInitialData(tooltipData, addHoverEffect);
+		ApplyInitialData();
 	}
 	protected virtual void SaveMaterial() {}
-	protected virtual void MouseEnter() {
+	public virtual void MouseEnter() {
 		hovered = true;
 		tooltip?.SetActive(true);
 		if (addHoverEffect) {
 			HoverEffectOn();
 		}
 	}
-	protected virtual void MouseExit() {
+	public virtual void MouseExit() {
 		hovered = false;
 		tooltip?.SetActive(false);
 		if (addHoverEffect) {
@@ -51,8 +57,6 @@ public class AddTooltip : MonoBehaviour {
 	protected virtual void HoverEffectOn() {}
 	protected virtual void HoverEffectOff() {}
     protected virtual void OnDestroy() {
-        if (tooltip != null) {
-            Destroy(tooltip);
-        }
+		Destroy(tooltip);
     }
 }

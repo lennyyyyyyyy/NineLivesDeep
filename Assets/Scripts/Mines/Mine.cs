@@ -12,17 +12,19 @@ public class Mine : UIItem {
 		Player.s.NoticeMine(GetType());
 		UIManager.s.OrganizeNotFlags();
 	}
-	public virtual void SetInitialData(Texture2D tex2d, TooltipData tooltipData, Type spriteType) {
+	public virtual void SetInitialData(Texture2D? tex2d = null,
+										TooltipData tooltipData = null,
+										Type spriteType = null) {
 		setInitialData = true;
-		this.tex2d = tex2d;
-		this.tooltipData = tooltipData;
-		this.spriteType = spriteType;
+		this.tex2d = tex2d ?? this.tex2d;
+		this.tooltipData = tooltipData ?? this.tooltipData;
+		this.spriteType = spriteType ?? this.spriteType;
 	}
-	public virtual void SetData(Texture2D tex2d, TooltipData tooltipData, Type spriteType) {
+	public virtual void SetData(Texture2D? tex2d = null,
+								 TooltipData tooltipData = null,
+								 Type spriteType = null) {
 		SetInitialData(tex2d, tooltipData, spriteType);
-
-		GetComponent<RawImage>().texture = tex2d;
-		addTooltip.SetData(tooltipData, true);
+		ApplyInitialData();
 	}
 	protected override void SetDefaultData() {
 		if (UIManager.s.uiTypeToData.ContainsKey(GetType())) {

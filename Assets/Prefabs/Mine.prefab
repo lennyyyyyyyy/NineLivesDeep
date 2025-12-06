@@ -85,11 +85,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09c47917abec84c748199f949772aed1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  setDefaults: 0
-  name: 
-  flavor: 
-  info: 
-  color: {r: 0, g: 0, b: 0, a: 0}
-  showPrice: 0
-  price: 0
+  setInitialData: 0
   addHoverEffect: 1
