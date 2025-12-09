@@ -64,9 +64,9 @@ public class Floor : MonoBehaviour
 			}, time);
 			GameManager.s.DelayAction(() => {
 				GameObject curse = Instantiate(GameManager.s.curse_p, Vector3.zero, Quaternion.identity, UIManager.s.GAMEUI.transform);
-				curse.AddComponent(typeof(Cataracts));
+				curse.AddComponent(typeof(Amnesia));
 				curse = Instantiate(GameManager.s.curse_p, Vector3.zero, Quaternion.identity, UIManager.s.GAMEUI.transform);
-				curse.AddComponent(typeof(Intensify));
+				curse.AddComponent(typeof(Cataracts));
 				//curse.AddComponent(Player.s.cursesUnseen[Random.Range(0, Player.s.cursesUnseen.Count)]);
 			}, time + 1f);
 			time += 2.8f;

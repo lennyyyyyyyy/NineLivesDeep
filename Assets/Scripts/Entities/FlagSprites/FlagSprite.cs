@@ -63,6 +63,12 @@ public class FlagSprite : CorrespondingSprite {
 		setInitialData = true;
 		this.parent = parent;
 		base.SetInitialData(parent.GetType());
+		//amnesia curse only for placed flag sprites, not pickup sprites in the shop
+		if (Player.s.modifiers.amnesiaUITypes.Contains(typeof(Flag))) {
+			tooltipData.name = "???";
+			tooltipData.flavor = "???";
+			tooltipData.info = "???";
+		}
 	}
 	protected override void ApplyInitialData() {
 		base.ApplyInitialData();
