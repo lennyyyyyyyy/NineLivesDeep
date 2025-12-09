@@ -20,10 +20,10 @@ public class AddTooltipScene : AddTooltip {
 	protected override void HoverEffectOff() {
 		sr.material = savedMaterial;
 	}
-    protected void OnMouseEnter() {
+    protected void OnMouseEnterCustom() {
 		base.MouseEnter();
     }
-    protected void OnMouseExit() {
+    protected void OnMouseExitCustom() {
 		base.MouseExit();
     }
 }

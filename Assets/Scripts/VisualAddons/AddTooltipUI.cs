@@ -1,24 +1,16 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using System;
 
 public class AddTooltipUI : AddTooltip {
     protected RawImage image;
     protected override void Start() {
         image = GetComponent<RawImage>();
 
-        // setup trigger pointer enter
-		EventTrigger trigger;
-		EventTrigger.Entry entry;
-
-        trigger = GetComponent<EventTrigger>() == null ? gameObject.AddComponent<EventTrigger>() : GetComponent<EventTrigger>(); 
-        entry = new EventTrigger.Entry{eventID = EventTriggerType.PointerEnter};
-        entry.callback.AddListener((data) => { OnPointerEnter((PointerEventData)data); });
-        trigger.triggers.Add(entry);
-
-        entry = new EventTrigger.Entry{eventID = EventTriggerType.PointerExit};
-        entry.callback.AddListener((data) => { OnPointerExit((PointerEventData)data); });
-        trigger.triggers.Add(entry);
+		UIManager.s.SetupUIEventTriggers(gameObject,
+									     new EventTriggerType[] {EventTriggerType.PointerEnter, EventTriggerType.PointerExit},
+										 new Action<PointerEventData>[] {OnPointerEnter, OnPointerExit});
 
 		base.Start();
     }

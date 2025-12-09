@@ -6,12 +6,9 @@ public class Consumable : Flag {
     protected override void Start() {
         base.Start();
 
-		EventTrigger trigger;
-		EventTrigger.Entry entry;
-        trigger = GetComponent<EventTrigger>() == null ? gameObject.AddComponent<EventTrigger>() : GetComponent<EventTrigger>();
-        entry = new EventTrigger.Entry{eventID = EventTriggerType.PointerClick};
-        entry.callback.AddListener((data) => { OnPointerClick((PointerEventData)data); });
-        trigger.triggers.Add(entry);
+		UIManager.s.SetupUIEventTriggers(gameObject,
+									     new EventTriggerType[] {EventTriggerType.PointerClick},
+										 new Action<PointerEventData>[] {OnPointerClick});
     }
     protected virtual void OnPointerClick(PointerEventData data) {}
 }

@@ -70,15 +70,15 @@ public class PickupSprite : CorrespondingSprite {
 		base.Move(tile, reposition);
 		transform.localScale = droppedScale * Vector3.one;
 	}
-    protected override void OnMouseEnter() {
-		base.OnMouseEnter();
+    protected override void OnMouseEnterCustom() {
+		base.OnMouseEnterCustom();
         hoveredOffset = Random.Range(0f, 1f);
         LeanTween.cancel(gameObject);
         LeanTween.cancel(light.gameObject);
         LeanTween.value(light.gameObject, (float f) => { light.intensity = f; }, light.intensity, 5f, 0.25f).setEase(LeanTweenType.easeInOutCubic);
     }
-    protected override void OnMouseExit() {
-		base.OnMouseExit();
+    protected override void OnMouseExitCustom() {
+		base.OnMouseExitCustom();
         LeanTween.cancel(gameObject);
         LeanTween.scale(gameObject, droppedScale * Vector3.one, 0.15f).setEase(LeanTweenType.easeInOutCubic);
         LeanTween.rotateLocal(gameObject, Vector3.zero, 0.15f).setEase(LeanTweenType.easeInOutCubic);

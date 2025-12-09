@@ -90,10 +90,10 @@ public class Entity : VerticalObject {
 	}
 	public virtual void Interact() {
 	}
-	protected virtual void OnMouseEnter() {
+	protected virtual void OnMouseEnterCustom() {
 		hovered = true;
 	}
-	protected virtual void OnMouseExit() {
+	protected virtual void OnMouseExitCustom() {
 		hovered = false;
 	}
 	protected virtual void OnMouseDown() {

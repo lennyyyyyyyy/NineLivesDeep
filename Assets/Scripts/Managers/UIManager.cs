@@ -332,6 +332,17 @@ public class UIManager : MonoBehaviour
 		}
 		return resource;
 	}
+	public void SetupUIEventTriggers(GameObject g, EventTriggerType[] eventIDs, Action<PointerEventData>[] actions) { 
+		EventTrigger trigger;
+		EventTrigger.Entry entry;
+		trigger = g.GetComponent<EventTrigger>() == null ? g.AddComponent<EventTrigger>() : g.GetComponent<EventTrigger>();
+		for (int i = 0; i < eventIDs.Length; i++) {
+			entry = new EventTrigger.Entry{eventID = eventIDs[i]};
+			int iCopy = i; //capture variable for closure
+			entry.callback.AddListener((data) => { actions[iCopy]((PointerEventData)data); });
+			trigger.triggers.Add(entry);
+		}
+	}
     public void STARTToGAME() {
         OrganizeFlags();
         LeanTween.value(gameObject, (float f) => {

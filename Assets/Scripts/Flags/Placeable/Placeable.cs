@@ -8,12 +8,9 @@ public class Placeable : Flag {
     protected override void Start() {
         base.Start();
 
-		EventTrigger trigger;
-		EventTrigger.Entry entry;
-		trigger = GetComponent<EventTrigger>() == null ? gameObject.AddComponent<EventTrigger>() : GetComponent<EventTrigger>();
-        entry = new EventTrigger.Entry{eventID = EventTriggerType.PointerDown};
-        entry.callback.AddListener((data) => { OnPointerDown((PointerEventData)data); });
-        trigger.triggers.Add(entry);
+		UIManager.s.SetupUIEventTriggers(gameObject,
+									     new EventTriggerType[] {EventTriggerType.PointerDown},
+										 new Action<PointerEventData>[] {OnPointerDown});
     }
     protected virtual void OnPointerDown(PointerEventData data) {
         if (usable) {

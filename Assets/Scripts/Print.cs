@@ -18,11 +18,13 @@ public class Print : MonoBehaviour
         c = GetComponent<Collider2D>();
     }
     private void OnMouseEnterCustom() {
+		hovered = true;
         hoverOffset = Random.Range(0f, 1f);
         hoverPeriod = 0.65f + 0.15f * Random.Range(-1f, 1f);
         GetComponent<SpriteRenderer>().color = hoveredColor;
     }
     private void OnMouseExitCustom() {
+		hovered = false;
         LeanTween.scale(gameObject, Vector3.one * defaultScale, 0.15f).setEase(LeanTweenType.easeInOutCubic);
         LeanTween.rotateLocal(gameObject, defaultRotation, 0.15f).setEase(LeanTweenType.easeInOutCubic);
         GetComponent<SpriteRenderer>().color = defaultColor;
@@ -34,20 +36,9 @@ public class Print : MonoBehaviour
 			Player.s.moveHistory.RemoveAt(0);
 		}
     }
-    void Update()
-    {
-        bool newHovered = GameManager.s.mouseColliders.Contains(c);
+    void Update() {
         if (hovered) {
             UIManager.s.floatingHover(transform, 1f, hoverOffset, defaultRotation, 0.1f, 10f, hoverPeriod);
-            if (Input.GetMouseButtonDown(0)) {
-                OnMouseDownCustom();
-            }
-            if (!newHovered) {
-                OnMouseExitCustom();
-            }
-        } else if (newHovered) {
-            OnMouseEnterCustom();
-        }
-        hovered = newHovered;
+        } 
     }
 }

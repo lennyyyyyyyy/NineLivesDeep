@@ -6,7 +6,30 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     // prefabs
-    public GameObject tile_p, tile_exit_p, tile_puddle_p, tile_mossy_p, tile_background_p, moss_p, grass1_p, grass2_p, mine_p, mineSprite_p, number_p, print_p, blood_p, heart_p, flag_p, curse_p, flagSprite_p, paw_p, tooltip_p, bubble_p, psychicEye_p, playerBit_p, crank_p;
+    public GameObject tile_p,
+		  		      tile_exit_p,
+					  tile_puddle_p,
+					  tile_mossy_p,
+					  tile_background_p,
+					  moss_p,
+					  grass1_p,
+					  grass2_p,
+					  mine_p,
+					  mineSprite_p,
+					  number_p,
+					  print_p,
+					  blood_p,
+					  heart_p,
+					  flag_p,
+					  curse_p,
+					  flagSprite_p,
+					  paw_p,
+					  tooltip_p,
+					  bubble_p,
+					  psychicEye_p,
+					  playerBit_p,
+					  crank_p;
+
     public GameObject underDarkenTarget;
     public static GameManager s;
     [System.NonSerialized]
@@ -28,7 +51,8 @@ public class GameManager : MonoBehaviour
     public Scene scene;
     public PhysicsScene2D physicsScene;
     [System.NonSerialized]
-    public Collider2D[] mouseColliders = {};
+	public HashSet<Collider2D> collidersUnderMouse = new HashSet<Collider2D>(),
+		   					   collidersUnderMouseLastFrame = new HashSet<Collider2D>();
     void Awake() {
         LeanTween.init(20000);
         s = this;
@@ -44,7 +68,24 @@ public class GameManager : MonoBehaviour
         physicsScene = PhysicsSceneExtensions2D.GetPhysicsScene2D(scene);
     }
     private void Update() {
-        mouseColliders = Physics2D.OverlapPointAll(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+		collidersUnderMouseLastFrame = new HashSet<Collider2D>(collidersUnderMouse);
+        collidersUnderMouse = new HashSet<Collider2D>(Physics2D.OverlapPointAll(Camera.main.ScreenToWorldPoint(Input.mousePosition)));
+
+		// custom mouse events
+        foreach (Collider2D c in collidersUnderMouse) {
+			if (!collidersUnderMouseLastFrame.Contains(c)) {
+                c.SendMessage("OnMouseEnterCustom", SendMessageOptions.DontRequireReceiver);
+            }
+			if (Input.GetMouseButtonDown(0)) {
+				c.SendMessage("OnMouseDownCustom", SendMessageOptions.DontRequireReceiver);
+			}
+        }
+		foreach (Collider2D c in collidersUnderMouseLastFrame) {
+			if (c != null && !collidersUnderMouse.Contains(c)) {
+                c.SendMessage("OnMouseExitCustom", SendMessageOptions.DontRequireReceiver);
+            }
+        }
+
     }
     public void STARTToGAME() {
         OnSTARTToGAME?.Invoke();
