@@ -56,6 +56,7 @@ public class Modifiers {
 public class Player : Entity {
     public static Player s;
     public static Action OnDie, OnRevive, OnAliveChange, OnUpdateSecondaryMapActive;
+	public static Action<int, int> OnMove;
 	//consts
     private float stepImpulse = 0.2f;
 	public int maxMoveHistory = 10;
@@ -345,11 +346,8 @@ public class Player : Entity {
 				triggerMines();
 				discoverTiles();
 			}
-			//wildcat passive
-			if (hasFlag(typeof(Wildcat)) && !tilesVisited.Contains(Floor.s.GetTile(x, y)) && Floor.s.GetTile(x, y).GetComponent<MossyTile>() != null) {
-				Flag w = UIManager.s.uiTypeToData[typeof(Wildcat)].instances[0].GetComponent<Flag>();
-				w.UpdateCount(w.count-1);
-			}
+			// subscription for wildcat passive
+			OnMove?.Invoke(x, y);
 			//fragile curse passive
 			if (Floor.s.GetTile(x, y).GetComponent<MossyTile>() != null || Floor.s.GetTile(x, y).GetComponent<Puddle>() != null) {
 				tempChanges++;
