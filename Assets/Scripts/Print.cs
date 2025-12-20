@@ -30,6 +30,7 @@ public class Print : MonoBehaviour
         GetComponent<SpriteRenderer>().color = defaultColor;
     }
     private void OnMouseDownCustom() {
+        Debug.Log("moving " + d.ToString());
         Player.s.Move(Player.s.GetCoord().x + d.x, Player.s.GetCoord().y + d.y);
 		Player.s.moveHistory.Add(d);
 		while (Player.s.moveHistory.Count > Player.s.maxMoveHistory) {

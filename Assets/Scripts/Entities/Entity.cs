@@ -15,7 +15,6 @@ public class Entity : VerticalObject {
 		base.Start();
 
 		addTooltip = (GetComponent<AddTooltipScene>() == null ? gameObject.AddComponent(typeof(AddTooltipScene)) as AddTooltipScene : GetComponent<AddTooltipScene>());
-		spriteRenderer = GetComponent<SpriteRenderer>();
 
 		if (setInitialData) {
 			ApplyInitialData();

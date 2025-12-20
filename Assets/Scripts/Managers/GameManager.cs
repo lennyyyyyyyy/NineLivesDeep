@@ -28,7 +28,10 @@ public class GameManager : MonoBehaviour
 					  bubble_p,
 					  psychicEye_p,
 					  playerBit_p,
-					  crank_p;
+					  crank_p,
+                      pillar_p,
+                      vase_p,
+                      tunnel_p;
 
     public GameObject underDarkenTarget;
     public static GameManager s;

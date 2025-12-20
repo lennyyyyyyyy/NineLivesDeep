@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 7370670841578914609}
   - component: {fileID: 5856222860116396954}
   m_Layer: 0
-  m_Name: Crank
+  m_Name: Pillar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -43,17 +43,17 @@ MonoBehaviour:
   m_GameObject: {fileID: 5592911073765413415}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d0d44867a8da84b03b05e399aa4cf8bc, type: 3}
+  m_Script: {fileID: 11500000, guid: 8fe315afda2224f9ead5c3c958ccf99e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   marker: {fileID: 5592911073765413415}
   sr: {fileID: 0}
   setInitialData: 1
-  sprite: {fileID: 7121960792398154069, guid: b49b6f15c9375465cac54d40618ee701, type: 3}
+  sprite: {fileID: 4269108728175869260, guid: c697fc10d1e024032bd7829896db8804, type: 3}
   tooltipData:
-    name: Crank
-    flavor: I'm cranking it!
-    info: Rotates the ring of tiles around the crank.
+    name: Pillar
+    flavor: pilla pilla
+    info: pilla pilla
     color: {r: 1, g: 1, b: 1, a: 1}
     showPrice: 0
     price: 0
@@ -102,7 +102,7 @@ SpriteRenderer:
   m_SortingLayerID: 965222017
   m_SortingLayer: 5
   m_SortingOrder: 0
-  m_Sprite: {fileID: 7121960792398154069, guid: b49b6f15c9375465cac54d40618ee701, type: 3}
+  m_Sprite: {fileID: 4269108728175869260, guid: c697fc10d1e024032bd7829896db8804, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -147,15 +147,15 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.28125, y: 0.375}
+  m_Offset: {x: -0.004677534, y: 0.76}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0, y: 0}
-    oldSize: {x: 0.5625, y: 0.75}
+    pivot: {x: 0.4889167, y: 0.08669625}
+    oldSize: {x: 1, y: 1.9375}
     newSize: {x: 0.59375, y: 0.8125}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.5625, y: 0.75}
+  m_Size: {x: 0.72186947, y: 1.8187127}
   m_EdgeRadius: 0

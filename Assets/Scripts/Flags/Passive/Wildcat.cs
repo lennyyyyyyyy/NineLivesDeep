@@ -19,7 +19,7 @@ class Wildcat : Passive {
         tmpro.text = count.ToString();
     }
 	protected virtual void OnPlayerMove(int x, int y) {
-		if (!Player.s.tilesVisited.Contains(Floor.s.GetTile(x, y)) && Floor.s.GetTile(x, y).GetComponent<MossyTile>() != null) {
+		if (Floor.s.GetTile(x, y) && !Player.s.tilesVisited.Contains(Floor.s.GetTile(x, y)) && Floor.s.GetTile(x, y).GetComponent<MossyTile>() != null) {
 			UpdateCount(count - 1);
 		}
 	}

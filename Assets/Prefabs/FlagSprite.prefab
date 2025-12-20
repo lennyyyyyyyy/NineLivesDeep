@@ -415,7 +415,7 @@ MeshRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 738925077
   m_SortingLayer: 6
-  m_SortingOrder: 0
+  m_SortingOrder: 32767
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!114 &3830915212396229410
 MonoBehaviour:
@@ -437,7 +437,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 0
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 18ece0aba83414a57b3058a503286aaa, type: 2}
   m_sharedMaterial: {fileID: 185068064983062337, guid: 18ece0aba83414a57b3058a503286aaa, type: 2}

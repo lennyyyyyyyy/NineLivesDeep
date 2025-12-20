@@ -207,6 +207,7 @@ public class Player : Entity {
             Destroy(prints[i]);
         }
         prints.Clear();
+        Debug.Log("destroyed prints");
     }
     public void updatePrints() {
         List<Vector2Int> filteredPrintLocs = new List<Vector2Int>(printLocs);
@@ -269,6 +270,7 @@ public class Player : Entity {
             p.GetComponent<Print>().init(v.x, v.y);
             prints.Add(p);
         }
+        Debug.Log("updated prints");
 
         UpdateActivePrints();
     }
@@ -331,6 +333,7 @@ public class Player : Entity {
 				destroyPrints();
 				LeanTween.moveLocal(gameObject, Vector3.zero, 0.5f).setEase(LeanTweenType.easeOutCubic).setOnComplete(() => {
 					animator.SetTrigger("jumpEnd");
+                    destroyPrints();
 					updatePrints();
 					triggerMines();
 					discoverTiles();
@@ -338,6 +341,7 @@ public class Player : Entity {
 						Floor.s.GetTile(x, y).GetComponent<ActionTile>().PerformAction();
 					} 
 					Floor.s.GetTile(x, y).GetComponent<Tile>().externalDepthImpulse += stepImpulse;
+                    OnMove?.Invoke(x, y);
 				}).setOnUpdate((float f) => {
 					GameManager.s.disturbShaders(feet.transform.position.x, feet.transform.position.y);
 				});
@@ -345,9 +349,8 @@ public class Player : Entity {
 				base.Move(x, y, reposition);
 				triggerMines();
 				discoverTiles();
+                OnMove?.Invoke(x, y);
 			}
-			// subscription for wildcat passive
-			OnMove?.Invoke(x, y);
 			//fragile curse passive
 			if (Floor.s.GetTile(x, y).GetComponent<MossyTile>() != null || Floor.s.GetTile(x, y).GetComponent<Puddle>() != null) {
 				tempChanges++;

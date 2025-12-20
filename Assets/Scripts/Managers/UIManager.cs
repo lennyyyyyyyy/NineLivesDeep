@@ -63,6 +63,9 @@ public class FlagData : UIItemData {
 			UIManager.s.spriteTypeToUIType[this.placeableSpriteType] = this.uiType;
 		}
 		UIManager.s.allFlagTypes.Add(this.uiType);
+        if (typeof(Consumable).IsAssignableFrom(this.uiType)) {
+            UIManager.s.allConsumableFlagTypes.Add(this.uiType);
+        }
 	}
 }
 public class CurseData : UIItemData {
@@ -95,6 +98,7 @@ public class UIManager : MonoBehaviour
 	public Dictionary<Type, UIItemData> uiTypeToData = new Dictionary<Type, UIItemData>();
 	public Dictionary<Type, Type> spriteTypeToUIType = new Dictionary<Type, Type>();
 	public List<Type> allFlagTypes = new List<Type>();
+    public List<Type> allConsumableFlagTypes = new List<Type>();
 	public List<Type> allCurseTypes = new List<Type>();
 	public List<Type> allMineTypes = new List<Type>();
 
