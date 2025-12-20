@@ -175,7 +175,7 @@ public class UIManager : MonoBehaviour
 			new CurseData(typeof(Cataracts), "cataracts", new TooltipData("Cataracts", "Staring longer isn't going to help.", "Flags are sometimes confused for other flags, when on the ground.")),
 			new CurseData(typeof(Shaky), "shaky", new TooltipData("Shaky", "Something's on your nerves.", "The camera shakes and moves unpredictably.")),
 			//mines
-			new MineData(typeof(Mine), "mine", new TooltipData("Mine", "Boom.", "Standard mine. Explodes when stepped on."), typeof(MineSprite)),
+			new MineData(typeof(Mine), "base", new TooltipData("Mine", "Boom.", "Standard mine. Explodes when stepped on."), typeof(MineSprite)),
 			new MineData(typeof(Hydra), "hydra", new TooltipData("Hydra Mine", "The mine, the myth, the legend.", "When stepped on, explodes and spawns two standard mines in adjacent tiles."), typeof(HydraSprite)),
 			new MineData(typeof(Mouse), "mouse", new TooltipData("Mouse Mine", "Slippery vermin.", "Moves to an adjacent tile periodically."), typeof(MouseSprite)),
 			new MineData(typeof(Chief), "chief", new TooltipData("Chief Mine", "It calls to its cronies.", "When triggered, moves mines closer to you."), typeof(ChiefSprite)),
