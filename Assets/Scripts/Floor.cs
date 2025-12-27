@@ -104,11 +104,9 @@ public class Floor : MonoBehaviour
 		// FLOOR TRANSITION SECOND STEP - DESTROY THE PREVIOUS FLOOR AND RENEW ARRAYS
 		
 		//destroy previous tiles
-        for (int i=0; i<width; i++) {
-            for (int j=0; j<height; j++) {
-                Destroy(GetTile(i, j));
-            }
-        }
+        foreach (GameObject tile in tiles.Values) {
+            Destroy(tile);
+        } 
         foreach (GameObject bt in backgroundTiles) {
             Destroy(bt);
         }
@@ -134,84 +132,186 @@ public class Floor : MonoBehaviour
 		onFloorChangeBeforeEntities?.Invoke();
     }
     public void InitMinefield() {
-        InitLayout(2 * floor + 7 + Player.s.modifiers.floorExpansion, 2 * floor + 7 + Player.s.modifiers.floorExpansion, "minefield");
-		
-		int exitX, exitY;
-		if (Random.value < 0.5) {
-			exitX = Random.Range(0, width);
-			exitY = height-1;
-		} else {
-			exitX = width-1;
-			exitY = Random.Range(0, height);
-		}
-        ReplaceTile(GameManager.s.tile_exit_p, exitX, exitY).GetComponent<ActionTile>().Init(ActionTile.EXITTOSHOP);
+        float variation = Random.value;
+        List<Vector2Int> potentialTiles = new List<Vector2Int>();
+        if (variation < 0.33f) { // normal shape
+            InitLayout(2 * floor + 7 + Player.s.modifiers.floorExpansion, 2 * floor + 7 + Player.s.modifiers.floorExpansion, "minefield");
+            for (int i=0; i<width; i++) {
+                for (int j=0; j<height; j++) {
+                    potentialTiles.Add(new Vector2Int(i, j));
+                }
+            }
+        } else if (variation < 0.66f) { // donut shape
+            InitLayout(2 * floor + 8 + Player.s.modifiers.floorExpansion, 2 * floor + 8 + Player.s.modifiers.floorExpansion, "minefield");
+            float centerX = (width - 1) / 2f;
+            float centerY = (height - 1) / 2f;
+            float innerRadius = (3 + Player.s.modifiers.floorExpansion) / 2f;
+            for (int i=0; i<width; i++) {
+                for (int j=0; j<height; j++) {
+                    float distToCenter = Mathf.Sqrt((i - centerX) * (i - centerX) + (j - centerY) * (j - centerY));
+                    if (distToCenter >= innerRadius) {
+                        potentialTiles.Add(new Vector2Int(i, j));
+                    }
+                }
+            }
+        } else { // heart / corner shape
+            InitLayout(2 * floor + 8 + Player.s.modifiers.floorExpansion, 2 * floor + 8 + Player.s.modifiers.floorExpansion, "minefield");
+            int xCutoff = (int) Mathf.Ceil((width - 1) / 2f);
+            int yCutoff = (int) Mathf.Ceil((height - 1) / 2f);
+            for (int i=0; i<width; i++) {
+                for (int j=0; j<height; j++) {
+                    if (i < xCutoff || j < yCutoff) {
+                        potentialTiles.Add(new Vector2Int(i, j));
+                    }
+                }
+            }
+        }
+        Dictionary<int, List<int>> potentialTilesByX = new Dictionary<int, List<int>>(),
+                                   potentialTilesByY = new Dictionary<int, List<int>>();
+        foreach (Vector2Int coord in potentialTiles) {
+            if (!potentialTilesByX.ContainsKey(coord.x)) {
+                potentialTilesByX[coord.x] = new List<int>();
+            }
+            potentialTilesByX[coord.x].Add(coord.y);
+            if (!potentialTilesByY.ContainsKey(coord.y)) {
+                potentialTilesByY[coord.y] = new List<int>();
+            }
+            potentialTilesByY[coord.y].Add(coord.x);
+        }
+        HashSet<Vector2Int> potentialExits = new HashSet<Vector2Int>();
+        foreach (KeyValuePair<int, List<int>> p in potentialTilesByX) {
+            p.Value.Sort();
+            potentialExits.Add(new Vector2Int(p.Key, p.Value[p.Value.Count - 1]));
+        }
+        foreach (KeyValuePair<int, List<int>> p in potentialTilesByY) {
+            p.Value.Sort();
+            potentialExits.Add(new Vector2Int(p.Key, p.Value[p.Value.Count - 1]));
+        }
+        List<Vector2Int> potentialExitsList = new List<Vector2Int>(potentialExits);
+
+        Vector2Int exitCoord = potentialExitsList[Random.Range(0, potentialExitsList.Count)];
+        ReplaceTile(GameManager.s.tile_exit_p, exitCoord.x, exitCoord.y).GetComponent<ActionTile>().Init(ActionTile.EXITTOSHOP);
 		ReplaceTile(GameManager.s.tile_p, 0, 0);
         foreach (Vector2Int v in Raincloud.rainCoords) {
             ReplaceTile(GameManager.s.tile_puddle_p, v.x, v.y);
         }
 		//random chance for trial entrance
 		if (Random.value < trialChance) {
-			int x = Random.Range(0, width), y = Random.Range(0, height);
-			if (!TileExistsAt(x, y)) {
-				GameObject t = ReplaceTile(GameManager.s.tile_exit_p, x, y);
+            Vector2Int trialCoord = potentialTiles[Random.Range(0, potentialTiles.Count)];
+			if (!TileExistsAt(trialCoord.x, trialCoord.y)) {
+				GameObject t = ReplaceTile(GameManager.s.tile_exit_p, trialCoord.x, trialCoord.y);
 				t.GetComponent<ActionTile>().Init(ActionTile.EXITTOTRIAL);
 			}
 		}
         
-        for (int i = 0; i < width; i++) {
-            for (int j = 0; j < height; j++) {
-                if (!TileExistsAt(i, j)) {
-					if (Random.value < 1f - Player.s.modifiers.noTileChance) {
-                    	float tileRand = Random.value;
-                    	if (tileRand < 0.05f) {
-                    	    ReplaceTile(GameManager.s.tile_puddle_p, i, j);
-                    	} else if (tileRand < 0.1f) {
-                    	    ReplaceTile(GameManager.s.tile_mossy_p, i, j);
-                    	} else {
-                    	    ReplaceTile(GameManager.s.tile_p, i, j);
-                    	}
-
-						// put misc entities
-						float entityRand = Random.value;
-						if (entityRand < 0.10f) {
-							GameObject g = Instantiate(GameManager.s.tunnel_p);
-							g.GetComponent<Entity>().Move(i, j);
-						}
-					}
+        foreach (Vector2Int coord in potentialTiles) {
+            int i = coord.x;
+            int j = coord.y;
+            if (!TileExistsAt(i, j) && Random.value < 1f - Player.s.modifiers.noTileChance) {
+                float tileRand = Random.value;
+                if (tileRand < 0.05f) {
+                    ReplaceTile(GameManager.s.tile_puddle_p, i, j);
+                } else if (tileRand < 0.1f) {
+                    ReplaceTile(GameManager.s.tile_mossy_p, i, j);
+                } else {
+                    ReplaceTile(GameManager.s.tile_p, i, j);
                 }
-				//generate mines
-				if (PrelimMineSpawnCheck(i, j)) {
-					float rand = Random.value;
-					float mineMult = GetTile(i, j).GetComponent<Tile>().mineMult * Player.s.modifiers.mineSpawnMult;
-					float totalMineChance = mineMult * (0.1f + 0.05f * floor);
-					for (int index = 0; index < Player.s.mines.Count; index++) {
-						Mine mine = Player.s.mines[index].GetComponent<Mine>();
-						if (rand < totalMineChance * (1 - (Player.s.mines.Count - index - 1) / (1.125f + Player.s.mines.Count * 0.875f))) {
-							PlaceMine(mine.spriteType, i, j);
-							break;
-						}
-					}
-				}
+
+                // put misc entities
+                float entityRand = Random.value;
+                if (entityRand < 0.10f) {
+                    GameObject g = Instantiate(GameManager.s.crank_p);
+                    g.GetComponent<Entity>().Move(i, j);
+                }
+            }
+            //generate mines
+            if (PrelimMineSpawnCheck(i, j)) {
+                float rand = Random.value;
+                float mineMult = GetTile(i, j).GetComponent<Tile>().mineMult * Player.s.modifiers.mineSpawnMult;
+                float totalMineChance = mineMult * (0.1f + 0.05f * floor);
+                for (int index = 0; index < Player.s.mines.Count; index++) {
+                    Mine mine = Player.s.mines[index].GetComponent<Mine>();
+                    if (rand < totalMineChance * (1 - (Player.s.mines.Count - index - 1) / (1.125f + Player.s.mines.Count * 0.875f))) {
+                        PlaceMine(mine.spriteType, i, j);
+                        break;
+                    }
+                }
             }
         }
 
         onNewMinefield?.Invoke();
     }
     public void InitShop() {
-        InitLayout(6, 2, "shop");
-        ReplaceTile(GameManager.s.tile_exit_p, 5, 0).GetComponent<ActionTile>().Init(ActionTile.EXITTOMINEFIELD);
-        for (int i = 0; i < width; i++) {
-            for (int j = 0; j < height; j++) {
-                if (!TileExistsAt(i, j)) {
-                    ReplaceTile(GameManager.s.tile_p, i, j);
+        int[] prices;
+        float priceVariation = Random.value;
+        if (priceVariation < 0.5f) {
+            prices = new int[] { 0,
+                                 15 + Random.Range(-3, 4),
+                                 15 + Random.Range(-3, 4),
+                                 15 + Random.Range(-3, 4), };
+        } else {
+            prices = new int[] { 7 + Random.Range(-2, 3),
+                                 7 + Random.Range(-2, 3),
+                                 7 + Random.Range(-2, 3),
+                                 7 + Random.Range(-2, 3), };
+        }
+        GameManager.s.Shuffle(ref prices);
+
+        Vector2Int[] pickupCoords;
+        List<Vector2Int> tileCoords = new List<Vector2Int>();
+        Vector2Int exitCoord;
+        float layoutVariation = Random.value;
+        if (layoutVariation < 0.33f) { // square arrangement
+            InitLayout(5, 5, "shop");
+            for (int i = 0; i < 5; i++) {
+                for (int j = 0; j < 5; j++) {
+                    tileCoords.Add(new Vector2Int(i, j));
                 }
             }
+            pickupCoords = new Vector2Int[] { new Vector2Int(1, 1),
+                                              new Vector2Int(3, 1),
+                                              new Vector2Int(1, 3),
+                                              new Vector2Int(3, 3), };
+            exitCoord = new Vector2Int(4, 4);
+        } else if (layoutVariation < 0.66f) { // line arrangement
+            InitLayout(9, 3, "shop");
+            for (int i = 0; i < 9; i++) {
+                for (int j = 0; j < 3; j++) {
+                    tileCoords.Add(new Vector2Int(i, j));
+                }
+            }
+            pickupCoords = new Vector2Int[] { new Vector2Int(1, 1),
+                                              new Vector2Int(3, 1),
+                                              new Vector2Int(5, 1),
+                                              new Vector2Int(7, 1), };
+            exitCoord = new Vector2Int(8, 0);
+        } else { // diagonal arrangement
+            InitLayout(6, 6, "shop");
+            pickupCoords = new Vector2Int[] { new Vector2Int(1, 1),
+                                              new Vector2Int(2, 2),
+                                              new Vector2Int(3, 3),
+                                              new Vector2Int(4, 4), };
+            HashSet<Vector2Int> tempSet = new HashSet<Vector2Int>();
+            foreach (Vector2Int v in pickupCoords) {
+                for (int i = -1; i <= 1; i++) {
+                    for (int j = -1; j <= 1; j++) {
+                        tempSet.Add(new Vector2Int(v.x + i, v.y + j));
+                    }
+                }
+            }
+            tileCoords = new List<Vector2Int>(tempSet);
+            exitCoord = new Vector2Int(5, 5);
         }
 
-        PlacePickupSprite(Player.s.flagsUnseen, PickupSprite.SpawnType.SHOP, 0, new Vector2Int(1, 1));
-        PlacePickupSprite(Player.s.flagsUnseen, PickupSprite.SpawnType.SHOP, 15, new Vector2Int(2, 1));
-        PlacePickupSprite(Player.s.flagsUnseen, PickupSprite.SpawnType.SHOP, 15, new Vector2Int(3, 1));
-        PlacePickupSprite(Player.s.flagsUnseen, PickupSprite.SpawnType.SHOP, 15, new Vector2Int(4, 1));
+        ReplaceTile(GameManager.s.tile_exit_p, exitCoord.x, exitCoord.y).GetComponent<ActionTile>().Init(ActionTile.EXITTOMINEFIELD);
+        foreach (Vector2Int coord in tileCoords) {
+            if (!TileExistsAt(coord.x, coord.y)) {
+                ReplaceTile(GameManager.s.tile_p, coord.x, coord.y);
+            }
+        }
+        for (int i=0; i<4; i++) {
+            PlacePickupSprite(Player.s.flagsUnseen, PickupSprite.SpawnType.SHOP, prices[i], pickupCoords[i]);
+        }
     }
 	public void InitTrial() {
 		InitLayout(floor + 7 + Player.s.modifiers.floorExpansion, floor + 7 + Player.s.modifiers.floorExpansion, "trial");

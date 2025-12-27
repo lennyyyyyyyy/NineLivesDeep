@@ -19,7 +19,9 @@ public class Intensify : Curse {
 		
 		List<GameObject> options = new List<GameObject>(Player.s.curses);
 		options = options.Where(curse => curse.GetComponent<Intensify>() == null).ToList();
-		intensifiedCurse = options[Random.Range(0, options.Count)].GetComponent<Curse>();
+        if (options.Count > 0) {
+            intensifiedCurse = options[Random.Range(0, options.Count)].GetComponent<Curse>();
+        }
 
 		Player.s.RecalculateModifiers();
 	}

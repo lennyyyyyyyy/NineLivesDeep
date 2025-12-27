@@ -140,8 +140,7 @@ public class GameManager : MonoBehaviour
             PerformActionRecursive(child.gameObject, action);
         }
     }
-    public Component CopyComponent(Component original, GameObject destination)
-    {
+    public Component CopyComponent(Component original, GameObject destination) {
         System.Type type = original.GetType();
         Component copy = destination.AddComponent(type);
         // Copied fields can be restricted with BindingFlags
@@ -172,6 +171,14 @@ public class GameManager : MonoBehaviour
 		int last = count - 1;
 		for (int i = 0; i < last; i++) {
 			int r = UnityEngine.Random.Range(i, count);
+            (ts[r], ts[i]) = (ts[i], ts[r]);
+        }
+    }
+    public void Shuffle<T>(ref T[] ts) {
+        int count = ts.Length;
+        int last = count - 1;
+        for (int i = 0; i < last; i++) {
+            int r = UnityEngine.Random.Range(i, count);
             (ts[r], ts[i]) = (ts[i], ts[r]);
         }
     }
