@@ -27,8 +27,9 @@ public class UIItem : MonoBehaviour {
 			SetDefaultData();
 		}
 
-		if (UIManager.s.uiTypeToData.ContainsKey(GetType())) {
-			UIManager.s.uiTypeToData[GetType()].instances.Add(gameObject);
+		if (CatalogManager.s.typeToData.ContainsKey(GetType())) {
+            UIItemData uiItemData = CatalogManager.s.typeToData[GetType()] as UIItemData;
+			uiItemData.instances.Add(gameObject);
 		}
 	}		
 	public virtual void SetInitialData(Texture2D? tex2d = null, TooltipData tooltipData = null) {
@@ -45,8 +46,8 @@ public class UIItem : MonoBehaviour {
 		ApplyInitialData();
     }
 	protected virtual void SetDefaultData() {
-		if (UIManager.s.uiTypeToData.ContainsKey(GetType())) {
-			UIItemData uiItemData = UIManager.s.uiTypeToData[GetType()];
+		if (CatalogManager.s.typeToData.ContainsKey(GetType())) {
+			UIItemData uiItemData = CatalogManager.s.typeToData[GetType()] as UIItemData;
 			SetData(uiItemData.tex2d, uiItemData.tooltipData);
 		}
 	}
@@ -60,10 +61,10 @@ public class UIItem : MonoBehaviour {
 			}
 		}
 		if (amnesiaApplies && addTooltip.tooltipData.name != "???") {
-			addTooltip.SetData(new TooltipData("???", "???", "???", color: UIManager.s.uiTypeToData[GetType()].tooltipData.color), true);
+			addTooltip.SetData(new TooltipData("???", "???", "???", color: (CatalogManager.s.typeToData[GetType()] as UIItemData).tooltipData.color), true);
 			addTooltip.MouseEnter();
 		} else if (!amnesiaApplies && addTooltip.tooltipData.name == "???") {
-			addTooltip.SetData(UIManager.s.uiTypeToData[GetType()].tooltipData, true);
+			addTooltip.SetData((CatalogManager.s.typeToData[GetType()] as UIItemData).tooltipData, true);
 			addTooltip.MouseEnter();
 		}
 	}

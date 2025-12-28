@@ -16,7 +16,7 @@ public class Placeable : Flag {
         if (usable) {
             sprite = Instantiate(GameManager.s.flagSprite_p, Camera.main.ScreenToWorldPoint(Input.mousePosition), Quaternion.identity);
             FlagSprite flagSprite = sprite.AddComponent(placeableSpriteType) as FlagSprite;
-			FlagData flagData = UIManager.s.uiTypeToData[GetType()] as FlagData;
+			FlagData flagData = CatalogManager.s.typeToData[GetType()] as FlagData;
 			flagSprite.SetInitialData(this); 
             base.OnPointerExit(null);
         }

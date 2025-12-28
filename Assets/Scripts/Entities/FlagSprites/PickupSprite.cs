@@ -43,7 +43,7 @@ public class PickupSprite : CorrespondingSprite {
 
 		//consumable count numbers based on the way it spawns
 		if (typeof(Consumable).IsAssignableFrom(this.correspondingUIType)) {
-			FlagData parentFlagData = UIManager.s.uiTypeToData[this.correspondingUIType] as FlagData;
+			FlagData parentFlagData = CatalogManager.s.typeToData[this.correspondingUIType] as FlagData;
 			if (this.spawnType == SpawnType.RANDOM) {
 				this.count = 1;
 			} else if (this.spawnType == SpawnType.TRIAL) {

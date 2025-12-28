@@ -219,9 +219,13 @@ public class Floor : MonoBehaviour
 
                 // put misc entities
                 float entityRand = Random.value;
-                if (entityRand < 0.10f) {
-                    GameObject g = Instantiate(GameManager.s.crank_p);
-                    g.GetComponent<Entity>().Move(i, j);
+                if (entityRand < 0.06f) {
+                    GameObject entityChoice = new GameObject[] { GameManager.s.crank_p,
+                                                                 GameManager.s.pillar_p,
+                                                                 GameManager.s.tunnel_p,
+                                                                 GameManager.s.vase_p, }[Random.Range(0, 4)];
+                    GameObject entity = Instantiate(entityChoice);
+                    entity.GetComponent<Entity>().Move(i, j);
                 }
             }
             //generate mines

@@ -14,9 +14,9 @@ public class CorrespondingSprite : Entity {
 		UIItemData uiItemData;
 		// cataract curse
 		if (typeof(Flag).IsAssignableFrom(correspondingUIType) && Random.value < Player.s.modifiers.cataractConfuseChance) {
-			uiItemData = UIManager.s.uiTypeToData[UIManager.s.allFlagTypes[Random.Range(0, UIManager.s.allFlagTypes.Count)]];
+			uiItemData = CatalogManager.s.typeToData[CatalogManager.s.allFlagTypes[Random.Range(0, CatalogManager.s.allFlagTypes.Count)]] as UIItemData;
 		} else {
-			uiItemData = UIManager.s.uiTypeToData[this.correspondingUIType];
+			uiItemData = CatalogManager.s.typeToData[this.correspondingUIType] as UIItemData;
 		}
 		base.SetInitialData(uiItemData.sprite, uiItemData.tooltipData);
 	}

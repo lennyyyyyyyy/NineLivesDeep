@@ -56,8 +56,8 @@ public class Flag : UIItem {
 		ApplyInitialData();
     }
 	protected override void SetDefaultData() {
-		if (UIManager.s.uiTypeToData.ContainsKey(GetType())) {
-			FlagData flagData = UIManager.s.uiTypeToData[GetType()] as FlagData;
+		if (CatalogManager.s.typeToData.ContainsKey(GetType())) {
+			FlagData flagData = CatalogManager.s.typeToData[GetType()] as FlagData;
 			SetData(flagData.tex2d, flagData.tooltipData, flagData.placeableSpriteType, flagData.placeableRemovesMines, flagData.consumableDefaultCount, flagData.showCount, flagData.allowedFloorTypes);
 		}
 	}

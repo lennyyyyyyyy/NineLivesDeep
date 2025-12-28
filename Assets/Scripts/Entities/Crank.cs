@@ -17,7 +17,6 @@ public class Crank : Entity {
 		return base.IsInteractable() && !isRotating;
 	} 
 	public override void Interact() {
-		Debug.Log("I'm cranking it at " + GetCoord().ToString() + " direction: " + (direction ? "cw" : "ccw"));
 		isRotating = true;
 		GameManager.s.DelayAction(() => { isRotating = false; }, 0.5f);
 		List<Vector2Int> endCoords = new List<Vector2Int>(),

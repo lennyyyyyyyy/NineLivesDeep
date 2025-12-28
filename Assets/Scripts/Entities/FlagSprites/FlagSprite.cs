@@ -129,14 +129,14 @@ public class FlagSprite : CorrespondingSprite {
         Player.s.destroyPrints();
         Player.s.updatePrints();
         sr.sortingLayerName = "Player";
-		FlagData parentFlagData = UIManager.s.uiTypeToData[correspondingUIType] as FlagData;
+		FlagData parentFlagData = CatalogManager.s.typeToData[correspondingUIType] as FlagData;
         if (parentFlagData.placeableRemovesMines && Floor.s.GetUniqueMine(GetCoord().x, GetCoord().y) != null) {
             Player.s.UpdateMoney(Player.s.money + Player.s.modifiers.mineDefuseMult);
             Floor.s.GetUniqueMine(GetCoord().x, GetCoord().y).GetComponent<MineSprite>().Remove();
         }
         if (Player.s.hasFlag(typeof(Reflection)) && GetType() != typeof(BaseSprite) && GetTile().GetComponent<Puddle>() != null) {
             //reflection passive
-            Flag b = UIManager.s.uiTypeToData[typeof(Base)].instances[0].GetComponent<Flag>();
+            Flag b = (CatalogManager.s.typeToData[typeof(Base)] as UIItemData).instances[0].GetComponent<Flag>();
             b.UpdateCount(b.count+1);
         }
 		//give tile momentum downward

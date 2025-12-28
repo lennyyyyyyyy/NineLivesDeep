@@ -12,8 +12,8 @@ public class Curse : UIItem {
 		UIManager.s.OrganizeNotFlags();
 	}
 	protected override void SetDefaultData() {
-		if (UIManager.s.uiTypeToData.ContainsKey(GetType())) {
-			CurseData curseData = UIManager.s.uiTypeToData[GetType()] as CurseData;
+		if (CatalogManager.s.typeToData.ContainsKey(GetType())) {
+			CurseData curseData = CatalogManager.s.typeToData[GetType()] as CurseData;
 			SetData(curseData.tex2d, curseData.tooltipData);
 		}
 	}

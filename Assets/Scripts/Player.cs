@@ -89,7 +89,8 @@ public class Player : Entity {
 	public Modifiers modifiers = new Modifiers();
 	[System.NonSerialized]
 	public List<Vector2Int> moveHistory = new List<Vector2Int>();
-	private int tempChanges = 0;
+    [System.NonSerialized]
+	public int tempChanges = 0;
 	[System.NonSerialized]
 	public float watchedMineJumpTimer = 0f;
 
@@ -121,13 +122,13 @@ public class Player : Entity {
 		}
     }
 	public void InitializeUnseenFlags() {
-		flagsUnseen = UIManager.s.allFlagTypes.ToList();
-		consumableFlagsUnseen = UIManager.s.allFlagTypes.Where(type => typeof(Consumable).IsAssignableFrom(type)).ToList();
-		cursesUnseen = UIManager.s.allCurseTypes.ToList();
-		minesUnseen = UIManager.s.allMineTypes.ToList();
+		flagsUnseen = CatalogManager.s.allFlagTypes.ToList();
+		consumableFlagsUnseen = CatalogManager.s.allFlagTypes.Where(type => typeof(Consumable).IsAssignableFrom(type)).ToList();
+		cursesUnseen = CatalogManager.s.allCurseTypes.ToList();
+		minesUnseen = CatalogManager.s.allMineTypes.ToList();
 	}
     public bool hasFlag(Type type) {
-        return UIManager.s.uiTypeToData[type].instances.Count > 0;
+        return (CatalogManager.s.typeToData[type] as UIItemData).instances.Count > 0;
     }
     public void setTrapped(bool b) {
     }
@@ -207,7 +208,6 @@ public class Player : Entity {
             Destroy(prints[i]);
         }
         prints.Clear();
-        Debug.Log("destroyed prints");
     }
     public void updatePrints() {
         List<Vector2Int> filteredPrintLocs = new List<Vector2Int>(printLocs);
@@ -270,7 +270,6 @@ public class Player : Entity {
             p.GetComponent<Print>().init(v.x, v.y);
             prints.Add(p);
         }
-        Debug.Log("updated prints");
 
         UpdateActivePrints();
     }

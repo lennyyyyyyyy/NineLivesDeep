@@ -27,8 +27,8 @@ public class Mine : UIItem {
 		ApplyInitialData();
 	}
 	protected override void SetDefaultData() {
-		if (UIManager.s.uiTypeToData.ContainsKey(GetType())) {
-			MineData mineData = UIManager.s.uiTypeToData[GetType()] as MineData;
+		if (CatalogManager.s.typeToData.ContainsKey(GetType())) {
+			MineData mineData = CatalogManager.s.typeToData[GetType()] as MineData;
 			SetData(mineData.tex2d, mineData.tooltipData, mineData.spriteType);
 		}
 	}
