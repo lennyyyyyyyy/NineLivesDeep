@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 
 public class Intensify : Curse {
-	private Curse intensifiedCurse;
+    [System.NonSerialized]
+	public Curse intensifiedCurse;
 
 	public override void Modify(ref Modifiers modifiers) {
 		if (intensifiedCurse != null) {

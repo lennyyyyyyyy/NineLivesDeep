@@ -59,6 +59,7 @@ public class FlagData : UIItemData {
 
 		if (this.placeableSpriteType != null) {
 			CatalogManager.s.spriteTypeToUIType[this.placeableSpriteType] = this.type;
+            TypeData td = new TypeData(this.placeableSpriteType);
 		}
 		CatalogManager.s.allFlagTypes.Add(this.type);
         if (typeof(Consumable).IsAssignableFrom(this.type)) {
@@ -77,6 +78,7 @@ public class MineData : UIItemData {
 		this.spriteType = spriteType;
 		CatalogManager.s.spriteTypeToUIType[this.spriteType] = this.type;
 		CatalogManager.s.allMineTypes.Add(this.type);
+        TypeData td = new TypeData(this.spriteType);
 	}
 }
 public class CatalogManager : MonoBehaviour {
@@ -98,6 +100,11 @@ public class CatalogManager : MonoBehaviour {
             new TypeData(typeof(Pillar)),
             new TypeData(typeof(Vase)),
             new TypeData(typeof(Tunnel)),
+            //tiles
+            new TypeData(typeof(NormalTile)),
+            new TypeData(typeof(ActionTile)),
+            new TypeData(typeof(MossyTile)),
+            new TypeData(typeof(Puddle)),
 			//placeable flags
 			new FlagData(typeof(Base), "base", new TooltipData("Flag", "Nostalgic, isn't it?", "Drag and drop these wherever you think mines are."),
 					     placeableSpriteType: typeof(BaseSprite),

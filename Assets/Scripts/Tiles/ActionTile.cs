@@ -5,6 +5,8 @@ using Random = UnityEngine.Random;
 public class ActionTile : Tile
 {
 	public const int EXITTOSHOP = 0, EXITTOMINEFIELD = 1, EXITTOTRIAL = 2, GIVETRIALREWARD = 3;
+    [System.NonSerialized]
+    public int actionCode;
 	protected Action action;
 	protected Material m;
 	protected int amount = 1;
@@ -17,6 +19,7 @@ public class ActionTile : Tile
 		};
 	}	
 	public void Init(int actionCode) {
+        this.actionCode = actionCode;
 		if (actionCode == EXITTOSHOP) {
 			m = UIManager.s.tileExitMat;
 			action = ExitAction("shop", Floor.s.floor);
