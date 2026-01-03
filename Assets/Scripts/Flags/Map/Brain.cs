@@ -3,7 +3,7 @@ using UnityEngine;
 public class Brain : Map
 {
     public override void OnDiscover(int x, int y) {
-        bool hasAromatic = Player.s.hasFlag(typeof(Aromatic));
+        bool hasAromatic = PlayerUIItemModule.s.HasUIItem(typeof(Aromatic));
         int count = 0;
         for (int dx=-1; dx<=1; dx++) {
             for (int dy=-1; dy<=1; dy++) {

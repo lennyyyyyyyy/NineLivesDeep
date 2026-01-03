@@ -14,8 +14,6 @@ public class UIManager : MonoBehaviour
     public GameObject canvas, STARTUI, GAMEUI, flagGroup, pawGroup, tooltipGroup, bubbleGroup;
     [System.NonSerialized]
     public RectTransform canvasRt;
-    public GameObject nine, lives, deep, startbutton;
-    public float startIdleStrength, startIdleSpeed;
     [System.NonSerialized]
     public Vector3 lastMousePos, mouseVelocity = Vector2.zero;
     private float mouseTimer = 0;
@@ -47,12 +45,6 @@ public class UIManager : MonoBehaviour
         canvasRt = canvas.transform as RectTransform;
     }
     private void Update() {
-        if (GameManager.s.gamestate == GameManager.s.START) {
-            nine.transform.localPosition = new Vector3(nine.transform.localPosition.x, startIdleStrength * Mathf.Sin(startIdleSpeed * Time.time), 0);
-            lives.transform.localPosition = new Vector3(lives.transform.localPosition.x, startIdleStrength * Mathf.Sin(startIdleSpeed * 0.9f * Time.time + 2), 0);
-            deep.transform.localPosition = new Vector3(deep.transform.localPosition.x, startIdleStrength * Mathf.Sin(startIdleSpeed * 1.1f * Time.time + 4), 0);
-            startbutton.transform.localPosition = new Vector3(startbutton.transform.localPosition.x, 90.2f + 0.5f * startIdleStrength * Mathf.Sin(startIdleSpeed * 0.8f * Time.time + 3), 0);
-        }
 
         mouseTimer += Time.deltaTime;
         if (mouseTimer > 0.05f) {
@@ -73,15 +65,28 @@ public class UIManager : MonoBehaviour
     public void updateSizeDelta(RectTransform rt, Vector3 v) {
         rt.sizeDelta = new Vector2(v.x, v.y);
     }
-    public void AddPaw() {
-        GameObject g = Instantiate(GameManager.s.paw_p, pawGroup.transform);
-        paws.Add(g);
-        (g.transform as RectTransform).anchoredPosition = new Vector2(150, 0);
+    private void MatchPawsToFlags() {
+        while (paws.Count < PlayerUIItemModule.s.flags.Count) {
+            GameObject g = Instantiate(GameManager.s.paw_p, pawGroup.transform);
+            paws.Add(g);
+            (g.transform as RectTransform).anchoredPosition = new Vector2(150, 0);
+        }
+        while (paws.Count > PlayerUIItemModule.s.flags.Count) {
+            GameObject p = paws[paws.Count - 1];
+            paws.RemoveAt(paws.Count - 1);
+            RectTransform prt = p.transform as RectTransform;
+            LeanTween.value(p, (Vector3 v) => updateAnchoredPosition(prt, v), prt.anchoredPosition, new Vector2(-60, prt.anchoredPosition.y), 0.5f)
+                .setEase(LeanTweenType.easeInOutCubic)
+                .setOnComplete(() => {
+                Destroy(p);
+            });
+        } 
     }
     public void OrganizeFlags() {
-        bool variableSpacing = Player.s.flags.Count * 100 > (UIManager.s.canvas.transform as RectTransform).rect.height;
-        for (int i = 0; i < Player.s.flags.Count; i++) {
-            GameObject f = Player.s.flags[i], p = paws[i];
+        MatchPawsToFlags();
+        bool variableSpacing = PlayerUIItemModule.s.flags.Count * 100 > (UIManager.s.canvas.transform as RectTransform).rect.height;
+        for (int i = 0; i < PlayerUIItemModule.s.flags.Count; i++) {
+            GameObject f = PlayerUIItemModule.s.flags[i], p = paws[i];
             RectTransform prt = p.transform as RectTransform;
             Flag flag = f.GetComponent<Flag>();
             flag.UpdateUsable();
@@ -91,7 +96,7 @@ public class UIManager : MonoBehaviour
 
             float destinationY;
             if (variableSpacing) {
-                destinationY = -(UIManager.s.canvas.transform as RectTransform).rect.height * (i+1) / (Player.s.flags.Count + 1);
+                destinationY = -(UIManager.s.canvas.transform as RectTransform).rect.height * (i+1) / (PlayerUIItemModule.s.flags.Count + 1);
             } else {
                 destinationY = -60 - i * 100;
             }
@@ -118,7 +123,7 @@ public class UIManager : MonoBehaviour
 		for (int i = 0; i < 4; i++) {
 			sortedNotFlags[i] = new List<GameObject>();
 		}
-		foreach (GameObject notFlag in Player.s.notFlags) {
+		foreach (GameObject notFlag in PlayerUIItemModule.s.notFlags) {
 			UIItem uiItem = notFlag.GetComponent<UIItem>();
 			if (uiItem is MineUIItem) {
 				sortedNotFlags[0].Add(notFlag);
@@ -130,22 +135,22 @@ public class UIManager : MonoBehaviour
 				sortedNotFlags[3].Add(notFlag);
 			}
 		}
-		Player.s.notFlags.Clear();
+		PlayerUIItemModule.s.notFlags.Clear();
 		for (int i = 0; i < sortedNotFlags.Length; i++) {
 			foreach (GameObject g in sortedNotFlags[i]) {
-				Player.s.notFlags.Add(g);
+				PlayerUIItemModule.s.notFlags.Add(g);
 			}
 		}
 		//then move items in their places
-        bool variableSpacing = Player.s.notFlags.Count * 100 > (UIManager.s.canvas.transform as RectTransform).rect.height;
-        for (int i = 0; i < Player.s.notFlags.Count; i++) {
-            GameObject g = Player.s.notFlags[i];
+        bool variableSpacing = PlayerUIItemModule.s.notFlags.Count * 100 > (UIManager.s.canvas.transform as RectTransform).rect.height;
+        for (int i = 0; i < PlayerUIItemModule.s.notFlags.Count; i++) {
+            GameObject g = PlayerUIItemModule.s.notFlags[i];
             LeanTween.cancel(g);
 			UIItem item = g.GetComponent<UIItem>();
 
             float destinationY;
             if (variableSpacing) {
-                destinationY = -(UIManager.s.canvas.transform as RectTransform).rect.height * (i+1) / (Player.s.notFlags.Count + 1);
+                destinationY = -(UIManager.s.canvas.transform as RectTransform).rect.height * (i+1) / (PlayerUIItemModule.s.notFlags.Count + 1);
             } else {
                 destinationY = -60 - i * 100;
             }

@@ -7,9 +7,7 @@ public class Mine : UIItem {
 	protected override void Start() {
 		base.Start();
 		
-		Player.s.notFlags.Add(gameObject);
-		Player.s.mines.Add(gameObject);
-		Player.s.NoticeMine(GetType());
+        PlayerUIItemModule.s.ProcessAddedMine(this);
 		UIManager.s.OrganizeNotFlags();
 	}
 	public virtual void SetInitialData(Texture2D? tex2d = null,
@@ -32,4 +30,9 @@ public class Mine : UIItem {
 			SetData(mineData.tex2d, mineData.tooltipData, mineData.spriteType);
 		}
 	}
+    protected override void OnDestroy() {
+        base.OnDestroy();
+        PlayerUIItemModule.s.ProcessRemovedMine(this);
+        UIManager.s.OrganizeNotFlags();
+    }
 }

@@ -84,6 +84,7 @@ public class Tile : Parallax
         targetDepth = 1.5f;
         referencePos = Floor.s.CoordToIdealPos(coord.x, coord.y).normalized + Quaternion.Euler(0, 0, 90 * Random.Range(0, 4)) * new Vector3(0, 40, 0);
     }
+    // Destroy tile while animated - API
 	public virtual void Unbuild(float duration) {
 		LeanTween.cancel(gameObject);
 		LeanTween.value(gameObject, (float f) => {targetDepth = f;}, targetDepth, 1.5f, duration).setEase(LeanTweenType.easeInOutQuint);
@@ -91,6 +92,7 @@ public class Tile : Parallax
 			Destroy(gameObject);
 		});
 	}
+    // Animate to the proper position, if invalid then animate destruction - API
     public virtual void Build(float duration) {
 		if (coord == Floor.INVALID_COORD) {
 			Unbuild(duration);
@@ -121,7 +123,6 @@ public class Tile : Parallax
             PutOverEnd();
         });
     }
-
     public virtual void PutOverEnd() {
         GameManager.s.SetGameLayerRecursive(gameObject, LayerMask.NameToLayer("Default"));
         GameManager.s.PerformActionRecursive(gameObject, (GameObject g) => {

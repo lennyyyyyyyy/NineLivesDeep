@@ -55,7 +55,7 @@ public class Map : Flag {
         if (active) {
             Deactivate();
         } else {
-            foreach (GameObject g in Player.s.flags) {
+            foreach (GameObject g in PlayerUIItemModule.s.flags) {
                 Flag flag = g.GetComponent<Flag>();
                 if (flag is Map && (flag as Map).active) {
                     (flag as Map).Deactivate();

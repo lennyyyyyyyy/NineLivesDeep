@@ -24,9 +24,7 @@ public class Flag : UIItem {
         UpdateCount(count);
         tmpro.enabled = showCount;
     
-        Player.s.flags.Add(gameObject); // add to player flags
-        Player.s.NoticeFlag(GetType()); // mark flag type as seen
-        UIManager.s.AddPaw(); // add paw to ui
+        PlayerUIItemModule.s.ProcessAddedFlag(this);
         UIManager.s.OrganizeFlags(); // organize flags in ui
     }
 	public virtual void SetInitialData(Texture2D? tex2d = null,
@@ -72,4 +70,9 @@ public class Flag : UIItem {
     public virtual void UpdateUsable() {
         usable = IsUsable();
     } 
+    protected override void OnDestroy() {
+        base.OnDestroy();
+        PlayerUIItemModule.s.ProcessRemovedFlag(this);
+        UIManager.s.OrganizeFlags();
+    }
 }

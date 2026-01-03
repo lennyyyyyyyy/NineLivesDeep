@@ -38,7 +38,7 @@ public class ActionTile : Tile
 				if (Floor.s.floorDeathCount > 0) {
 					Floor.s.PlacePickupSprite(CatalogManager.s.allConsumableFlagTypes, PickupSprite.SpawnType.TRIAL, 0, new Vector2Int(Floor.s.width-1, Floor.s.height-2));
 				} else {
-					Floor.s.PlacePickupSprite(Player.s.flagsUnseen, PickupSprite.SpawnType.TRIAL, 0, new Vector2Int(Floor.s.width-1, Floor.s.height-2));
+					Floor.s.PlacePickupSprite(PlayerUIItemModule.s.flagsUnseen, PickupSprite.SpawnType.TRIAL, 0, new Vector2Int(Floor.s.width-1, Floor.s.height-2));
 				}
 			};
 		}

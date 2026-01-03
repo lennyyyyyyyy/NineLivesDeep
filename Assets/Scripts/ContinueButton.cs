@@ -1,8 +1,8 @@
 using UnityEngine;
 
-class StartButton : MonoBehaviour
+class ContinueButton : MonoBehaviour
 {
-    public static StartButton s;
+    public static ContinueButton s;
     private bool hovered = false, pressed = false, finished = false;
     private float hoverOffset;
     private void Awake() {
@@ -20,7 +20,9 @@ class StartButton : MonoBehaviour
     }
     public void OnPointerUp() {
         pressed = false;
-        if (!finished) {GameManager.s.STARTToGAME();}
+        if (!finished) {
+
+        }
         finished = true;
     }
     void Update() {

@@ -10,7 +10,8 @@ public class MineUIItem : UIItem {
 	protected override void Start() {
 		base.Start();
 		count = GetComponentInChildren<TMP_Text>();
-		Player.s.notFlags.Add(gameObject);
+
+		PlayerUIItemModule.s.notFlags.Add(gameObject);
 		UIManager.s.OrganizeNotFlags();
 	}
 }

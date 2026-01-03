@@ -27,10 +27,7 @@ public class UIItem : MonoBehaviour {
 			SetDefaultData();
 		}
 
-		if (CatalogManager.s.typeToData.ContainsKey(GetType())) {
-            UIItemData uiItemData = CatalogManager.s.typeToData[GetType()] as UIItemData;
-			uiItemData.instances.Add(gameObject);
-		}
+        PlayerUIItemModule.s.ProcessAddedUIItem(this);
 	}		
 	public virtual void SetInitialData(Texture2D? tex2d = null, TooltipData tooltipData = null) {
 		setInitialData = true;
@@ -72,4 +69,7 @@ public class UIItem : MonoBehaviour {
 	}
 	public virtual void Modify(ref Modifiers modifiers) {
 	}
+    protected virtual void OnDestroy() {
+        PlayerUIItemModule.s.ProcessRemovedUIItem(this);
+    }
 }

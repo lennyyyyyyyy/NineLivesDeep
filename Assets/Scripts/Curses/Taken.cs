@@ -11,7 +11,7 @@ class Taken : Curse {
 			modifiers.takenCurseCount += 1;
 		}
 		takenFlags.Clear();
-		List<GameObject> options = Player.s.flags.ToList();
+		List<GameObject> options = PlayerUIItemModule.s.flags.ToList();
 		for (int i = 0; i < modifiers.takenCurseCount && options.Count > 0; i++) {
 			int index = Random.Range(0, options.Count);
 			GameObject flag = options[index];

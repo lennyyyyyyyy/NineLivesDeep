@@ -23,9 +23,11 @@ public class Modifiers {
 			   discoverRange,
 			   reviveRange,
 			   moveDirectionDisableDuration,
-			   takenCurseCount;
+			   takenCurseCount,
+               reflectionPassiveCount;
 	public bool watched;
 	public HashSet<Type> amnesiaUITypes;	
+    public List<Vector2Int> moveOptions;
 	public void Reset() {
 		mineSpawnMult = 1;
 		mineDefuseMult = 1;
@@ -48,53 +50,62 @@ public class Modifiers {
 		watchedMineJumpTime = 0f;
 		watchedMineJumpChancePerSecond = 0f;
 		tempChangesUntilDeath = (int) 2e9;
+        reflectionPassiveCount = 0;
+        moveOptions = new List<Vector2Int>() {
+            new Vector2Int(-1, -1),
+            new Vector2Int(-1, 0),
+            new Vector2Int(-1, 1),
+            new Vector2Int(0, -1),
+            new Vector2Int(0, 1),
+            new Vector2Int(1, -1),
+            new Vector2Int(1, 0),
+            new Vector2Int(1, 1)
+        };
 	}
 	public Modifiers() {
 		Reset();
 	}
 }
+
+// Player is reloaded per run, not per application
 public class Player : Entity {
     public static Player s;
     public static Action OnDie, OnRevive, OnAliveChange, OnUpdateSecondaryMapActive;
 	public static Action<int, int> OnMove;
-	//consts
-    private float stepImpulse = 0.2f;
-	public int maxMoveHistory = 10;
 
+    // saved data
+    [System.NonSerialized]
+    public bool trapped = false, alive = true;
+    [System.NonSerialized]
+    public float money = 0;
+    [System.NonSerialized]
+	public int tempChanges = 0;
+    public HashSet<GameObject> tilesVisited = new HashSet<GameObject>();
+	[System.NonSerialized]
+	public List<Vector2Int> moveHistory = new List<Vector2Int>();
+
+    // unsaved data
     [System.NonSerialized]
     public List<GameObject> prints = new List<GameObject>();
     [System.NonSerialized]
-    public List<GameObject> flags = new List<GameObject>(), 
-		   				    notFlags = new List<GameObject>(), 
-							curses = new List<GameObject>(),
-							mines = new List<GameObject>(),
-							tilesUnvisited = new List<GameObject>();
-    public HashSet<Type> flagsSeen = new HashSet<Type>(), 
-		   				 cursesSeen = new HashSet<Type>(),
-						 minesSeen = new HashSet<Type>(); // not in use but holding on to these
-	public List<Type> flagsUnseen, consumableFlagsUnseen, cursesUnseen, minesUnseen;
-    public HashSet<GameObject> tilesVisited = new HashSet<GameObject>();
-    public List<Vector2Int> printLocs;
+    public List<GameObject> tilesUnvisited = new List<GameObject>();
     public GameObject light, blood, feet;
     public GameObject[,] playerBits;
-    public bool trapped = false, alive = true;
     [System.NonSerialized]
     public Animator animator;
     [System.NonSerialized]
     public int texWidth, texHeight;
 	[System.NonSerialized]
 	public bool secondaryMapActive = true;
-    [System.NonSerialized]
-    public float money = 0;
 	public Modifiers modifiers = new Modifiers();
 	[System.NonSerialized]
-	public List<Vector2Int> moveHistory = new List<Vector2Int>();
-    [System.NonSerialized]
-	public int tempChanges = 0;
-	[System.NonSerialized]
 	public float watchedMineJumpTimer = 0f;
+	// consts
+    private float stepImpulse = 0.2f;
+    [System.NonSerialized]
+	public int maxMoveHistory = 10;
 
-    void Awake() {
+    private void Awake() {
         s = this;
     }
     protected override void Start() {
@@ -121,38 +132,14 @@ public class Player : Entity {
 			watchedMineJumpTimer += Time.deltaTime;
 		}
     }
-	public void InitializeUnseenFlags() {
-		flagsUnseen = CatalogManager.s.allFlagTypes.ToList();
-		consumableFlagsUnseen = CatalogManager.s.allFlagTypes.Where(type => typeof(Consumable).IsAssignableFrom(type)).ToList();
-		cursesUnseen = CatalogManager.s.allCurseTypes.ToList();
-		minesUnseen = CatalogManager.s.allMineTypes.ToList();
-	}
-    public bool hasFlag(Type type) {
-        return (CatalogManager.s.typeToData[type] as UIItemData).instances.Count > 0;
-    }
-    public void setTrapped(bool b) {
-    }
 	public void RecalculateModifiers() {
 		modifiers.Reset();
-		foreach (GameObject flag in flags) {
+		foreach (GameObject flag in PlayerUIItemModule.s.flags) {
 			flag.GetComponent<UIItem>().Modify(ref modifiers);
 		}
-		foreach (GameObject notFlag in notFlags) {
+		foreach (GameObject notFlag in PlayerUIItemModule.s.notFlags) {
 			notFlag.GetComponent<UIItem>().Modify(ref modifiers);
 		}
-	}
-	public void NoticeFlag(Type type) {
-		flagsSeen.Add(type);
-		flagsUnseen.Remove(type);
-		consumableFlagsUnseen.Remove(type);
-	}			
-	public void NoticeCurse(Type type) {
-		cursesSeen.Add(type);
-		cursesUnseen.Remove(type);
-	}
-	public void NoticeMine(Type type) {
-		minesSeen.Add(type);
-		minesUnseen.Remove(type);
 	}
     public void Die() {
 		Floor.s.floorDeathCount++;
@@ -177,7 +164,7 @@ public class Player : Entity {
     }
     public void UpdateSecondaryMapActive() {
         secondaryMapActive = alive;
-        foreach (GameObject g in flags) {
+        foreach (GameObject g in PlayerUIItemModule.s.flags) {
             Flag flag = g.GetComponent<Flag>();
             if (flag is Placeable) {
                 secondaryMapActive &= (flag as Placeable).sprite == null || (flag as Placeable).sprite.GetComponent<FlagSprite>().state == "dropped";
@@ -187,7 +174,7 @@ public class Player : Entity {
     }
     public void UpdateActivePrints() {
         bool active = alive;
-        foreach (GameObject g in flags) {
+        foreach (GameObject g in PlayerUIItemModule.s.flags) {
             Flag flag = g.GetComponent<Flag>();
             if (flag is Placeable) {
                 active &= (flag as Placeable).sprite == null || (flag as Placeable).sprite.GetComponent<FlagSprite>().state == "dropped";
@@ -210,17 +197,7 @@ public class Player : Entity {
         prints.Clear();
     }
     public void updatePrints() {
-        List<Vector2Int> filteredPrintLocs = new List<Vector2Int>(printLocs);
-        //extend radius if catnip
-        if (hasFlag(typeof(Catnip))) {
-            for (int x = -2; x <= 2; x++) {
-                for (int y = -2; y <= 2; y++) {
-                    if (Math.Abs(x) == 2 || Math.Abs(y) == 2) {
-                        filteredPrintLocs.Add(new Vector2Int(x, y));
-                    }
-                }
-            }
-        }
+        List<Vector2Int> filteredPrintLocs = new List<Vector2Int>(modifiers.moveOptions);
         //restrict if trapped
         if (trapped) {
             for (int i = filteredPrintLocs.Count - 1; i >= 0; i--) {
@@ -274,7 +251,7 @@ public class Player : Entity {
         UpdateActivePrints();
     }
     public void discover(int x, int y) {
-        foreach (GameObject g in flags) {
+        foreach (GameObject g in PlayerUIItemModule.s.flags) {
             Flag flag = g.GetComponent<Flag>();
             if (flag is Map) {
                 Map map = (flag as Map);
@@ -307,7 +284,6 @@ public class Player : Entity {
 			}
 		}
         Move(0, 0, true, false);
-        setTrapped(false);
 		tempChanges = 0;
     }
 	public override bool Move(int x, int y, bool reposition = true) {

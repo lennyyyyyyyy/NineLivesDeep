@@ -6,9 +6,7 @@ public class Curse : UIItem {
     protected override void Start() {
 		base.Start();
 		
-		Player.s.notFlags.Add(gameObject);
-		Player.s.curses.Add(gameObject);
-		Player.s.NoticeCurse(GetType());
+        PlayerUIItemModule.s.ProcessAddedCurse(this);
 		UIManager.s.OrganizeNotFlags();
 	}
 	protected override void SetDefaultData() {
@@ -17,4 +15,9 @@ public class Curse : UIItem {
 			SetData(curseData.tex2d, curseData.tooltipData);
 		}
 	}
+    protected override void OnDestroy() {
+        base.OnDestroy();
+        PlayerUIItemModule.s.ProcessRemovedCurse(this);
+        UIManager.s.OrganizeNotFlags();
+    }
 }

@@ -4,7 +4,10 @@ using TMPro;
 public class Number : MonoBehaviour
 {
 	protected Map map;
-	protected Vector2Int coord;
+    [System.NonSerialized]
+	public Vector2Int coord;
+    [System.NonSerialized]
+    public int num;
 	protected TMP_Text text;
 	private void Update() {
 		if (Random.value < 1 - Mathf.Pow(1 - Player.s.modifiers.mapNumberDisappearChancePerSecond, Time.deltaTime)) {
@@ -18,6 +21,7 @@ public class Number : MonoBehaviour
         text.enabled = false;
     }
     public void SetNum(int num) {
+        this.num = num;
         text.text = num.ToString();
         LeanTween.scale(gameObject, Vector3.one, Random.Range(0.5f, 1.5f)).setRepeat(-1).setLoopPingPong().setEase(LeanTweenType.easeInOutCubic);
         transform.eulerAngles = Vector3.forward * Random.Range(-30f, -10f);

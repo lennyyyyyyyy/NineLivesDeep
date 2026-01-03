@@ -134,10 +134,10 @@ public class FlagSprite : CorrespondingSprite {
             Player.s.UpdateMoney(Player.s.money + Player.s.modifiers.mineDefuseMult);
             Floor.s.GetUniqueMine(GetCoord().x, GetCoord().y).GetComponent<MineSprite>().Remove();
         }
-        if (Player.s.hasFlag(typeof(Reflection)) && GetType() != typeof(BaseSprite) && GetTile().GetComponent<Puddle>() != null) {
-            //reflection passive
-            Flag b = (CatalogManager.s.typeToData[typeof(Base)] as UIItemData).instances[0].GetComponent<Flag>();
-            b.UpdateCount(b.count+1);
+        //reflection passive
+        if (Player.s.modifiers.reflectionPassiveCount != 0 && GetType() != typeof(BaseSprite) && GetTile().GetComponent<Puddle>() != null) {
+            Flag b = PlayerUIItemModule.s.typeToInstances[typeof(Base)][0].GetComponent<Flag>();
+            b.UpdateCount(b.count + Player.s.modifiers.reflectionPassiveCount);
         }
 		//give tile momentum downward
 		GetTile().GetComponent<Tile>().externalDepthImpulse += placeImpulse;	

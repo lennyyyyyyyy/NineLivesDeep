@@ -19,7 +19,6 @@ public class UIItemData : TypeData {
 	public Texture2D tex2d;
     public Sprite sprite;
 	public TooltipData tooltipData;
-	public List<GameObject> instances = new List<GameObject>();
 
 	public UIItemData(Type type, string category, string resourceName, TooltipData tooltipData) : base(type) {
 		this.tex2d = UIManager.s.LoadResourceSafe<Texture2D>("Textures/" + category + "_" + resourceName);
@@ -81,6 +80,11 @@ public class MineData : UIItemData {
         TypeData td = new TypeData(this.spriteType);
 	}
 }
+/* 
+ * The catalog manager maps all types to various static data
+ * Used for save files, tooltips, sprites, textures, etc.
+ * Created once at application start and never modified again
+ */
 public class CatalogManager : MonoBehaviour {
     public static CatalogManager s;
 
@@ -172,6 +176,6 @@ public class CatalogManager : MonoBehaviour {
 			new MineData(typeof(Telemine), "telemine", new TooltipData("Telemine", "Explosion so powerful it makes a wormhole.", "Teleports you to a nearby undiscovered tile."), typeof(TelemineSprite))
 		};
 
-		Player.s.InitializeUnseenFlags();
+		PlayerUIItemModule.s.InitializeUnseenFlags();
     }
 }

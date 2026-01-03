@@ -9,7 +9,7 @@ class Wildcat : Passive {
     public override void UpdateCount(int newCount) {
         if (newCount == 0) {
             count = 5;
-            Flag y = (CatalogManager.s.typeToData[typeof(You)] as UIItemData).instances[0].GetComponent<Flag>();
+            Flag y = PlayerUIItemModule.s.typeToInstances[typeof(You)][0].GetComponent<Flag>();
             y.UpdateCount(y.count+1);
             
         } else {

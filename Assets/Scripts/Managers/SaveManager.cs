@@ -9,10 +9,16 @@ public class CurseSaveData {
     public int typeID, intensifiedTypeID;
 }
 [Serializable]
+public class NumberSaveData {
+    public Vector2Int coord;
+    public int num;
+}
+[Serializable]
 public class FlagSaveData {
     public int typeID;
     public int count;
     public bool usable;
+    public List<NumberSaveData> numbers = new List<NumberSaveData>();
 }
 [Serializable]
 public class EntitySaveData {
@@ -31,7 +37,7 @@ public class TileSaveData {
 public class SaveData {
     //player data
     public Vector2Int playerCoord; 
-    public bool playerAlive;
+    public bool playerTrapped, playerAlive;
     public float money;
     public int tempChanges;
     public List<CurseSaveData> curses = new List<CurseSaveData>();
@@ -57,9 +63,21 @@ public class SaveManager : MonoBehaviour {
     public static SaveManager s;
     public static Action OnSave, OnLoad;
 
-    public SaveData saveData;
+    [System.NonSerialized]
+    public bool saveDataValid = false;
+    public SaveData saveData = null;
     private void Awake() {
         s = this;
+    }
+    private void Start() {
+        string filepath = Application.persistentDataPath + "/savefile.json";
+        if (File.Exists(filepath)) {
+            string json = File.ReadAllText(filepath);
+            try {
+                saveData = JsonUtility.FromJson<SaveData>(json);
+                saveDataValid = true;
+            } catch (Exception e) {}
+        }
     }
     private void Update() {
         if (CanSave() && Input.GetKeyDown("s")) {
@@ -73,6 +91,7 @@ public class SaveManager : MonoBehaviour {
         OnSave?.Invoke();
         saveData = new SaveData() {
             playerCoord = Player.s.GetCoord(),
+            playerTrapped = Player.s.trapped,
             playerAlive = Player.s.alive,
             money = Player.s.money,
             tempChanges = Player.s.tempChanges,
@@ -81,10 +100,10 @@ public class SaveManager : MonoBehaviour {
             height = Floor.s.height,
             floorType = Floor.s.floorType,
             floorDeathCount = Floor.s.floorDeathCount,
-            rainCoords = Raincloud.rainCoords.ToList(),
+            rainCoords = Floor.s.rainCoords.ToList(),
             moveHistory = Player.s.moveHistory.ToList(),
         };
-        foreach (GameObject g in Player.s.curses) {
+        foreach (GameObject g in PlayerUIItemModule.s.curses) {
             Curse c = g.GetComponent<Curse>();
             CurseSaveData data = new CurseSaveData() {
                 typeID = CatalogManager.s.typeToData[c.GetType()].id
@@ -94,29 +113,39 @@ public class SaveManager : MonoBehaviour {
             }
             saveData.curses.Add(data);
         }
-        foreach (GameObject g in Player.s.mines) {
+        foreach (GameObject g in PlayerUIItemModule.s.mines) {
             Mine m = g.GetComponent<Mine>();
             saveData.mines.Add(CatalogManager.s.typeToData[m.GetType()].id);
         }
-        foreach (GameObject g in Player.s.flags) {
+        foreach (GameObject g in PlayerUIItemModule.s.flags) {
             Flag f = g.GetComponent<Flag>();
             FlagSaveData data = new FlagSaveData() {
                 typeID = CatalogManager.s.typeToData[f.GetType()].id,
                 count = f.count,
                 usable = f.usable
             };
+            if (f is Map) {
+                foreach (GameObject number in (f as Map).numbers.Values) {
+                    Number n = number.GetComponent<Number>();
+                    NumberSaveData nData = new NumberSaveData() {
+                        coord = n.coord,
+                        num = n.num
+                    };
+                    data.numbers.Add(nData);
+                }
+            }
             saveData.flags.Add(data);
         }
-        foreach (Type t in Player.s.flagsUnseen) {
+        foreach (Type t in PlayerUIItemModule.s.flagsUnseen) {
             saveData.flagsUnseen.Add(CatalogManager.s.typeToData[t].id);
         }
-        foreach (Type t in Player.s.consumableFlagsUnseen) {
+        foreach (Type t in PlayerUIItemModule.s.consumableFlagsUnseen) {
             saveData.consumableFlagsUnseen.Add(CatalogManager.s.typeToData[t].id);
         }
-        foreach (Type t in Player.s.cursesUnseen) {
+        foreach (Type t in PlayerUIItemModule.s.cursesUnseen) {
             saveData.cursesUnseen.Add(CatalogManager.s.typeToData[t].id);
         }
-        foreach (Type t in Player.s.minesUnseen) {
+        foreach (Type t in PlayerUIItemModule.s.minesUnseen) {
             saveData.minesUnseen.Add(CatalogManager.s.typeToData[t].id);
         }
         foreach (GameObject tile in Player.s.tilesVisited) {

@@ -18,7 +18,7 @@ public class Intensify : Curse {
 			intensifiedCurse.intensified = false;
 		}
 		
-		List<GameObject> options = new List<GameObject>(Player.s.curses);
+		List<GameObject> options = new List<GameObject>(PlayerUIItemModule.s.curses);
 		options = options.Where(curse => curse.GetComponent<Intensify>() == null).ToList();
         if (options.Count > 0) {
             intensifiedCurse = options[Random.Range(0, options.Count)].GetComponent<Curse>();
