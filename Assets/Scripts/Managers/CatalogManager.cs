@@ -21,8 +21,8 @@ public class UIItemData : TypeData {
 	public TooltipData tooltipData;
 
 	public UIItemData(Type type, string category, string resourceName, TooltipData tooltipData) : base(type) {
-		this.tex2d = UIManager.s.LoadResourceSafe<Texture2D>("Textures/" + category + "_" + resourceName);
-		this.sprite = UIManager.s.LoadResourceSafe<Sprite>("Textures/" + category + "_" + resourceName);
+		this.tex2d = HelperManager.s.LoadResourceSafe<Texture2D>("Textures/" + category + "_" + resourceName);
+		this.sprite = HelperManager.s.LoadResourceSafe<Sprite>("Textures/" + category + "_" + resourceName);
         Color[] colors = tex2d.GetPixels();
         float r = 0, g = 0, b = 0;
         foreach (Color c in colors) {

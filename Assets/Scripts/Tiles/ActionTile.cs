@@ -10,12 +10,13 @@ public class ActionTile : Tile
 	protected Action action;
 	protected Material m;
 	protected int amount = 1;
-	private Action ExitAction(string newFloorType, int newFloor) {
+    // Creates the default sequence for exiting a floor into a new floor
+	protected Action ExitAction(string newFloorType, int newFloor) {
 		return () => { 
 			Player.s.Remove();
 			MainCamera.s.locked = true;
 			MainCamera.s.ExitMotion();
-			GameManager.s.DelayAction(() => {Floor.s.IntroAndCreateFloor(newFloorType, newFloor);}, 0.5f);
+			HelperManager.s.DelayAction(() => {Floor.s.IntroAndCreateFloor(newFloorType, newFloor);}, 0.5f);
 		};
 	}	
 	public void Init(int actionCode) {
@@ -32,7 +33,7 @@ public class ActionTile : Tile
 		} else if (actionCode == GIVETRIALREWARD) {
 			m = UIManager.s.tileTrialMat;
 			action = () => {
-				Tile t = Floor.s.ReplaceTile(GameManager.s.tile_p, Floor.s.width-1, Floor.s.height-2).GetComponent<Tile>();
+				Tile t = Floor.s.ReplaceTile(PrefabManager.s.tilePrefab, Floor.s.width-1, Floor.s.height-2).GetComponent<Tile>();
 				t.PositionUnbuilt();
 				t.Build(2f);
 				if (Floor.s.floorDeathCount > 0) {

@@ -20,8 +20,8 @@ class Bubble : MonoBehaviour {
         tmp.text = text;
         tmp.color = color;
         GetComponent<Outline>().effectColor = color;
-        Vector2 size = UIManager.s.WorldSizeFromRT(transform as RectTransform);
-        Vector2 canvasSize = UIManager.s.WorldSizeFromRT(UIManager.s.canvasRt);
+        Vector2 size = HelperManager.s.WorldSizeFromRT(transform as RectTransform);
+        Vector2 canvasSize = HelperManager.s.WorldSizeFromRT(UIManager.s.canvasRt);
         float targetX = Mathf.Clamp(transform.position.x, MainCamera.s.transform.position.x - canvasSize.x * 0.51f + size.x/2, MainCamera.s.transform.position.x + canvasSize.x*0.51f - size.x/2);
         float targetY = Mathf.Clamp(transform.position.y, MainCamera.s.transform.position.y - canvasSize.y * 0.51f + size.y/2, MainCamera.s.transform.position.y + canvasSize.y*0.51f - size.y/2);
         transform.position = new Vector3(targetX, targetY, 0);

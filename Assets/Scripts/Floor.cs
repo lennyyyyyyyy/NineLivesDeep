@@ -6,10 +6,14 @@ using System.Linq;
 using System.Collections.Generic;
 
 // Floor is reloaded per run, not per application
-public class Floor : MonoBehaviour
-{
+public class Floor : MonoBehaviour {
     public static Floor s;
 	public static readonly Vector2Int INVALID_COORD = new Vector2Int(-100, -100);
+    public static Action onFloorChangeBeforeNewLayout,
+                         onFloorChangeBeforeEntities,
+                         onFloorChangeAfterEntities,
+                         onNewMinefield;
+    public static Action<int, int> onExplosionAtCoord;
 
     // saved data
     public Dictionary<Vector2Int, GameObject> tiles = new Dictionary<Vector2Int, GameObject>();
@@ -26,11 +30,6 @@ public class Floor : MonoBehaviour
 	public Vector3 windDirection;
     [System.NonSerialized]
     public List<GameObject> backgroundTiles = new List<GameObject>();
-    public static Action onFloorChangeBeforeNewLayout,
-                         onFloorChangeBeforeEntities,
-                         onFloorChangeAfterEntities,
-                         onNewMinefield;
-    public static Action<int, int> onExplosionAtCoord;
     // constants
     [System.NonSerialized]
     public float tileExternalPower = 0.50f, tileDampingPower = 0.20f, tileAdjacentDragPower = 20.0f;
@@ -57,17 +56,17 @@ public class Floor : MonoBehaviour
 		
 		float time = 1f;
 
-        GameManager.s.DelayAction(() => {
-            UIManager.s.InstantiateBubble(Vector3.zero, introduction, Color.white, 2f, 2f);
+        HelperManager.s.DelayAction(() => {
+            HelperManager.s.InstantiateBubble(Vector3.zero, introduction, Color.white, 2f, 2f);
         }, time);
 		time += 2.8f;
 
 		if (floorType == "minefield") {
-			GameManager.s.DelayAction(() => {
-				UIManager.s.InstantiateBubble(Vector3.zero, "a mine appears...", new Color(0.5f, 0.5f, 0.5f), 2f, 2f);
+			HelperManager.s.DelayAction(() => {
+				HelperManager.s.InstantiateBubble(Vector3.zero, "a mine appears...", new Color(0.5f, 0.5f, 0.5f), 2f, 2f);
 			}, time);
-			GameManager.s.DelayAction(() => {
-				GameObject mine = Instantiate(GameManager.s.mine_p, Vector3.zero, Quaternion.identity, UIManager.s.GAMEUI.transform);
+			HelperManager.s.DelayAction(() => {
+				GameObject mine = Instantiate(PrefabManager.s.minePrefab, Vector3.zero, Quaternion.identity, UIManager.s.GAMEUI.transform);
                 if (floor == 0) {
                     mine.AddComponent<Mine>();
                 } else {
@@ -78,18 +77,18 @@ public class Floor : MonoBehaviour
 		}
 
 		if (floorType == "minefield" && floor % 3 == 0) {
-			GameManager.s.DelayAction(() => {
-				UIManager.s.InstantiateBubble(Vector3.zero, "CURSED", new Color(0.5f, 0, 0), 2f, 2f);
+			HelperManager.s.DelayAction(() => {
+				HelperManager.s.InstantiateBubble(Vector3.zero, "CURSED", new Color(0.5f, 0, 0), 2f, 2f);
 			}, time);
-			GameManager.s.DelayAction(() => {
-				GameObject curse = Instantiate(GameManager.s.curse_p, Vector3.zero, Quaternion.identity, UIManager.s.GAMEUI.transform);
+			HelperManager.s.DelayAction(() => {
+				GameObject curse = Instantiate(PrefabManager.s.cursePrefab, Vector3.zero, Quaternion.identity, UIManager.s.GAMEUI.transform);
 				curse.AddComponent(PlayerUIItemModule.s.cursesUnseen[Random.Range(0, PlayerUIItemModule.s.cursesUnseen.Count)]);
 			}, time + 1f);
 			time += 2.8f;
 		}
 
 		// FLOOR TRANSITION SECOND STEP - DESTROY THE PREVIOUS FLOOR AND RENEW ARRAYS
-        GameManager.s.DelayAction(() => {
+        HelperManager.s.DelayAction(() => {
 			onFloorChangeBeforeNewLayout?.Invoke();
 			if (floorType == "minefield") {
 				InitMinefield();
@@ -110,7 +109,7 @@ public class Floor : MonoBehaviour
         }, time);
 		time += 3.8f;
 
-		GameManager.s.DelayAction(() => { MainCamera.s.locked = false; }, time);
+		HelperManager.s.DelayAction(() => { MainCamera.s.locked = false; }, time);
 	}	
     public void InitLayout(int newWidth, int newHeight, string newFloorType) {
 		// FLOOR TRANSITION SECOND STEP - DESTROY THE PREVIOUS FLOOR AND RENEW ARRAYS
@@ -131,7 +130,7 @@ public class Floor : MonoBehaviour
         backgroundTiles.Clear();
 
         for (int i=0; i<MaxSize() * MaxSize() * 1.25f; i++) {
-            backgroundTiles.Add(Instantiate(GameManager.s.tile_background_p, transform));
+            backgroundTiles.Add(Instantiate(PrefabManager.s.tileBackgroundPrefab, transform));
         }
 
 		ParticleSystem.ShapeModule sh = ambientDust.shape;
@@ -202,16 +201,16 @@ public class Floor : MonoBehaviour
         List<Vector2Int> potentialExitsList = new List<Vector2Int>(potentialExits);
 
         Vector2Int exitCoord = potentialExitsList[Random.Range(0, potentialExitsList.Count)];
-        ReplaceTile(GameManager.s.tile_exit_p, exitCoord.x, exitCoord.y).GetComponent<ActionTile>().Init(ActionTile.EXITTOSHOP);
-		ReplaceTile(GameManager.s.tile_p, 0, 0);
+        ReplaceTile(PrefabManager.s.tileActionPrefab, exitCoord.x, exitCoord.y).GetComponent<ActionTile>().Init(ActionTile.EXITTOSHOP);
+		ReplaceTile(PrefabManager.s.tilePrefab, 0, 0);
         foreach (Vector2Int v in rainCoords) {
-            ReplaceTile(GameManager.s.tile_puddle_p, v.x, v.y);
+            ReplaceTile(PrefabManager.s.tilePuddlePrefab, v.x, v.y);
         }
 		//random chance for trial entrance
 		if (Random.value < trialChance) {
             Vector2Int trialCoord = potentialTiles[Random.Range(0, potentialTiles.Count)];
 			if (!TileExistsAt(trialCoord.x, trialCoord.y)) {
-				GameObject t = ReplaceTile(GameManager.s.tile_exit_p, trialCoord.x, trialCoord.y);
+				GameObject t = ReplaceTile(PrefabManager.s.tileActionPrefab, trialCoord.x, trialCoord.y);
 				t.GetComponent<ActionTile>().Init(ActionTile.EXITTOTRIAL);
 			}
 		}
@@ -222,20 +221,20 @@ public class Floor : MonoBehaviour
             if (!TileExistsAt(i, j) && Random.value < 1f - Player.s.modifiers.noTileChance) {
                 float tileRand = Random.value;
                 if (tileRand < 0.05f) {
-                    ReplaceTile(GameManager.s.tile_puddle_p, i, j);
+                    ReplaceTile(PrefabManager.s.tilePuddlePrefab, i, j);
                 } else if (tileRand < 0.1f) {
-                    ReplaceTile(GameManager.s.tile_mossy_p, i, j);
+                    ReplaceTile(PrefabManager.s.tileMossyPrefab, i, j);
                 } else {
-                    ReplaceTile(GameManager.s.tile_p, i, j);
+                    ReplaceTile(PrefabManager.s.tilePrefab, i, j);
                 }
 
                 // put misc entities
                 float entityRand = Random.value;
                 if (entityRand < 0.06f) {
-                    GameObject entityChoice = new GameObject[] { GameManager.s.crank_p,
-                                                                 GameManager.s.pillar_p,
-                                                                 GameManager.s.tunnel_p,
-                                                                 GameManager.s.vase_p, }[Random.Range(0, 4)];
+                    GameObject entityChoice = new GameObject[] { PrefabManager.s.crankPrefab,
+                                                                 PrefabManager.s.pillarPrefab,
+                                                                 PrefabManager.s.tunnelPrefab,
+                                                                 PrefabManager.s.vasePrefab, }[Random.Range(0, 4)];
                     GameObject entity = Instantiate(entityChoice);
                     entity.GetComponent<Entity>().Move(i, j);
                 }
@@ -271,7 +270,7 @@ public class Floor : MonoBehaviour
                                  7 + Random.Range(-2, 3),
                                  7 + Random.Range(-2, 3), };
         }
-        GameManager.s.Shuffle(ref prices);
+        HelperManager.s.Shuffle(ref prices);
 
         Vector2Int[] pickupCoords;
         List<Vector2Int> tileCoords = new List<Vector2Int>();
@@ -319,10 +318,10 @@ public class Floor : MonoBehaviour
             exitCoord = new Vector2Int(5, 5);
         }
 
-        ReplaceTile(GameManager.s.tile_exit_p, exitCoord.x, exitCoord.y).GetComponent<ActionTile>().Init(ActionTile.EXITTOMINEFIELD);
+        ReplaceTile(PrefabManager.s.tileActionPrefab, exitCoord.x, exitCoord.y).GetComponent<ActionTile>().Init(ActionTile.EXITTOMINEFIELD);
         foreach (Vector2Int coord in tileCoords) {
             if (!TileExistsAt(coord.x, coord.y)) {
-                ReplaceTile(GameManager.s.tile_p, coord.x, coord.y);
+                ReplaceTile(PrefabManager.s.tilePrefab, coord.x, coord.y);
             }
         }
         for (int i=0; i<4; i++) {
@@ -332,12 +331,12 @@ public class Floor : MonoBehaviour
 	public void InitTrial() {
 		InitLayout(floor + 7 + Player.s.modifiers.floorExpansion, floor + 7 + Player.s.modifiers.floorExpansion, "trial");
 		
-		ReplaceTile(GameManager.s.tile_exit_p, width-2, height-2).GetComponent<ActionTile>().Init(ActionTile.GIVETRIALREWARD);
-		ReplaceTile(GameManager.s.tile_exit_p, width-1, height-1).GetComponent<ActionTile>().Init(ActionTile.EXITTOSHOP);
+		ReplaceTile(PrefabManager.s.tileActionPrefab, width-2, height-2).GetComponent<ActionTile>().Init(ActionTile.GIVETRIALREWARD);
+		ReplaceTile(PrefabManager.s.tileActionPrefab, width-1, height-1).GetComponent<ActionTile>().Init(ActionTile.EXITTOSHOP);
 		for (int i = 0; i < width-1; i++) {
 			for (int j = 0; j < height-1; j++) {
 				if (!TileExistsAt(i, j)) {
-					ReplaceTile(GameManager.s.tile_p, i, j);
+					ReplaceTile(PrefabManager.s.tileActionPrefab, i, j);
 					if (PrelimMineSpawnCheck(i, j) && Random.value < 0.2 * Player.s.modifiers.mineSpawnMult) {
 						PlaceMine(typeof(MineSprite), i, j);
 					}
@@ -417,7 +416,7 @@ public class Floor : MonoBehaviour
 			}
 		}
 		Player.s.destroyPrints();
-		GameManager.s.DelayAction(() => {
+		HelperManager.s.DelayAction(() => {
 			Player.s.updatePrints();
 			Player.s.discoverTiles();
 		}, 0.5f);
@@ -469,14 +468,14 @@ public class Floor : MonoBehaviour
                 } 
             }
         }
-        GameManager.s.Shuffle(ref tileList);
+        HelperManager.s.Shuffle(ref tileList);
         for (int i=0; i<tileList.Count; i++) {
             Tile tile = tileList[i];
-            GameManager.s.DelayAction(() => { tile.Build(buildDuration); }, totalDuration * i / tileList.Count);
+            HelperManager.s.DelayAction(() => { tile.Build(buildDuration); }, totalDuration * i / tileList.Count);
         }
     }
     public GameObject PlaceMine(Type t, int x, int y) {
-        GameObject g = Instantiate(GameManager.s.mineSprite_p);
+        GameObject g = Instantiate(PrefabManager.s.mineSpritePrefab);
         MineSprite m = g.AddComponent(t) as MineSprite;
 		if (m.Move(x, y)) {
 			return g;
@@ -485,7 +484,7 @@ public class Floor : MonoBehaviour
 		return null;
     }
     public void PlacePickupSprite(List<Type> pool, PickupSprite.SpawnType spawnType, int price, Vector2Int spawnCoord) {
-        GameObject g = Instantiate(GameManager.s.flagSprite_p);
+        GameObject g = Instantiate(PrefabManager.s.flagSpritePrefab);
         PickupSprite ps = g.AddComponent(typeof(PickupSprite)) as PickupSprite;
         ps.SetInitialData(pool[Random.Range(0, pool.Count)], price, spawnType, spawnCoord);
         PlayerUIItemModule.s.NoticeFlag(ps.correspondingUIType);
@@ -541,7 +540,7 @@ public class Floor : MonoBehaviour
 		windZone.directionY = windDirection.y * Player.s.modifiers.windStrength * 1.5f;
 	}
     private void STARTToGAME() {
-        GameManager.s.DelayAction(() => {IntroAndCreateFloor("minefield", 0);}, 1f);
+        HelperManager.s.DelayAction(() => {IntroAndCreateFloor("minefield", 0);}, 1f);
     }
     private void OnEnable() {
         GameManager.OnSTARTToGAME += STARTToGAME;

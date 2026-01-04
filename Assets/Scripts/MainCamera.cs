@@ -23,11 +23,11 @@ public class MainCamera : MonoBehaviour
     }
 	public void SetupFloorIntro() {
         UIManager.s.ppv.weight = 0;
-        GameManager.s.DelayActionFrames(() => {
+        HelperManager.s.DelayActionFrames(() => {
             transform.position = Vector3.zero;
             Camera.main.orthographicSize = 300f;
         }, 3);
-        GameManager.s.DelayActionFrames(() => { UIManager.s.ppv.weight = 1; }, 6);
+        HelperManager.s.DelayActionFrames(() => { UIManager.s.ppv.weight = 1; }, 6);
 	}	
     void Awake() {
         s = this;

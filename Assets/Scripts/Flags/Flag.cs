@@ -60,7 +60,7 @@ public class Flag : UIItem {
 		}
 	}
     public virtual void UpdateCount(int newCount) {
-        UIManager.s.InstantiateBubble(gameObject, (newCount - count >= 0 ? "+" : "-") + Mathf.Abs(newCount - count).ToString(), Color.white);
+        HelperManager.s.InstantiateBubble(gameObject, (newCount - count >= 0 ? "+" : "-") + Mathf.Abs(newCount - count).ToString(), Color.white);
         count = newCount;
         tmpro.text = count.ToString();
     }

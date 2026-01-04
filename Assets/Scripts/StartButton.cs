@@ -25,11 +25,11 @@ class StartButton : MonoBehaviour
     }
     void Update() {
         if (hovered && !pressed) {
-            UIManager.s.floatingHover(transform, 1.1f, hoverOffset, Vector3.zero);
+            HelperManager.s.FloatingHover(transform, 1.1f, hoverOffset, Vector3.zero);
         } else if (pressed) {
-            UIManager.s.floatingHover(transform, 0.8f, hoverOffset, Vector3.zero);
+            HelperManager.s.FloatingHover(transform, 0.8f, hoverOffset, Vector3.zero);
         } else {
-            UIManager.s.floatingHover(transform, 1f, hoverOffset, Vector3.zero, 0, 0);
+            HelperManager.s.FloatingHover(transform, 1f, hoverOffset, Vector3.zero, 0, 0);
         }
     }
 }

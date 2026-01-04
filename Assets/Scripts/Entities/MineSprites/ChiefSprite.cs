@@ -16,7 +16,7 @@ class ChiefSprite : MineSprite {
 				}
 			}
 		}
-		GameManager.s.Shuffle(ref signaledMines);
+		HelperManager.s.Shuffle(ref signaledMines);
 		//call them towards the player
 		foreach (GameObject mine in signaledMines) {
 			Vector2 normalizedMoveDir = ((Vector2)(GetCoord() - mine.GetComponent<MineSprite>().GetCoord())).normalized;

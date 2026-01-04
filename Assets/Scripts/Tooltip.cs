@@ -64,8 +64,8 @@ public class Tooltip : MonoBehaviour {
     }
     public void Position(float x, float y, float width) {
         transform.position = lastTooltipPos;
-        Vector2 size = UIManager.s.WorldSizeFromRT(transform as RectTransform);
-        Vector2 canvasSize = UIManager.s.WorldSizeFromRT(UIManager.s.canvasRt);
+        Vector2 size = HelperManager.s.WorldSizeFromRT(transform as RectTransform);
+        Vector2 canvasSize = HelperManager.s.WorldSizeFromRT(UIManager.s.canvasRt);
         float targetY = Mathf.Clamp(y, MainCamera.s.transform.position.y - canvasSize.y/2 + size.y/2, MainCamera.s.transform.position.y + canvasSize.y/2 - size.y/2);
         
         if (x - width/2 - size.x - 2 * padding * canvasSize.x > MainCamera.s.transform.position.x-canvasSize.x/2 && 

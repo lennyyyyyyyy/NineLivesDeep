@@ -7,9 +7,9 @@ public class MossyTile : Tile
     public GameObject dust;
     protected override void Start() {
         base.Start();
-        InstantiateRows(GameManager.s.moss_p, mossRowCount, 0.9f * mossHeightInRows / mossRowCount);
-        InstantiateRows(GameManager.s.grass1_p, grass1RowCount, grassHeight1);
-        InstantiateRows(GameManager.s.grass2_p, grass2RowCount, grassHeight2);
+        InstantiateRows(PrefabManager.s.mossPrefab, mossRowCount, 0.9f * mossHeightInRows / mossRowCount);
+        InstantiateRows(PrefabManager.s.grass1Prefab, grass1RowCount, grassHeight1);
+        InstantiateRows(PrefabManager.s.grass2Prefab, grass2RowCount, grassHeight2);
         dust.transform.eulerAngles = new Vector3(Random.Range(lightXStart, lightXEnd), 0, Random.Range(-lightZRange, lightZRange));
         mineMult = 2;
      }

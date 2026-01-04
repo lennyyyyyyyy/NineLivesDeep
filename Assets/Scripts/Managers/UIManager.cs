@@ -31,21 +31,20 @@ public class UIManager : MonoBehaviour
     private void Awake() {
         s = this;
 
-        alphaEdgeBlueMat = LoadResourceSafe<Material>("Materials/AlphaEdgeBlue");
-		tileNormalMat = LoadResourceSafe<Material>("Materials/TileNormal");
-		tileExitMat = LoadResourceSafe<Material>("Materials/TileExit");
-		tileTrialMat = LoadResourceSafe<Material>("Materials/TileTrial");
-		tilePuddleMat = LoadResourceSafe<Material>("Materials/TilePuddle");
-		tileMossyMat = LoadResourceSafe<Material>("Materials/TileMossy");
-		mineDebugSprite = LoadResourceSafe<Sprite>("Textures/mine_debug");
-        ppvp = LoadResourceSafe<VolumeProfile>("PPVoluemeProfile");
+        alphaEdgeBlueMat = HelperManager.s.LoadResourceSafe<Material>("Materials/AlphaEdgeBlue");
+		tileNormalMat = HelperManager.s.LoadResourceSafe<Material>("Materials/TileNormal");
+		tileExitMat = HelperManager.s.LoadResourceSafe<Material>("Materials/TileExit");
+		tileTrialMat = HelperManager.s.LoadResourceSafe<Material>("Materials/TileTrial");
+		tilePuddleMat = HelperManager.s.LoadResourceSafe<Material>("Materials/TilePuddle");
+		tileMossyMat = HelperManager.s.LoadResourceSafe<Material>("Materials/TileMossy");
+		mineDebugSprite = HelperManager.s.LoadResourceSafe<Sprite>("Textures/mine_debug");
+        ppvp = HelperManager.s.LoadResourceSafe<VolumeProfile>("PPVolumeProfile");
     }
     private void Start() {
         lastMousePos = UnityEngine.InputSystem.Mouse.current.position.ReadValue();
         canvasRt = canvas.transform as RectTransform;
     }
     private void Update() {
-
         mouseTimer += Time.deltaTime;
         if (mouseTimer > 0.05f) {
             mouseVelocity = (Camera.main.ScreenToWorldPoint(UnityEngine.InputSystem.Mouse.current.position.ReadValue()) - lastMousePos) / mouseTimer;
@@ -53,21 +52,9 @@ public class UIManager : MonoBehaviour
             mouseTimer = 0;
         }
     }
-    public void updateAlpha(SpriteRenderer sr, float a) {
-        sr.color = new Color(sr.color.r, sr.color.g, sr.color.b, a);
-    }
-    public void updateColor(SpriteRenderer sr, Color c) {
-        sr.color = c;
-    }
-    public void updateAnchoredPosition(RectTransform rt, Vector3 v) {
-        rt.anchoredPosition = new Vector2(v.x, v.y);
-    }
-    public void updateSizeDelta(RectTransform rt, Vector3 v) {
-        rt.sizeDelta = new Vector2(v.x, v.y);
-    }
     private void MatchPawsToFlags() {
         while (paws.Count < PlayerUIItemModule.s.flags.Count) {
-            GameObject g = Instantiate(GameManager.s.paw_p, pawGroup.transform);
+            GameObject g = Instantiate(PrefabManager.s.pawPrefab, pawGroup.transform);
             paws.Add(g);
             (g.transform as RectTransform).anchoredPosition = new Vector2(150, 0);
         }
@@ -75,7 +62,7 @@ public class UIManager : MonoBehaviour
             GameObject p = paws[paws.Count - 1];
             paws.RemoveAt(paws.Count - 1);
             RectTransform prt = p.transform as RectTransform;
-            LeanTween.value(p, (Vector3 v) => updateAnchoredPosition(prt, v), prt.anchoredPosition, new Vector2(-60, prt.anchoredPosition.y), 0.5f)
+            LeanTween.value(p, (Vector3 v) => HelperManager.s.UpdateAnchoredPosition(prt, v), prt.anchoredPosition, new Vector2(-60, prt.anchoredPosition.y), 0.5f)
                 .setEase(LeanTweenType.easeInOutCubic)
                 .setOnComplete(() => {
                 Destroy(p);
@@ -102,16 +89,23 @@ public class UIManager : MonoBehaviour
             }
 
             if (flag.usable && !(Vector2.Distance(flag.rt.anchoredPosition, new Vector2(-60, destinationY)) < 0.1f && Vector2.Distance(prt.anchoredPosition, new Vector2(0, destinationY)) < 0.1f)) {
-                LeanTween.value(f, (Vector3 v) => updateAnchoredPosition(flag.rt, v), flag.rt.anchoredPosition, new Vector2(-60, destinationY), 0.5f).setEase(LeanTweenType.easeInOutCubic);
-                LeanTween.value(p, (Vector3 v) => updateAnchoredPosition(prt, v), prt.anchoredPosition, new Vector2(-60, destinationY), 0.5f).setEase(LeanTweenType.easeInOutCubic).setOnComplete(()=>{
-                    LeanTween.value(p, (Vector3 v) => updateAnchoredPosition(prt, v), prt.anchoredPosition, new Vector2(0, destinationY), 0.5f).setEase(LeanTweenType.easeInOutCubic);
+                LeanTween.value(f, (Vector3 v) => HelperManager.s.UpdateAnchoredPosition(flag.rt, v), 
+                    flag.rt.anchoredPosition, new Vector2(-60, destinationY), 0.5f).setEase(LeanTweenType.easeInOutCubic);
+                LeanTween.value(p, (Vector3 v) => HelperManager.s.UpdateAnchoredPosition(prt, v),
+                    prt.anchoredPosition, new Vector2(-60, destinationY), 0.5f).setEase(LeanTweenType.easeInOutCubic).setOnComplete(()=>{
+                    LeanTween.value(p, (Vector3 v) => HelperManager.s.UpdateAnchoredPosition(prt, v), 
+                        prt.anchoredPosition, new Vector2(0, destinationY), 0.5f).setEase(LeanTweenType.easeInOutCubic);
                 });
             } else if (!flag.usable && !(Vector2.Distance(flag.rt.anchoredPosition, new Vector2(-30, destinationY)) < 0.1f && Vector2.Distance(prt.anchoredPosition, new Vector2(-30, destinationY)) < 0.1f)) {
-                LeanTween.value(f, (Vector3 v) => updateAnchoredPosition(flag.rt, v), flag.rt.anchoredPosition, new Vector2(-60, destinationY), 0.5f).setEase(LeanTweenType.easeInOutCubic).setOnComplete(()=>{
-                    LeanTween.value(f, (Vector3 v) => updateAnchoredPosition(flag.rt, v), flag.rt.anchoredPosition, new Vector2(-30, destinationY), 0.5f).setEase(LeanTweenType.easeInOutCubic);
+                LeanTween.value(f, (Vector3 v) => HelperManager.s.UpdateAnchoredPosition(flag.rt, v),
+                    flag.rt.anchoredPosition, new Vector2(-60, destinationY), 0.5f).setEase(LeanTweenType.easeInOutCubic).setOnComplete(()=>{
+                    LeanTween.value(f, (Vector3 v) => HelperManager.s.UpdateAnchoredPosition(flag.rt, v),
+                        flag.rt.anchoredPosition, new Vector2(-30, destinationY), 0.5f).setEase(LeanTweenType.easeInOutCubic);
                 });
-                LeanTween.value(p, (Vector3 v) => updateAnchoredPosition(prt, v), prt.anchoredPosition, new Vector2(-60, destinationY), 0.5f).setEase(LeanTweenType.easeInOutCubic).setOnComplete(()=>{
-                    LeanTween.value(p, (Vector3 v) => updateAnchoredPosition(prt, v), prt.anchoredPosition, new Vector2(-30, destinationY), 0.5f).setEase(LeanTweenType.easeInOutCubic);
+                LeanTween.value(p, (Vector3 v) => HelperManager.s.UpdateAnchoredPosition(prt, v),
+                    prt.anchoredPosition, new Vector2(-60, destinationY), 0.5f).setEase(LeanTweenType.easeInOutCubic).setOnComplete(()=>{
+                    LeanTween.value(p, (Vector3 v) => HelperManager.s.UpdateAnchoredPosition(prt, v),
+                        prt.anchoredPosition, new Vector2(-30, destinationY), 0.5f).setEase(LeanTweenType.easeInOutCubic);
                 });
             }
         }
@@ -155,51 +149,11 @@ public class UIManager : MonoBehaviour
                 destinationY = -60 - i * 100;
             }
             if (!(Vector2.Distance(item.rt.anchoredPosition, new Vector2(60, destinationY)) < 0.1f)) {
-                LeanTween.value(g, (Vector3 v) => updateAnchoredPosition(item.rt, v), item.rt.anchoredPosition, new Vector2(60, destinationY), 0.5f).setEase(LeanTweenType.easeInOutCubic);
+                LeanTween.value(g, (Vector3 v) => HelperManager.s.UpdateAnchoredPosition(item.rt, v),
+                    item.rt.anchoredPosition, new Vector2(60, destinationY), 0.5f).setEase(LeanTweenType.easeInOutCubic);
             } 
 		}
 		Player.s.RecalculateModifiers();
-	}
-    public void InstantiateBubble(Vector3 pos, string t, Color c, float time = 1f, float scale = 1f) {
-        GameObject b = Instantiate(GameManager.s.bubble_p, pos, Quaternion.identity, UIManager.s.bubbleGroup.transform);
-        b.GetComponent<Bubble>().Init(c, t, time, scale);
-    }
-    public void InstantiateBubble(GameObject g, string t, Color c, float radius = 0.5f, float time = 1f, float scale = 1f) {
-        InstantiateBubble(g.transform.position + new Vector3(UnityEngine.Random.Range(-radius, radius), UnityEngine.Random.Range(-radius, radius), 0), t, c, time);
-    }
-    public Vector2 WorldSizeFromRT(RectTransform rt) {
-        Vector3[] corners = new Vector3[4];
-        rt.GetWorldCorners(corners);
-        return new Vector2(corners[2].x - corners[0].x, corners[1].y - corners[0].y);
-    }
-    public void floatingHover(Transform t, float hoveredScale, float offset, Vector3 defaultRotation, float stretch=0.1f, float angle=10f, float period=0.65f, float power=0.65f) {
-        Vector3 newScale = Vector3.one;
-
-        newScale[0] = Mathf.Lerp(t.localScale[0], hoveredScale * Mathf.Pow(1+stretch, Mathf.Sin((period*Time.time)*(2*Mathf.PI))), 1 - Mathf.Pow(1 - power, Time.deltaTime / .15f));
-        newScale[1] = Mathf.Lerp(t.localScale[1], Mathf.Pow(hoveredScale, 2) / newScale[0], 1 - Mathf.Pow(1 - power, Time.deltaTime / .15f));
-
-        t.localScale = newScale;
-        t.localEulerAngles = new Vector3(t.localEulerAngles.x, 
-                                                t.localEulerAngles.y, 
-                                                Mathf.LerpAngle(t.localEulerAngles.z, defaultRotation.z + angle * Mathf.Sin((period*Time.time + offset)*(2*Mathf.PI)), 1 - Mathf.Pow(1 - power, Time.deltaTime / .15f)));
-    }
-	public T LoadResourceSafe<T>(string path) where T : UnityEngine.Object {
-		T resource = Resources.Load<T>(path);
-		if (typeof(T) == typeof(Texture2D)) {
-			return resource ?? Resources.Load<T>("Textures/nulltex");
-		}
-		return resource;
-	}
-	public void SetupUIEventTriggers(GameObject g, EventTriggerType[] eventIDs, Action<PointerEventData>[] actions) { 
-		EventTrigger trigger;
-		EventTrigger.Entry entry;
-		trigger = g.GetComponent<EventTrigger>() == null ? g.AddComponent<EventTrigger>() : g.GetComponent<EventTrigger>();
-		for (int i = 0; i < eventIDs.Length; i++) {
-			entry = new EventTrigger.Entry{eventID = eventIDs[i]};
-			int iCopy = i; //capture variable for closure
-			entry.callback.AddListener((data) => { actions[iCopy]((PointerEventData)data); });
-			trigger.triggers.Add(entry);
-		}
 	}
     public void STARTToGAME() {
         OrganizeFlags();

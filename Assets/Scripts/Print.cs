@@ -38,7 +38,7 @@ public class Print : MonoBehaviour
     }
     void Update() {
         if (hovered) {
-            UIManager.s.floatingHover(transform, 1f, hoverOffset, defaultRotation, 0.1f, 10f, hoverPeriod);
+            HelperManager.s.FloatingHover(transform, 1f, hoverOffset, defaultRotation, 0.1f, 10f, hoverPeriod);
         } 
     }
 }

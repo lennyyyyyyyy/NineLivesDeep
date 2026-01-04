@@ -103,8 +103,8 @@ public class Tile : Parallax
 		}
     }
     public virtual void PutUnder() {
-        GameManager.s.SetGameLayerRecursive(gameObject, LayerMask.NameToLayer("Under"));
-        GameManager.s.PerformActionRecursive(gameObject, (GameObject g) => {
+        HelperManager.s.SetGameLayerRecursive(gameObject, LayerMask.NameToLayer("Under"));
+        HelperManager.s.PerformActionRecursive(gameObject, (GameObject g) => {
             SpriteRenderer sr = g.GetComponent<SpriteRenderer>();
             if (sr != null) {
                 if (sr.sortingLayerName == "Player") {
@@ -124,8 +124,8 @@ public class Tile : Parallax
         });
     }
     public virtual void PutOverEnd() {
-        GameManager.s.SetGameLayerRecursive(gameObject, LayerMask.NameToLayer("Default"));
-        GameManager.s.PerformActionRecursive(gameObject, (GameObject g) => {
+        HelperManager.s.SetGameLayerRecursive(gameObject, LayerMask.NameToLayer("Default"));
+        HelperManager.s.PerformActionRecursive(gameObject, (GameObject g) => {
             SpriteRenderer sr = g.GetComponent<SpriteRenderer>();
             if (sr != null) {
                 if (sr.sortingLayerName == "UnderPlayer") {

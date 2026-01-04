@@ -30,7 +30,7 @@ public class AddTooltip : MonoBehaviour {
 		}
 
 		if (tooltip == null) {
-			tooltip = Instantiate(GameManager.s.tooltip_p, UIManager.s.tooltipGroup.transform);
+			tooltip = Instantiate(PrefabManager.s.tooltipPrefab, UIManager.s.tooltipGroup.transform);
 		}
 		tooltip.GetComponent<Tooltip>().SetData(tooltipData);
 		tooltip.active = false;

@@ -17,9 +17,9 @@ public class UIItem : MonoBehaviour {
 		rt = (transform as RectTransform);
 		addTooltip = (GetComponent<AddTooltipUI>() == null ? gameObject.AddComponent(typeof(AddTooltipUI)) as AddTooltipUI : GetComponent<AddTooltipUI>());
 
-		UIManager.s.SetupUIEventTriggers(gameObject,
-									     new EventTriggerType[] {EventTriggerType.PointerEnter, EventTriggerType.PointerExit},
-										 new Action<PointerEventData>[] {OnPointerEnter, OnPointerExit});
+		HelperManager.s.SetupUIEventTriggers(gameObject,
+                                             new EventTriggerType[] {EventTriggerType.PointerEnter, EventTriggerType.PointerExit},
+                                             new Action<PointerEventData>[] {OnPointerEnter, OnPointerExit});
 
 		if (setInitialData) {
 			ApplyInitialData();

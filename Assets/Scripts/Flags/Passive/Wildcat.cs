@@ -14,7 +14,7 @@ class Wildcat : Passive {
             
         } else {
             count = newCount;
-            UIManager.s.InstantiateBubble(gameObject, newCount.ToString() + " left...", Color.white);
+            HelperManager.s.InstantiateBubble(gameObject, newCount.ToString() + " left...", Color.white);
         }
         tmpro.text = count.ToString();
     }

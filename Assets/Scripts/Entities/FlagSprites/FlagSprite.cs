@@ -39,7 +39,7 @@ public class FlagSprite : CorrespondingSprite {
     protected override void Update() {
         base.Update();
         if (state == "held") {
-            UIManager.s.floatingHover(transform, 0.8f, 0, transform.localEulerAngles, 0.05f, heldOffset, heldPeriod, heldPower);
+            HelperManager.s.FloatingHover(transform, 0.8f, 0, transform.localEulerAngles, 0.05f, heldOffset, heldPeriod, heldPower);
 
             float idleAngle = 5f * Mathf.Sin((heldPeriod*Time.time + heldOffset)*(2*Mathf.PI));
             Vector3 swingDirection =   1f * new Vector3(-transform.up.x * transform.up.y, 1 - Mathf.Pow(transform.up.y, 2), 0) // gravity pulling center of mass

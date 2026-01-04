@@ -8,15 +8,15 @@ public class AddTooltipUI : AddTooltip {
     protected override void Start() {
         image = GetComponent<RawImage>();
 
-		UIManager.s.SetupUIEventTriggers(gameObject,
-									     new EventTriggerType[] {EventTriggerType.PointerEnter, EventTriggerType.PointerExit},
-										 new Action<PointerEventData>[] {OnPointerEnter, OnPointerExit});
+		HelperManager.s.SetupUIEventTriggers(gameObject,
+                                             new EventTriggerType[] {EventTriggerType.PointerEnter, EventTriggerType.PointerExit},
+                                             new Action<PointerEventData>[] {OnPointerEnter, OnPointerExit});
 
 		base.Start();
     }
     protected override void Update() {
         if (tooltip != null && tooltip.active) {
-            tooltip.GetComponent<Tooltip>().Position(transform.position.x, transform.position.y, UIManager.s.WorldSizeFromRT((transform as RectTransform)).x);
+            tooltip.GetComponent<Tooltip>().Position(transform.position.x, transform.position.y, HelperManager.s.WorldSizeFromRT((transform as RectTransform)).x);
         }
     }
 	protected override void SaveMaterial() {

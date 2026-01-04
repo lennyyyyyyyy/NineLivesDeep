@@ -12,35 +12,35 @@ public class Map : Flag {
     protected override void Start() {
         base.Start();
 
-		UIManager.s.SetupUIEventTriggers(gameObject,
-									     new EventTriggerType[] {EventTriggerType.PointerClick},
-										 new Action<PointerEventData>[] {OnPointerClick});
+		HelperManager.s.SetupUIEventTriggers(gameObject,
+                                             new EventTriggerType[] {EventTriggerType.PointerClick},
+                                             new Action<PointerEventData>[] {OnPointerClick});
     }
     protected override void OnPointerEnter(PointerEventData data) {
 		base.OnPointerEnter(data);
         if (active) {
-            LeanTween.value(gameObject, (Vector3 v) => UIManager.s.updateSizeDelta(rt, v), rt.sizeDelta, new Vector2(110, 110), 0.1f).setEase(LeanTweenType.easeInOutCubic);
+            LeanTween.value(gameObject, (Vector3 v) => HelperManager.s.UpdateSizeDelta(rt, v), rt.sizeDelta, new Vector2(110, 110), 0.1f).setEase(LeanTweenType.easeInOutCubic);
         } else {
-            LeanTween.value(gameObject, (Vector3 v) => UIManager.s.updateSizeDelta(rt, v), rt.sizeDelta, new Vector2(100, 100), 0.1f).setEase(LeanTweenType.easeInOutCubic);
+            LeanTween.value(gameObject, (Vector3 v) => HelperManager.s.UpdateSizeDelta(rt, v), rt.sizeDelta, new Vector2(100, 100), 0.1f).setEase(LeanTweenType.easeInOutCubic);
         }
     } 
     protected override void OnPointerExit(PointerEventData data) {
 		base.OnPointerExit(data);
         if (active) {
-            LeanTween.value(gameObject, (Vector3 v) => UIManager.s.updateSizeDelta(rt, v), rt.sizeDelta, new Vector2(100, 100), 0.1f).setEase(LeanTweenType.easeInOutCubic);
+            LeanTween.value(gameObject, (Vector3 v) => HelperManager.s.UpdateSizeDelta(rt, v), rt.sizeDelta, new Vector2(100, 100), 0.1f).setEase(LeanTweenType.easeInOutCubic);
         } else {
-            LeanTween.value(gameObject, (Vector3 v) => UIManager.s.updateSizeDelta(rt, v), rt.sizeDelta, new Vector2(80, 80), 0.1f).setEase(LeanTweenType.easeInOutCubic);
+            LeanTween.value(gameObject, (Vector3 v) => HelperManager.s.UpdateSizeDelta(rt, v), rt.sizeDelta, new Vector2(80, 80), 0.1f).setEase(LeanTweenType.easeInOutCubic);
         }
     }
     protected virtual void Activate() {
-        LeanTween.value(gameObject, (Vector3 v) => UIManager.s.updateSizeDelta(rt, v), rt.sizeDelta, new Vector2(100, 100), 0.1f).setEase(LeanTweenType.easeInOutCubic);
+        LeanTween.value(gameObject, (Vector3 v) => HelperManager.s.UpdateSizeDelta(rt, v), rt.sizeDelta, new Vector2(100, 100), 0.1f).setEase(LeanTweenType.easeInOutCubic);
         active = true;
         foreach (GameObject number in numbers.Values) {
 			number.GetComponent<Number>().Enter();
         }
     }
     protected virtual void Deactivate() {
-        LeanTween.value(gameObject, (Vector3 v) => UIManager.s.updateSizeDelta(rt, v), rt.sizeDelta, new Vector2(80, 80), 0.1f).setEase(LeanTweenType.easeInOutCubic);
+        LeanTween.value(gameObject, (Vector3 v) => HelperManager.s.UpdateSizeDelta(rt, v), rt.sizeDelta, new Vector2(80, 80), 0.1f).setEase(LeanTweenType.easeInOutCubic);
         active = false;
         foreach (GameObject number in numbers.Values) {
 			number.GetComponent<Number>().Exit();
@@ -75,7 +75,7 @@ public class Map : Flag {
 		if (NumberExistsAt(x, y)) {
 			numbers[new Vector2Int(x, y)].GetComponent<Number>().SetNum(num);
 		} else {
-			GameObject n = numbers[new Vector2Int(x, y)] = Instantiate(GameManager.s.number_p, Floor.s.transform);
+			GameObject n = numbers[new Vector2Int(x, y)] = Instantiate(PrefabManager.s.numberPrefab, Floor.s.transform);
 			n.transform.position = Floor.s.CoordToIdealPos(x, y); 
 			n.transform.localScale = Vector3.one;
 			n.GetComponent<Number>().Init(this, new Vector2Int(x, y));

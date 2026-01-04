@@ -7,7 +7,7 @@ public class PsychicSprite : FlagSprite
 
     protected virtual void Start(){
         base.Start();
-        eye = Instantiate(GameManager.s.psychicEye_p, transform).GetComponent<PsychicEye>();
+        eye = Instantiate(PrefabManager.s.psychicEyePrefab, transform).GetComponent<PsychicEye>();
         sr.sprite = Resources.Load<Sprite>("Textures/flag_psychic_sprite");
     }
     protected virtual void Update() {

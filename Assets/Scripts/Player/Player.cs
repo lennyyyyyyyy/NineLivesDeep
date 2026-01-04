@@ -121,7 +121,7 @@ public class Player : Entity {
         playerBits = new GameObject[texWidth, texHeight];
         for (int i=0; i<texWidth; i++) {
             for (int j=0; j<texHeight; j++) {
-                playerBits[i, j] = Instantiate(GameManager.s.playerBit_p);
+                playerBits[i, j] = Instantiate(PrefabManager.s.playerBitPrefab);
                 playerBits[i, j].GetComponent<PlayerBit>().Init(i, j);
             }
         }
@@ -152,7 +152,7 @@ public class Player : Entity {
     }
     public void Revive() {
         OnRevive?.Invoke();
-        GameManager.s.DelayAction(() => {
+        HelperManager.s.DelayAction(() => {
             sr.enabled = true; 
             alive = true;
             OnAliveChange?.Invoke();
@@ -185,7 +185,7 @@ public class Player : Entity {
         }
     }
     public void UpdateMoney(float newCount) {
-        UIManager.s.InstantiateBubble(MineUIItem.s.gameObject, (newCount - money >= 0 ? "+" : "-") + (Mathf.Round(Mathf.Abs(newCount - money)*100f)/100f).ToString(), Color.white);
+        HelperManager.s.InstantiateBubble(MineUIItem.s.gameObject, (newCount - money >= 0 ? "+" : "-") + (Mathf.Round(Mathf.Abs(newCount - money)*100f)/100f).ToString(), Color.white);
         money = newCount;
         
         MineUIItem.s.count.text = money.ToString();
@@ -243,7 +243,7 @@ public class Player : Entity {
         filteredPrintLocs = new List<Vector2Int>(new HashSet<Vector2Int>(filteredPrintLocs));
 
         foreach (Vector2Int v in filteredPrintLocs) {
-            GameObject p = Instantiate(GameManager.s.print_p);
+            GameObject p = Instantiate(PrefabManager.s.printPrefab);
             p.GetComponent<Print>().init(v.x, v.y);
             prints.Add(p);
         }

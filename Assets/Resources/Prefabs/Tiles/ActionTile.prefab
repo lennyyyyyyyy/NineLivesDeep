@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6338453205203800448}
   - component: {fileID: 6463852580483308708}
   m_Layer: 0
-  m_Name: ExitTile
+  m_Name: ActionTile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

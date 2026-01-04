@@ -28,7 +28,7 @@ public class PickupSprite : CorrespondingSprite {
     protected override void Update() {
         base.Update();
         if (hovered) {
-            UIManager.s.floatingHover(transform, hoveredScale, hoveredOffset, Vector3.zero);
+            HelperManager.s.FloatingHover(transform, hoveredScale, hoveredOffset, Vector3.zero);
         }
     }
 	public virtual void SetInitialData(Type correspondingUIType, int? price = null, SpawnType? spawnType = null, Vector2Int? spawnCoord = null) {
@@ -90,7 +90,7 @@ public class PickupSprite : CorrespondingSprite {
 	}
 	public override void Interact() {
 		Player.s.UpdateMoney(Player.s.money - price);
-		GameObject g = Instantiate(GameManager.s.flag_p, transform.position, Quaternion.identity, UIManager.s.flagGroup.transform);
+		GameObject g = Instantiate(PrefabManager.s.flagPrefab, transform.position, Quaternion.identity, UIManager.s.flagGroup.transform);
 		Flag f = g.AddComponent(correspondingUIType) as Flag;
 		// it this has a count then give the item the same count
 		if (tmpro.enabled) {

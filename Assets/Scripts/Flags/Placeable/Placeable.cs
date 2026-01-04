@@ -8,13 +8,13 @@ public class Placeable : Flag {
     protected override void Start() {
         base.Start();
 
-		UIManager.s.SetupUIEventTriggers(gameObject,
-									     new EventTriggerType[] {EventTriggerType.PointerDown},
-										 new Action<PointerEventData>[] {OnPointerDown});
+		HelperManager.s.SetupUIEventTriggers(gameObject,
+                                             new EventTriggerType[] {EventTriggerType.PointerDown},
+                                             new Action<PointerEventData>[] {OnPointerDown});
     }
     protected virtual void OnPointerDown(PointerEventData data) {
         if (usable) {
-            sprite = Instantiate(GameManager.s.flagSprite_p, Camera.main.ScreenToWorldPoint(Input.mousePosition), Quaternion.identity);
+            sprite = Instantiate(PrefabManager.s.flagSpritePrefab, Camera.main.ScreenToWorldPoint(Input.mousePosition), Quaternion.identity);
             FlagSprite flagSprite = sprite.AddComponent(placeableSpriteType) as FlagSprite;
 			FlagData flagData = CatalogManager.s.typeToData[GetType()] as FlagData;
 			flagSprite.SetInitialData(this); 

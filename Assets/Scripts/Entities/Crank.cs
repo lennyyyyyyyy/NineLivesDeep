@@ -18,7 +18,7 @@ public class Crank : Entity {
 	} 
 	public override void Interact() {
 		isRotating = true;
-		GameManager.s.DelayAction(() => { isRotating = false; }, 0.5f);
+		HelperManager.s.DelayAction(() => { isRotating = false; }, 0.5f);
 		List<Vector2Int> endCoords = new List<Vector2Int>(),
 						 ringCoords = new List<Vector2Int>() {
 							 									GetCoord() + new Vector2Int(0, 1),
