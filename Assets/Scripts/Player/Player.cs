@@ -70,8 +70,6 @@ public class Modifiers {
 // Player is reloaded per run, not per application
 public class Player : Entity {
     public static Player s;
-    public static Action OnDie, OnRevive, OnAliveChange, OnUpdateSecondaryMapActive;
-	public static Action<int, int> OnMove;
 
     // saved data
     [System.NonSerialized]
@@ -144,18 +142,18 @@ public class Player : Entity {
     public void Die() {
 		Floor.s.floorDeathCount++;
         alive = false;
-        OnAliveChange?.Invoke();
+        sr.enabled = false;
+        EventManager.s.OnPlayerAliveChange?.Invoke();
+        EventManager.s.OnPlayerDie?.Invoke();
         UpdateSecondaryMapActive();
         UpdateActivePrints();
-        OnDie?.Invoke();
-        sr.enabled = false;
     }
     public void Revive() {
-        OnRevive?.Invoke();
+        EventManager.s.OnPlayerRevive?.Invoke();
         HelperManager.s.DelayAction(() => {
             sr.enabled = true; 
             alive = true;
-            OnAliveChange?.Invoke();
+            EventManager.s.OnPlayerAliveChange?.Invoke();
             UpdateSecondaryMapActive();
             UpdateActivePrints();
 			tempChanges = 0;
@@ -170,7 +168,7 @@ public class Player : Entity {
                 secondaryMapActive &= (flag as Placeable).sprite == null || (flag as Placeable).sprite.GetComponent<FlagSprite>().state == "dropped";
             }
         }
-		OnUpdateSecondaryMapActive?.Invoke();
+		EventManager.s.OnUpdateSecondaryMapActive?.Invoke();
     }
     public void UpdateActivePrints() {
         bool active = alive;
@@ -275,7 +273,7 @@ public class Player : Entity {
             }
         }
     } 
-    private void onFloorChange() {
+    private void OnFloorChange() {
         tilesVisited.Clear();
 		tilesUnvisited.Clear();
 		foreach (GameObject tile in Floor.s.tiles.Values) {
@@ -316,7 +314,7 @@ public class Player : Entity {
 						Floor.s.GetTile(x, y).GetComponent<ActionTile>().PerformAction();
 					} 
 					Floor.s.GetTile(x, y).GetComponent<Tile>().externalDepthImpulse += stepImpulse;
-                    OnMove?.Invoke(x, y);
+                    EventManager.s.OnPlayerMoveToCoord?.Invoke(x, y);
 				}).setOnUpdate((float f) => {
 					ShaderManager.s.DisturbShaders(feet.transform.position.x, feet.transform.position.y);
 				});
@@ -324,7 +322,7 @@ public class Player : Entity {
 				base.Move(x, y, reposition);
 				triggerMines();
 				discoverTiles();
-                OnMove?.Invoke(x, y);
+                EventManager.s.OnPlayerMoveToCoord?.Invoke(x, y);
 			}
 			//fragile curse passive
 			if (Floor.s.GetTile(x, y).GetComponent<MossyTile>() != null || Floor.s.GetTile(x, y).GetComponent<Puddle>() != null) {
@@ -355,9 +353,9 @@ public class Player : Entity {
 		return true;
 	}
     void OnEnable() {
-        Floor.onFloorChangeAfterEntities += onFloorChange;
+        EventManager.s.OnFloorChangeAfterEntities += OnFloorChange;
     }
     void OnDisable() {
-        Floor.onFloorChangeAfterEntities -= onFloorChange;
+        EventManager.s.OnFloorChangeAfterEntities -= OnFloorChange;
     }
 }

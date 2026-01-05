@@ -92,18 +92,18 @@ public class Map : Flag {
 			numbers.Remove(new Vector2Int(x, y));
 		}
 	}
-    public virtual void reset() {
+    public virtual void Reset() {
 		foreach (GameObject n in numbers.Values) {
 			Destroy(n);
 		}
     }
     protected virtual void OnEnable() {
-        Floor.onFloorChangeAfterEntities += reset;
-		Player.OnUpdateSecondaryMapActive += UpdateSecondaryActive;
+        EventManager.s.OnFloorChangeAfterEntities += Reset;
+		EventManager.s.OnUpdateSecondaryMapActive += UpdateSecondaryActive;
     }
     protected virtual void OnDisable() {
-        Floor.onFloorChangeAfterEntities -= reset;
-		Player.OnUpdateSecondaryMapActive -= UpdateSecondaryActive;
+        EventManager.s.OnFloorChangeAfterEntities -= Reset;
+		EventManager.s.OnUpdateSecondaryMapActive -= UpdateSecondaryActive;
     }
     protected override bool IsUsable() {
         return base.IsUsable();

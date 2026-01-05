@@ -20,7 +20,7 @@ class StartButton : MonoBehaviour
     }
     public void OnPointerUp() {
         pressed = false;
-        if (!finished) {GameManager.s.STARTToGAME();}
+        if (!finished) { EventManager.s.OnGameStart?.Invoke(); }
         finished = true;
     }
     void Update() {

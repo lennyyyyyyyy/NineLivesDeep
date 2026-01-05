@@ -2,11 +2,16 @@ using UnityEngine;
 using System;
 using System.Collections.Generic;
 using Random = UnityEngine.Random;
-public class ActionTile : Tile
-{
-	public const int EXITTOSHOP = 0, EXITTOMINEFIELD = 1, EXITTOTRIAL = 2, GIVETRIALREWARD = 3;
+public class ActionTile : Tile {
+    public enum ActionCode {
+        EXITTOSHOP,
+        EXITTOMINEFIELD,
+        EXITTOTRIAL,
+        GIVETRIALREWARD
+    }
+
     [System.NonSerialized]
-    public int actionCode;
+    public ActionCode actionCode;
 	protected Action action;
 	protected Material m;
 	protected int amount = 1;
@@ -19,18 +24,18 @@ public class ActionTile : Tile
 			HelperManager.s.DelayAction(() => {Floor.s.IntroAndCreateFloor(newFloorType, newFloor);}, 0.5f);
 		};
 	}	
-	public void Init(int actionCode) {
+	public void Init(ActionCode actionCode) {
         this.actionCode = actionCode;
-		if (actionCode == EXITTOSHOP) {
+		if (actionCode == ActionCode.EXITTOSHOP) {
 			m = UIManager.s.tileExitMat;
 			action = ExitAction("shop", Floor.s.floor);
-		} else if (actionCode == EXITTOMINEFIELD) {
+		} else if (actionCode == ActionCode.EXITTOMINEFIELD) {
 			m = UIManager.s.tileExitMat;
 			action = ExitAction("minefield", Floor.s.floor+1);
-		} else if (actionCode == EXITTOTRIAL) {
+		} else if (actionCode == ActionCode.EXITTOTRIAL) {
 			m = UIManager.s.tileTrialMat;
 			action = ExitAction("trial", Floor.s.floor);
-		} else if (actionCode == GIVETRIALREWARD) {
+		} else if (actionCode == ActionCode.GIVETRIALREWARD) {
 			m = UIManager.s.tileTrialMat;
 			action = () => {
 				Tile t = Floor.s.ReplaceTile(PrefabManager.s.tilePrefab, Floor.s.width-1, Floor.s.height-2).GetComponent<Tile>();

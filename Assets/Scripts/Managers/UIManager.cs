@@ -155,7 +155,7 @@ public class UIManager : MonoBehaviour
 		}
 		Player.s.RecalculateModifiers();
 	}
-    public void STARTToGAME() {
+    public void OnGameStart() {
         OrganizeFlags();
         LeanTween.value(gameObject, (float f) => {
             STARTUI.GetComponent<CanvasGroup>().alpha = f;
@@ -165,11 +165,11 @@ public class UIManager : MonoBehaviour
         });
     }
     private void OnEnable() {
-        GameManager.OnSTARTToGAME += STARTToGAME;
-        Player.OnAliveChange += OrganizeFlags;
+        EventManager.s.OnGameStart += OnGameStart;
+        EventManager.s.OnPlayerAliveChange += OrganizeFlags;
     }
     private void OnDisable() {
-        GameManager.OnSTARTToGAME -= STARTToGAME;
-        Player.OnAliveChange -= OrganizeFlags;
+        EventManager.s.OnGameStart -= OnGameStart;
+        EventManager.s.OnPlayerAliveChange -= OrganizeFlags;
     }
 }

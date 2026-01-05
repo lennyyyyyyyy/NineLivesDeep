@@ -9,7 +9,7 @@ public class Tunnel : Entity {
     private void Awake() {
         tunnels.Add(this);
     }
-    private void OnPlayerMove(int x, int y) {
+    private void OnPlayerMoveToCoord(int x, int y) {
         if (GetCoord().x == x && GetCoord().y == y && tunnels.Count > 1) {
             if (playerTeleportedLast) {
                 playerTeleportedLast = false;
@@ -22,10 +22,10 @@ public class Tunnel : Entity {
         }
     }
     private void OnEnable() {
-        Player.OnMove += OnPlayerMove;
+        EventManager.s.OnPlayerMoveToCoord += OnPlayerMoveToCoord;
     }
     private void OnDisable() {
-        Player.OnMove -= OnPlayerMove;
+        EventManager.s.OnPlayerMoveToCoord -= OnPlayerMoveToCoord;
     }
     private void OnDestroy() {
         tunnels.Remove(this);

@@ -8,9 +8,9 @@ public class Vase : Entity {
         }
     }
     private void OnEnable() {
-        Floor.onExplosionAtCoord += OnExplosionAtCoord;
+        EventManager.s.OnExplosionAtCoord += OnExplosionAtCoord;
     }
     private void OnDisable() {
-        Floor.onExplosionAtCoord -= OnExplosionAtCoord;
+        EventManager.s.OnExplosionAtCoord -= OnExplosionAtCoord;
     }
 }

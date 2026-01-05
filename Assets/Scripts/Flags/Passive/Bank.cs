@@ -6,10 +6,10 @@ class Bank : Passive {
     }
     protected override void OnEnable() {
         base.OnEnable();
-        Floor.onNewMinefield += OnNewMinefield;
+        EventManager.s.OnNewMinefield += OnNewMinefield;
     }
     protected override void OnDisable() {
         base.OnDisable();
-        Floor.onNewMinefield -= OnNewMinefield;
+        EventManager.s.OnNewMinefield -= OnNewMinefield;
     }
 }

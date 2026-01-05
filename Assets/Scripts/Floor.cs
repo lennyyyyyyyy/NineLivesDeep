@@ -9,11 +9,6 @@ using System.Collections.Generic;
 public class Floor : MonoBehaviour {
     public static Floor s;
 	public static readonly Vector2Int INVALID_COORD = new Vector2Int(-100, -100);
-    public static Action onFloorChangeBeforeNewLayout,
-                         onFloorChangeBeforeEntities,
-                         onFloorChangeAfterEntities,
-                         onNewMinefield;
-    public static Action<int, int> onExplosionAtCoord;
 
     // saved data
     public Dictionary<Vector2Int, GameObject> tiles = new Dictionary<Vector2Int, GameObject>();
@@ -89,7 +84,7 @@ public class Floor : MonoBehaviour {
 
 		// FLOOR TRANSITION SECOND STEP - DESTROY THE PREVIOUS FLOOR AND RENEW ARRAYS
         HelperManager.s.DelayAction(() => {
-			onFloorChangeBeforeNewLayout?.Invoke();
+			EventManager.s.OnFloorChangeBeforeNewLayout?.Invoke();
 			if (floorType == "minefield") {
 				InitMinefield();
 			} else if (floorType == "shop") {
@@ -99,7 +94,7 @@ public class Floor : MonoBehaviour {
 			}
 			
 			// FLOOR TRANSITION FOURTH STEP - BUILD NEW FLOOR
-			onFloorChangeAfterEntities?.Invoke();	
+			EventManager.s.OnFloorChangeAfterEntities?.Invoke();	
 			
 			floorDeathCount = 0;
 			PositionTilesUnbuilt();
@@ -140,7 +135,7 @@ public class Floor : MonoBehaviour {
 		windZone.endRange = Mathf.Max(sh.scale.x, sh.scale.y) * 0.75f;
 		
 		// FLOOR TRANSITION THIRD STEP - CREATE TILES, ENTITIES, AND MINES
-		onFloorChangeBeforeEntities?.Invoke();
+		EventManager.s.OnFloorChangeBeforeEntities?.Invoke();
     }
     public void InitMinefield() {
         float variation = Random.value;
@@ -201,7 +196,7 @@ public class Floor : MonoBehaviour {
         List<Vector2Int> potentialExitsList = new List<Vector2Int>(potentialExits);
 
         Vector2Int exitCoord = potentialExitsList[Random.Range(0, potentialExitsList.Count)];
-        ReplaceTile(PrefabManager.s.tileActionPrefab, exitCoord.x, exitCoord.y).GetComponent<ActionTile>().Init(ActionTile.EXITTOSHOP);
+        ReplaceTile(PrefabManager.s.tileActionPrefab, exitCoord.x, exitCoord.y).GetComponent<ActionTile>().Init(ActionTile.ActionCode.EXITTOSHOP);
 		ReplaceTile(PrefabManager.s.tilePrefab, 0, 0);
         foreach (Vector2Int v in rainCoords) {
             ReplaceTile(PrefabManager.s.tilePuddlePrefab, v.x, v.y);
@@ -211,7 +206,7 @@ public class Floor : MonoBehaviour {
             Vector2Int trialCoord = potentialTiles[Random.Range(0, potentialTiles.Count)];
 			if (!TileExistsAt(trialCoord.x, trialCoord.y)) {
 				GameObject t = ReplaceTile(PrefabManager.s.tileActionPrefab, trialCoord.x, trialCoord.y);
-				t.GetComponent<ActionTile>().Init(ActionTile.EXITTOTRIAL);
+				t.GetComponent<ActionTile>().Init(ActionTile.ActionCode.EXITTOTRIAL);
 			}
 		}
         
@@ -254,7 +249,7 @@ public class Floor : MonoBehaviour {
             }
         }
 
-        onNewMinefield?.Invoke();
+        EventManager.s.OnNewMinefield?.Invoke();
     }
     public void InitShop() {
         int[] prices;
@@ -318,7 +313,7 @@ public class Floor : MonoBehaviour {
             exitCoord = new Vector2Int(5, 5);
         }
 
-        ReplaceTile(PrefabManager.s.tileActionPrefab, exitCoord.x, exitCoord.y).GetComponent<ActionTile>().Init(ActionTile.EXITTOMINEFIELD);
+        ReplaceTile(PrefabManager.s.tileActionPrefab, exitCoord.x, exitCoord.y).GetComponent<ActionTile>().Init(ActionTile.ActionCode.EXITTOMINEFIELD);
         foreach (Vector2Int coord in tileCoords) {
             if (!TileExistsAt(coord.x, coord.y)) {
                 ReplaceTile(PrefabManager.s.tilePrefab, coord.x, coord.y);
@@ -331,8 +326,8 @@ public class Floor : MonoBehaviour {
 	public void InitTrial() {
 		InitLayout(floor + 7 + Player.s.modifiers.floorExpansion, floor + 7 + Player.s.modifiers.floorExpansion, "trial");
 		
-		ReplaceTile(PrefabManager.s.tileActionPrefab, width-2, height-2).GetComponent<ActionTile>().Init(ActionTile.GIVETRIALREWARD);
-		ReplaceTile(PrefabManager.s.tileActionPrefab, width-1, height-1).GetComponent<ActionTile>().Init(ActionTile.EXITTOSHOP);
+		ReplaceTile(PrefabManager.s.tileActionPrefab, width-2, height-2).GetComponent<ActionTile>().Init(ActionTile.ActionCode.GIVETRIALREWARD);
+		ReplaceTile(PrefabManager.s.tileActionPrefab, width-1, height-1).GetComponent<ActionTile>().Init(ActionTile.ActionCode.EXITTOSHOP);
 		for (int i = 0; i < width-1; i++) {
 			for (int j = 0; j < height-1; j++) {
 				if (!TileExistsAt(i, j)) {
@@ -539,13 +534,13 @@ public class Floor : MonoBehaviour {
 		windZone.directionX = windDirection.x * Player.s.modifiers.windStrength * 1.5f;
 		windZone.directionY = windDirection.y * Player.s.modifiers.windStrength * 1.5f;
 	}
-    private void STARTToGAME() {
-        HelperManager.s.DelayAction(() => {IntroAndCreateFloor("minefield", 0);}, 1f);
+    private void OnGameStart() {
+        HelperManager.s.DelayAction(() => { IntroAndCreateFloor("minefield", 0); }, 1f);
     }
     private void OnEnable() {
-        GameManager.OnSTARTToGAME += STARTToGAME;
+        EventManager.s.OnGameStart += OnGameStart;
     }
     private void OnDisable() {
-        GameManager.OnSTARTToGAME -= STARTToGAME;
+        EventManager.s.OnGameStart -= OnGameStart;
     }
 }

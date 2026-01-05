@@ -23,7 +23,7 @@ public class MineSprite : Entity {
 		SetData(sprite: UIManager.s.mineDebugSprite, obstacle: false);
 	}
     public virtual void Trigger() {
-        Floor.onExplosionAtCoord?.Invoke(GetCoord().x, GetCoord().y);
+        EventManager.s.OnExplosionAtCoord?.Invoke(GetCoord().x, GetCoord().y);
         Player.s.Die();
 		Remove();
     }

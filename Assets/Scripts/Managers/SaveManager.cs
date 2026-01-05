@@ -31,7 +31,7 @@ public class TileSaveData {
     public int typeID;
     public Vector2Int coord;
     public List<int> nonPlayerEntities = new List<int>();
-    public int actionCode;
+    public ActionTile.ActionCode actionCode;
 }
 [Serializable]
 public class SaveData {
@@ -61,7 +61,6 @@ public class SaveData {
 
 public class SaveManager : MonoBehaviour {
     public static SaveManager s;
-    public static Action OnSave, OnLoad;
 
     [System.NonSerialized]
     public bool saveDataValid = false;
@@ -88,7 +87,7 @@ public class SaveManager : MonoBehaviour {
         return true;
     }
     public void Save() {
-        OnSave?.Invoke();
+        EventManager.s.OnSave?.Invoke();
         saveData = new SaveData() {
             playerCoord = Player.s.GetCoord(),
             playerTrapped = Player.s.trapped,
@@ -172,9 +171,6 @@ public class SaveManager : MonoBehaviour {
         string filepath = Application.persistentDataPath + "/savefile.json";
         File.WriteAllText(filepath, json);
         Debug.Log("Saved to " + filepath);
-    }
-    public void Load() {
-        OnLoad?.Invoke();
     }
 }
 

@@ -18,17 +18,17 @@ class Wildcat : Passive {
         }
         tmpro.text = count.ToString();
     }
-	protected virtual void OnPlayerMove(int x, int y) {
+	protected virtual void OnPlayerMoveToCoord(int x, int y) {
 		if (Floor.s.GetTile(x, y) && !Player.s.tilesVisited.Contains(Floor.s.GetTile(x, y)) && Floor.s.GetTile(x, y).GetComponent<MossyTile>() != null) {
 			UpdateCount(count - 1);
 		}
 	}
 	protected override void OnEnable() {
 		base.OnEnable();
-		Player.OnMove += OnPlayerMove;
+		EventManager.s.OnPlayerMoveToCoord += OnPlayerMoveToCoord;
 	}
 	protected override void OnDisable() {
 		base.OnDisable();
-		Player.OnMove -= OnPlayerMove;
+		EventManager.s.OnPlayerMoveToCoord -= OnPlayerMoveToCoord;
 	}
 }

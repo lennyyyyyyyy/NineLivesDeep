@@ -27,10 +27,10 @@ public class Intensify : Curse {
 		Player.s.RecalculateModifiers();
 	}
 	private void OnEnable() {
-		Floor.onFloorChangeBeforeNewLayout += SwitchIntensifiedCurse;
+		EventManager.s.OnFloorChangeBeforeNewLayout += SwitchIntensifiedCurse;
 	}
 	private void OnDisable() {
-		Floor.onFloorChangeBeforeNewLayout -= SwitchIntensifiedCurse;
+		EventManager.s.OnFloorChangeBeforeNewLayout -= SwitchIntensifiedCurse;
 	}
 }
 
