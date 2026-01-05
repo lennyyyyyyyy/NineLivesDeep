@@ -33,8 +33,7 @@ public class FlagSprite : CorrespondingSprite {
 			}
         }
         //darken under
-        LeanTween.cancel(GameManager.s.underDarkenTarget);
-        LeanTween.value(GameManager.s.underDarkenTarget, TweenUnderDarken, Shader.GetGlobalFloat(GameManager.s.UnderDarkenID), 0.1f, overToUnderDuration).setEase(LeanTweenType.easeInOutCubic);
+        ShaderManager.s.TweenUnderDarken(0.1f, overToUnderDuration);
     }
     protected override void Update() {
         base.Update();
@@ -51,7 +50,7 @@ public class FlagSprite : CorrespondingSprite {
             transform.position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             //disturb shaders when moving and holding flag
             if (UIManager.s.mouseVelocity.magnitude > 0) {
-                GameManager.s.disturbShaders(transform.position.x, transform.position.y);
+                ShaderManager.s.DisturbShaders(transform.position.x, transform.position.y);
             }
             //OnMouseUp bug
             if (!UnityEngine.InputSystem.Mouse.current.leftButton.isPressed) {
@@ -93,7 +92,7 @@ public class FlagSprite : CorrespondingSprite {
                 LeanTween.rotate(gameObject, Vector3.zero, 0.15f).setEase(LeanTweenType.easeInCubic).setOnComplete(() => {
                     state = "dropped";
                     //disturb shaders when it hits the ground
-                    GameManager.s.disturbShaders(transform.position.x, transform.position.y);
+                    ShaderManager.s.DisturbShaders(transform.position.x, transform.position.y);
                     //show map layers and prints
                     Player.s.UpdateSecondaryMapActive();
                     Player.s.UpdateActivePrints();
@@ -118,8 +117,7 @@ public class FlagSprite : CorrespondingSprite {
 				tile.GetComponent<Tile>().PutOver();
             }
             //brighten under
-            LeanTween.cancel(GameManager.s.underDarkenTarget);
-            LeanTween.value(GameManager.s.underDarkenTarget, TweenUnderDarken, Shader.GetGlobalFloat(GameManager.s.UnderDarkenID), 1f, overToUnderDuration).setEase(LeanTweenType.easeInOutCubic);
+            ShaderManager.s.TweenUnderDarken(1f, overToUnderDuration);
             //replace parent with cat paw animation
             UIManager.s.OrganizeFlags();
         }
@@ -150,8 +148,5 @@ public class FlagSprite : CorrespondingSprite {
 	}
     public override bool CoordAllowed(int x, int y) { 
         return base.CoordAllowed(x, y) && Floor.s.GetUniqueFlag(x, y) == null && !(x == Player.s.GetCoord().x && y == Player.s.GetCoord().y); 
-    }
-    protected static void TweenUnderDarken(float darken) {
-        Shader.SetGlobalFloat(GameManager.s.UnderDarkenID, darken);
     }
 }

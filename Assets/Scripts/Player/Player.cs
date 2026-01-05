@@ -318,7 +318,7 @@ public class Player : Entity {
 					Floor.s.GetTile(x, y).GetComponent<Tile>().externalDepthImpulse += stepImpulse;
                     OnMove?.Invoke(x, y);
 				}).setOnUpdate((float f) => {
-					GameManager.s.disturbShaders(feet.transform.position.x, feet.transform.position.y);
+					ShaderManager.s.DisturbShaders(feet.transform.position.x, feet.transform.position.y);
 				});
 			} else {
 				base.Move(x, y, reposition);

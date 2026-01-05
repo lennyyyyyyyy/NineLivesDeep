@@ -13,7 +13,6 @@ using System.Linq;
 public class HelperManager : MonoBehaviour {
     public static HelperManager s;
 
-    public readonly int LayerID = Shader.PropertyToID("_Layer");
     private void Awake() {
         s = this;
     }
@@ -35,7 +34,7 @@ public class HelperManager : MonoBehaviour {
         if (sr != null) {
             MaterialPropertyBlock mpb = new MaterialPropertyBlock();
             sr.GetPropertyBlock(mpb);
-            mpb.SetFloat(LayerID, layer);
+            mpb.SetFloat(ShaderManager.s.LayerID, layer);
             sr.SetPropertyBlock(mpb);
         }
     }
