@@ -16,7 +16,6 @@ public class GameManager : MonoBehaviour {
     public static GameManager s;
     [System.NonSerialized]
     public GameState gameState = GameState.START;
-    public float deathReviveDuration = 3;
     public Scene scene;
     public PhysicsScene2D physicsScene;
 

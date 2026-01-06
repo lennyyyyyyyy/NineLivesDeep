@@ -64,7 +64,7 @@ public class Tile : Parallax
     {
         base.Update();
         underTile.GetComponent<Parallax>().referencePos = referencePos;
-        float prop = 1 - Mathf.Pow(1 - Floor.s.tileExternalPower, Time.deltaTime / .15f);
+        float prop = 1 - Mathf.Pow(1 - ConstantsManager.s.tileAdjacentDragSpeed, Time.deltaTime / .15f);
         float adjacentDrag = 0;
         int adjacentTiles = 0;
         foreach ((int dx, int dy) in new (int, int)[] { (1,0), (-1,0), (0,1), (0,-1) }) {
@@ -73,10 +73,10 @@ public class Tile : Parallax
                 adjacentTiles++;
             }
         }
-        externalDepthImpulse += Floor.s.tileAdjacentDragPower * Time.deltaTime * adjacentDrag / Mathf.Max(1, adjacentTiles);
+        externalDepthImpulse += ConstantsManager.s.tileAdjacentDragPower * Time.deltaTime * adjacentDrag / Mathf.Max(1, adjacentTiles);
         depth += externalDepthImpulse * prop;
         externalDepthImpulse *= 1 - prop;
-        depth = Mathf.Lerp(depth, targetDepth + 0.012f * Mathf.Sin(Time.time * Mathf.PI * 2 / period), 1 - Mathf.Pow(1 - Floor.s.tileDampingPower, Time.deltaTime / .15f));
+        depth = Mathf.Lerp(depth, targetDepth + 0.012f * Mathf.Sin(Time.time * Mathf.PI * 2 / period), 1 - Mathf.Pow(1 - ConstantsManager.s.tileDampingPower, Time.deltaTime / .15f));
         underTile.GetComponent<Parallax>().depth = depth + 0.02f;
     }
     public virtual void PositionUnbuilt() {

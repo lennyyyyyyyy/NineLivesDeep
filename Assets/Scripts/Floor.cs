@@ -25,11 +25,6 @@ public class Floor : MonoBehaviour {
 	public Vector3 windDirection;
     [System.NonSerialized]
     public List<GameObject> backgroundTiles = new List<GameObject>();
-    // constants
-    [System.NonSerialized]
-    public float tileExternalPower = 0.50f, tileDampingPower = 0.20f, tileAdjacentDragPower = 20.0f;
-    [System.NonSerialized]
-	public float trialChance = 0.5f;
     
     private ParticleSystem ambientDust;
 	private ParticleSystemForceField windZone;
@@ -202,7 +197,7 @@ public class Floor : MonoBehaviour {
             ReplaceTile(PrefabManager.s.tilePuddlePrefab, v.x, v.y);
         }
 		//random chance for trial entrance
-		if (Random.value < trialChance) {
+		if (Random.value < ConstantsManager.s.minefieldTrialChance) {
             Vector2Int trialCoord = potentialTiles[Random.Range(0, potentialTiles.Count)];
 			if (!TileExistsAt(trialCoord.x, trialCoord.y)) {
 				GameObject t = ReplaceTile(PrefabManager.s.tileActionPrefab, trialCoord.x, trialCoord.y);

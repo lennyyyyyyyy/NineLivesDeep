@@ -1,7 +1,6 @@
 using UnityEngine;
 using System.Linq;
-public class Print : MonoBehaviour
-{
+public class Print : MonoBehaviour {
     public Vector2Int d;
     public static Color defaultColor = new Color(.05f, .05f, .05f, 1), hoveredColor = new Color(.6f, 1, 1, 1);
     public static float defaultScale = 0.9f, hoverOffset, hoverPeriod;
@@ -32,7 +31,7 @@ public class Print : MonoBehaviour
     private void OnMouseDownCustom() {
         Player.s.Move(Player.s.GetCoord().x + d.x, Player.s.GetCoord().y + d.y);
 		Player.s.moveHistory.Add(d);
-		while (Player.s.moveHistory.Count > Player.s.maxMoveHistory) {
+		while (Player.s.moveHistory.Count > ConstantsManager.s.playerMaxMoveHistory) {
 			Player.s.moveHistory.RemoveAt(0);
 		}
     }

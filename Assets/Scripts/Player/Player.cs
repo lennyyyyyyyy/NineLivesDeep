@@ -98,10 +98,6 @@ public class Player : Entity {
 	public Modifiers modifiers = new Modifiers();
 	[System.NonSerialized]
 	public float watchedMineJumpTimer = 0f;
-	// consts
-    private float stepImpulse = 0.2f;
-    [System.NonSerialized]
-	public int maxMoveHistory = 10;
 
     private void Awake() {
         s = this;
@@ -158,7 +154,7 @@ public class Player : Entity {
             UpdateActivePrints();
 			tempChanges = 0;
 			triggerMines();
-        }, GameManager.s.deathReviveDuration);
+        }, ConstantsManager.s.playerReviveDuration);
     }
     public void UpdateSecondaryMapActive() {
         secondaryMapActive = alive;
@@ -313,7 +309,7 @@ public class Player : Entity {
 					if (Floor.s.GetTile(x, y).GetComponent<ActionTile>() != null) {
 						Floor.s.GetTile(x, y).GetComponent<ActionTile>().PerformAction();
 					} 
-					Floor.s.GetTile(x, y).GetComponent<Tile>().externalDepthImpulse += stepImpulse;
+					Floor.s.GetTile(x, y).GetComponent<Tile>().externalDepthImpulse += ConstantsManager.s.playerStepImpulse;
                     EventManager.s.OnPlayerMoveToCoord?.Invoke(x, y);
 				}).setOnUpdate((float f) => {
 					ShaderManager.s.DisturbShaders(feet.transform.position.x, feet.transform.position.y);
