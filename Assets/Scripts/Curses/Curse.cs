@@ -3,11 +3,15 @@ using UnityEngine.UI;
 
 public class Curse : UIItem {
 	public bool intensified = false;
+
+    protected virtual void Awake() {
+        transform.SetParent(GameUIManager.s.notFlagGroup.transform);
+    }
     protected override void Start() {
 		base.Start();
 		
         PlayerUIItemModule.s.ProcessAddedCurse(this);
-		UIManager.s.OrganizeNotFlags();
+		GameUIManager.s.OrganizeNotFlags();
 	}
 	protected override void SetDefaultData() {
 		if (CatalogManager.s.typeToData.ContainsKey(GetType())) {
@@ -18,6 +22,6 @@ public class Curse : UIItem {
     protected override void OnDestroy() {
         base.OnDestroy();
         PlayerUIItemModule.s.ProcessRemovedCurse(this);
-        UIManager.s.OrganizeNotFlags();
+        GameUIManager.s.OrganizeNotFlags();
     }
 }

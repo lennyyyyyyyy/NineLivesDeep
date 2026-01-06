@@ -6,12 +6,13 @@ public class MineUIItem : UIItem {
 	public TMP_Text count;
 	protected virtual void Awake() {
 		s = this;
+        transform.SetParent(GameUIManager.s.notFlagGroup.transform);
 	}
 	protected override void Start() {
 		base.Start();
 		count = GetComponentInChildren<TMP_Text>();
 
 		PlayerUIItemModule.s.notFlags.Add(gameObject);
-		UIManager.s.OrganizeNotFlags();
+		GameUIManager.s.OrganizeNotFlags();
 	}
 }

@@ -178,8 +178,8 @@ public class Player : Entity {
                 active &= (flag as Placeable).sprite == null || (flag as Placeable).sprite.GetComponent<FlagSprite>().state == "dropped";
             }
         }
-        foreach (GameObject g in prints) {
-            g.active = active;
+        foreach (GameObject print in prints) {
+            print.SetActive(active);
         }
     }
     public void UpdateMoney(float newCount) {

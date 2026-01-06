@@ -50,7 +50,7 @@ public class Tile : Parallax
         underTile.AddComponent<Parallax>();
         underTile.AddComponent<SpriteRenderer>().color = new Color(.177f, .0973f, .0737f, 1f);
         underTile.GetComponent<SpriteRenderer>().sortingLayerName = "Player";
-        underTile.active = underTileActive;
+        underTile.SetActive(underTileActive);
         collider = gameObject.AddComponent<BoxCollider2D>();
         collider.isTrigger = true;
         period = Random.Range(4f, 6f);

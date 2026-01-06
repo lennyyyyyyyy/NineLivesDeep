@@ -90,7 +90,7 @@ public class PickupSprite : CorrespondingSprite {
 	}
 	public override void Interact() {
 		Player.s.UpdateMoney(Player.s.money - price);
-		GameObject g = Instantiate(PrefabManager.s.flagPrefab, transform.position, Quaternion.identity, UIManager.s.flagGroup.transform);
+		GameObject g = Instantiate(PrefabManager.s.flagPrefab, transform.position, Quaternion.identity);
 		Flag f = g.AddComponent(correspondingUIType) as Flag;
 		// it this has a count then give the item the same count
 		if (tmpro.enabled) {

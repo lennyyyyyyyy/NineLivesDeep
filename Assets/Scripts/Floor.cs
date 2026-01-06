@@ -61,7 +61,7 @@ public class Floor : MonoBehaviour {
 				HelperManager.s.InstantiateBubble(Vector3.zero, "a mine appears...", new Color(0.5f, 0.5f, 0.5f), 2f, 2f);
 			}, time);
 			HelperManager.s.DelayAction(() => {
-				GameObject mine = Instantiate(PrefabManager.s.minePrefab, Vector3.zero, Quaternion.identity, UIManager.s.GAMEUI.transform);
+				GameObject mine = Instantiate(PrefabManager.s.minePrefab, Vector3.zero, Quaternion.identity);
                 if (floor == 0) {
                     mine.AddComponent<Mine>();
                 } else {
@@ -76,7 +76,7 @@ public class Floor : MonoBehaviour {
 				HelperManager.s.InstantiateBubble(Vector3.zero, "CURSED", new Color(0.5f, 0, 0), 2f, 2f);
 			}, time);
 			HelperManager.s.DelayAction(() => {
-				GameObject curse = Instantiate(PrefabManager.s.cursePrefab, Vector3.zero, Quaternion.identity, UIManager.s.GAMEUI.transform);
+				GameObject curse = Instantiate(PrefabManager.s.cursePrefab, Vector3.zero, Quaternion.identity);
 				curse.AddComponent(PlayerUIItemModule.s.cursesUnseen[Random.Range(0, PlayerUIItemModule.s.cursesUnseen.Count)]);
 			}, time + 1f);
 			time += 2.8f;
@@ -100,7 +100,7 @@ public class Floor : MonoBehaviour {
 			PositionTilesUnbuilt();
 			BuildTiles(2f, 2f);
 			MainCamera.s.ZoomTo(12.5f, 1f);	
-			UIManager.s.OrganizeFlags();
+			GameUIManager.s.OrganizeFlags();
         }, time);
 		time += 3.8f;
 

@@ -7,7 +7,7 @@ public class AddTooltipScene : AddTooltip {
 		base.Start();
     }
     protected override void Update() {
-        if (tooltip != null && tooltip.active) {
+        if (tooltip != null && tooltip.activeSelf) {
             tooltip.GetComponent<Tooltip>().Position(transform.position.x, transform.position.y, sr.bounds.size.x);
         }
     }

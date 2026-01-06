@@ -8,7 +8,7 @@ public class Mine : UIItem {
 		base.Start();
 		
         PlayerUIItemModule.s.ProcessAddedMine(this);
-		UIManager.s.OrganizeNotFlags();
+		GameUIManager.s.OrganizeNotFlags();
 	}
 	public virtual void SetInitialData(Texture2D? tex2d = null,
 										TooltipData tooltipData = null,
@@ -33,6 +33,6 @@ public class Mine : UIItem {
     protected override void OnDestroy() {
         base.OnDestroy();
         PlayerUIItemModule.s.ProcessRemovedMine(this);
-        UIManager.s.OrganizeNotFlags();
+        GameUIManager.s.OrganizeNotFlags();
     }
 }

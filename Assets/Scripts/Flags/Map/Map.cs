@@ -48,7 +48,7 @@ public class Map : Flag {
     }
 	protected virtual void UpdateSecondaryActive() {
 		foreach (GameObject n in numbers.Values) {
-			n.active = Player.s.secondaryMapActive;
+			n.SetActive(Player.s.secondaryMapActive);
 		}
 	}
     protected virtual void OnPointerClick(PointerEventData data) {

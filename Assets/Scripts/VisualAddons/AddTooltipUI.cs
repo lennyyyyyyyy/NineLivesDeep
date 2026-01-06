@@ -15,7 +15,7 @@ public class AddTooltipUI : AddTooltip {
 		base.Start();
     }
     protected override void Update() {
-        if (tooltip != null && tooltip.active) {
+        if (tooltip != null && tooltip.activeSelf) {
             tooltip.GetComponent<Tooltip>().Position(transform.position.x, transform.position.y, HelperManager.s.WorldSizeFromRT((transform as RectTransform)).x);
         }
     }

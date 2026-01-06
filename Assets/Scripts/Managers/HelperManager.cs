@@ -109,7 +109,7 @@ public class HelperManager : MonoBehaviour {
 		}
 	}
     public void InstantiateBubble(Vector3 pos, string t, Color c, float time = 1f, float scale = 1f) {
-        GameObject b = Instantiate(PrefabManager.s.bubblePrefab, pos, Quaternion.identity, UIManager.s.bubbleGroup.transform);
+        GameObject b = Instantiate(PrefabManager.s.bubblePrefab, pos, Quaternion.identity, GameUIManager.s.bubbleGroup.transform);
         b.GetComponent<Bubble>().Init(c, t, time, scale);
     }
     public void InstantiateBubble(GameObject g, string t, Color c, float radius = 0.5f, float time = 1f, float scale = 1f) {

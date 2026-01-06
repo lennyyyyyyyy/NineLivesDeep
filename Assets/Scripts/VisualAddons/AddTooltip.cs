@@ -30,10 +30,10 @@ public class AddTooltip : MonoBehaviour {
 		}
 
 		if (tooltip == null) {
-			tooltip = Instantiate(PrefabManager.s.tooltipPrefab, UIManager.s.tooltipGroup.transform);
+			tooltip = Instantiate(PrefabManager.s.tooltipPrefab, GameUIManager.s.tooltipGroup.transform);
 		}
 		tooltip.GetComponent<Tooltip>().SetData(tooltipData);
-		tooltip.active = false;
+		tooltip.SetActive(false);
 	}
 	public virtual void SetData(TooltipData tooltipData = null, bool? addHoverEffect = null) {
 		SetInitialData(tooltipData, addHoverEffect);

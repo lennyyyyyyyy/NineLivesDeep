@@ -4,7 +4,13 @@ public class StartUIManager : MonoBehaviour
 {
     public static StartUIManager s;
 
-    public GameObject nine, lives, deep, startbutton, continuebutton;
+    public GameObject startUIGroup, 
+                      nine,
+                      lives,
+                      deep,
+                      startbutton,
+                      continuebutton;
+
     private float startIdleStrength = 15f, startIdleSpeed = 2f;
     private void Awake() {
         s = this;
@@ -20,5 +26,18 @@ public class StartUIManager : MonoBehaviour
             startbutton.transform.localPosition = new Vector3(startbutton.transform.localPosition.x, 90.2f + 0.5f * startIdleStrength * Mathf.Sin(startIdleSpeed * 0.8f * Time.time + 3), 0);
             continuebutton.transform.localPosition = new Vector3(continuebutton.transform.localPosition.x, 106.0f + 0.5f * startIdleStrength * Mathf.Sin(startIdleSpeed * 0.8f * Time.time + 1.5f), 0);
         }
+    }
+    private void OnGameStart() {
+        LeanTween.value(gameObject, (float f) => {
+            startUIGroup.GetComponent<CanvasGroup>().alpha = f;
+        }, 1, 0, ConstantsManager.s.gameStartTransitionDuration).setEase(LeanTweenType.easeInOutCubic).setOnComplete(() => {
+            startUIGroup.SetActive(false);
+        });
+    }
+    private void OnEnable() {
+        EventManager.s.OnGameStart += OnGameStart;
+    }
+    private void OnDisable() {
+        EventManager.s.OnGameStart -= OnGameStart;
     }
 }
