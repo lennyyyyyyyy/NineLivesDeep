@@ -23,6 +23,9 @@ public class FlagSaveData {
 [Serializable]
 public class EntitySaveData {
     public int typeID;
+    // flag sprites - nothing extra
+    // mine sprites - nothing extra
+    // pickup sprites
     public int pickupPrice;
     public int pickupCount;
 }
@@ -30,7 +33,7 @@ public class EntitySaveData {
 public class TileSaveData {
     public int typeID;
     public Vector2Int coord;
-    public List<int> nonPlayerEntities = new List<int>();
+    public List<EntitySaveData> nonPlayerEntities = new List<EntitySaveData>();
     public ActionTile.ActionCode actionCode;
 }
 [Serializable]
@@ -44,21 +47,69 @@ public class SaveData {
     public List<int> mines = new List<int>();
     public List<FlagSaveData> flags = new List<FlagSaveData>(); 
     public List<int> flagsUnseen = new List<int>(),
-              consumableFlagsUnseen = new List<int>(),
-              cursesUnseen = new List<int>(),
-              minesUnseen = new List<int>();
+                     consumableFlagsUnseen = new List<int>(),
+                     cursesUnseen = new List<int>(),
+                     minesUnseen = new List<int>();
+    public List<Vector2Int> tilesVisited = new List<Vector2Int>();
+    public List<Vector2Int> moveHistory;
+    public List<Vector2Int> rainCoords;
+
+    //floor data
+    public int floor, width, height, floorDeathCount;
+    public string floorType;
+    public List<TileSaveData> tiles = new List<TileSaveData>();
+}
+public class CurseLoadData {
+    public Type type, intensifiedType;
+}
+public class NumberLoadData {
+    public Vector2Int coord;
+    public int num;
+}
+public class FlagLoadData {
+    public Type type;
+    public int count;
+    public bool usable;
+    public List<NumberLoadData> numbers = new List<NumberLoadData>();
+}
+public class EntityLoadData {
+    public Type type;
+    // flag sprites - nothing extra
+    // mine sprites - nothing extra
+    // pickup sprites
+    public int pickupPrice;
+    public int pickupCount;
+    // misc entities
+    public GameObject prefab;
+}
+public class TileLoadData {
+    public Type type;
+    public Vector2Int coord;
+    public List<EntityLoadData> nonPlayerEntities = new List<EntityLoadData>();
+    public ActionTile.ActionCode actionCode;
+}
+public class LoadData {
+    //player data
+    public Vector2Int playerCoord; 
+    public bool playerTrapped, playerAlive;
+    public float money;
+    public int tempChanges;
+    public List<CurseLoadData> curses = new List<CurseLoadData>();
+    public List<Type> mines = new List<Type>();
+    public List<FlagLoadData> flags = new List<FlagLoadData>(); 
+    public List<Type> flagsUnseen = new List<Type>(),
+                      consumableFlagsUnseen = new List<Type>(),
+                      cursesUnseen = new List<Type>(),
+                      minesUnseen = new List<Type>();
     public List<Vector2Int> tilesVisited = new List<Vector2Int>();
     public List<Vector2Int> moveHistory;
 
     //floor data
     public int floor, width, height, floorDeathCount;
     public string floorType;
-    public List<TileSaveData> tiles = new List<TileSaveData>();
-
-    //misc
+    public List<TileLoadData> tiles = new List<TileLoadData>();
     public List<Vector2Int> rainCoords;
 }
-
 public class SaveManager : MonoBehaviour {
     public static SaveManager s;
 
@@ -162,7 +213,15 @@ public class SaveManager : MonoBehaviour {
             foreach (GameObject entity in t.entities) {
                 if (entity != Player.s.gameObject) {
                     Entity e = entity.GetComponent<Entity>();
-                    data.nonPlayerEntities.Add(CatalogManager.s.typeToData[e.GetType()].id);
+                    EntitySaveData edata = new EntitySaveData() {
+                        typeID = CatalogManager.s.typeToData[e.GetType()].id
+                    };
+                    if (e is PickupSprite) {
+                        PickupSprite ps = (PickupSprite) e;
+                        edata.pickupPrice = ps.price;
+                        edata.pickupCount = ps.count;
+                    } 
+                    data.nonPlayerEntities.Add(edata);
                 }
             }
             saveData.tiles.Add(data);

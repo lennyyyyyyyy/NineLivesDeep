@@ -1,19 +1,25 @@
 using UnityEngine;
+using TMPro;
 
-class StartButton : MonoBehaviour
-{
+class StartButton : MonoBehaviour {
     public static StartButton s;
+
     private bool hovered = false, pressed = false, finished = false;
     private float hoverOffset;
+    private TMP_Text startText;
+
     private void Awake() {
         s = this;
+        startText = GetComponentInChildren<TMP_Text>();
     }
     public void OnPointerEnter() {
         hovered = true;
         hoverOffset = Random.Range(0f, 1f);
+        startText.enabled = true;
     }
     public void OnPointerExit() {
         hovered = false;
+        startText.enabled = false;
     }
     public void OnPointerDown() {
         pressed = !finished;

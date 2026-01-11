@@ -6,7 +6,6 @@ using UnityEngine;
 public class PrefabManager : MonoBehaviour {
     public static PrefabManager s;
 
-    // prefabs
     [System.NonSerialized]
     public GameObject tilePrefab,
 		  		      tileActionPrefab,
@@ -16,24 +15,24 @@ public class PrefabManager : MonoBehaviour {
                       mossPrefab,
                       grass1Prefab,
                       grass2Prefab,
+                      flagPrefab,
+                      cursePrefab,
                       minePrefab,
                       mineUIItemPrefab,
-                      mineSpritePrefab,
-                      numberPrefab,
-                      printPrefab,
-                      bloodPrefab,
-                      flagPrefab,
                       flagSpritePrefab,
-                      cursePrefab,
+                      mineSpritePrefab,
                       pawPrefab,
                       tooltipPrefab,
                       bubblePrefab,
-                      psychicEyePrefab,
-					  playerBitPrefab,
 					  crankPrefab,
                       pillarPrefab,
                       vasePrefab,
                       tunnelPrefab,
+                      psychicEyePrefab,
+					  playerBitPrefab,
+                      numberPrefab,
+                      printPrefab,
+                      bloodPrefab,
                       runPrefab;
 
     private void Awake() {
@@ -51,8 +50,8 @@ public class PrefabManager : MonoBehaviour {
         cursePrefab = HelperManager.s.LoadResourceSafe<GameObject>("Prefabs/UIItems/Curse");
         minePrefab = HelperManager.s.LoadResourceSafe<GameObject>("Prefabs/UIItems/Mine");
         mineUIItemPrefab = HelperManager.s.LoadResourceSafe<GameObject>("Prefabs/UIItems/MineUIItem");
-        mineSpritePrefab = HelperManager.s.LoadResourceSafe<GameObject>("Prefabs/MainEntities/MineSprite");
         flagSpritePrefab = HelperManager.s.LoadResourceSafe<GameObject>("Prefabs/MainEntities/FlagSprite");
+        mineSpritePrefab = HelperManager.s.LoadResourceSafe<GameObject>("Prefabs/MainEntities/MineSprite");
         pawPrefab = HelperManager.s.LoadResourceSafe<GameObject>("Prefabs/UIComponents/Paw");
         tooltipPrefab = HelperManager.s.LoadResourceSafe<GameObject>("Prefabs/UIComponents/Tooltip");
         bubblePrefab = HelperManager.s.LoadResourceSafe<GameObject>("Prefabs/UIComponents/Bubble");
