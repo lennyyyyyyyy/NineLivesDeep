@@ -28,6 +28,7 @@ public class EntitySaveData {
     // pickup sprites
     public int pickupPrice;
     public int pickupCount;
+    // misc entities - nothing extra
 }
 [Serializable]
 public class TileSaveData {
@@ -79,8 +80,7 @@ public class EntityLoadData {
     // pickup sprites
     public int pickupPrice;
     public int pickupCount;
-    // misc entities
-    public GameObject prefab;
+    // misc entities - nothing extra
 }
 public class TileLoadData {
     public Type type;
@@ -103,12 +103,12 @@ public class LoadData {
                       minesUnseen = new List<Type>();
     public List<Vector2Int> tilesVisited = new List<Vector2Int>();
     public List<Vector2Int> moveHistory;
+    public List<Vector2Int> rainCoords;
 
     //floor data
     public int floor, width, height, floorDeathCount;
     public string floorType;
     public List<TileLoadData> tiles = new List<TileLoadData>();
-    public List<Vector2Int> rainCoords;
 }
 public class SaveManager : MonoBehaviour {
     public static SaveManager s;
@@ -138,7 +138,6 @@ public class SaveManager : MonoBehaviour {
         return true;
     }
     public void Save() {
-        EventManager.s.OnSave?.Invoke();
         saveData = new SaveData() {
             playerCoord = Player.s.GetCoord(),
             playerTrapped = Player.s.trapped,
@@ -230,6 +229,76 @@ public class SaveManager : MonoBehaviour {
         string filepath = Application.persistentDataPath + "/savefile.json";
         File.WriteAllText(filepath, json);
         Debug.Log("Saved to " + filepath);
+    }
+    public void Load() {
+        if (!saveDataValid) {
+            Debug.LogError("No valid save data to load!");
+            return;
+        }
+        LoadData loadData = new LoadData() {
+            playerCoord = saveData.playerCoord,
+            playerTrapped = saveData.playerTrapped,
+            playerAlive = saveData.playerAlive,
+            money = saveData.money,
+            tempChanges = saveData.tempChanges,
+            tilesVisited = saveData.tilesVisited.ToList(),
+            moveHistory = saveData.moveHistory.ToList(),
+            rainCoords = saveData.rainCoords.ToList(),
+            floor = saveData.floor,
+            width = saveData.width,
+            height = saveData.height,
+            floorType = saveData.floorType,
+            floorDeathCount = saveData.floorDeathCount
+        };
+        foreach (CurseSaveData data in saveData.curses) {
+            loadData.curses.Add(new CurseLoadData() {
+                type = CatalogManager.s.idToData[data.typeID].type,
+                intensifiedType = CatalogManager.s.idToData[data.intensifiedTypeID].type
+            });
+        }
+        foreach (int typeID in saveData.mines) {
+            loadData.mines.Add(CatalogManager.s.idToData[typeID].type);
+        }
+        foreach (FlagSaveData data in saveData.flags) {
+            FlagLoadData fdata = new FlagLoadData() {
+                type = CatalogManager.s.idToData[data.typeID].type,
+                count = data.count,
+                usable = data.usable
+            };
+            foreach (NumberSaveData nData in data.numbers) {
+                fdata.numbers.Add(new NumberLoadData() {
+                    coord = nData.coord,
+                    num = nData.num
+                });
+            }
+            loadData.flags.Add(fdata);
+        }
+        foreach (int typeID in saveData.flagsUnseen) {
+            loadData.flagsUnseen.Add(CatalogManager.s.idToData[typeID].type);
+        }
+        foreach (int typeID in saveData.consumableFlagsUnseen) {
+            loadData.consumableFlagsUnseen.Add(CatalogManager.s.idToData[typeID].type);
+        }
+        foreach (int typeID in saveData.cursesUnseen) {
+            loadData.cursesUnseen.Add(CatalogManager.s.idToData[typeID].type);
+        }
+        foreach (int typeID in saveData.minesUnseen) {
+            loadData.minesUnseen.Add(CatalogManager.s.idToData[typeID].type);
+        }
+        foreach (TileSaveData data in saveData.tiles) {
+            TileLoadData tdata = new TileLoadData() {
+                type = CatalogManager.s.idToData[data.typeID].type,
+                coord = data.coord,
+                actionCode = data.actionCode
+            };
+            foreach (EntitySaveData edata in data.nonPlayerEntities) {
+                tdata.nonPlayerEntities.Add(new EntityLoadData() {
+                    type = CatalogManager.s.idToData[edata.typeID].type,
+                    pickupPrice = edata.pickupPrice,
+                    pickupCount = edata.pickupCount 
+                });
+            }
+        }
     }
 }
 
