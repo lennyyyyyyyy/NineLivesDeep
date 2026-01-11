@@ -27,16 +27,15 @@ public class PlayerUIItemModule : MonoBehaviour {
 
     private void Awake() {
         s = this;
-    }
-	public void InitializeUnseenFlags() {
 		flagsUnseen = CatalogManager.s.allFlagTypes.ToList();
 		consumableFlagsUnseen = CatalogManager.s.allFlagTypes.Where(type => typeof(Consumable).IsAssignableFrom(type)).ToList();
 		cursesUnseen = CatalogManager.s.allCurseTypes.ToList();
 		minesUnseen = CatalogManager.s.allMineTypes.ToList();
-	}
+    }
     public bool HasUIItem(Type type) {
         return typeToInstances.ContainsKey(type) && typeToInstances[type].Count > 0;
     }
+
     public void ProcessAddedUIItem(UIItem uiItem) {
         Type type = uiItem.GetType();
         if (!typeToInstances.ContainsKey(type)) {
@@ -53,6 +52,41 @@ public class PlayerUIItemModule : MonoBehaviour {
             }
         }
     }
+    public void OrganizeFlags() {
+        foreach (GameObject f in flags) {
+            Flag flag = f.GetComponent<Flag>();
+            flag.UpdateUsable();
+        }
+		Player.s.RecalculateModifiers();
+        GameUIManager.s.OrganizeFlags();
+    }
+    public void OrganizeNotFlags() {
+		//counting sort in the right order
+		List<GameObject>[] sortedNotFlags = new List<GameObject>[4];
+		for (int i = 0; i < 4; i++) {
+			sortedNotFlags[i] = new List<GameObject>();
+		}
+		foreach (GameObject notFlag in notFlags) {
+			UIItem uiItem = notFlag.GetComponent<UIItem>();
+			if (uiItem is MineUIItem) {
+				sortedNotFlags[0].Add(notFlag);
+			} else if (uiItem is Mine) {
+				sortedNotFlags[1].Add(notFlag);
+			} else if (uiItem is Intensify){
+				sortedNotFlags[2].Add(notFlag);
+			} else if (uiItem is Curse) {
+				sortedNotFlags[3].Add(notFlag);
+			}
+        }
+		notFlags.Clear();
+		for (int i = 0; i < sortedNotFlags.Length; i++) {
+			foreach (GameObject g in sortedNotFlags[i]) {
+				notFlags.Add(g);
+			}
+		}
+		Player.s.RecalculateModifiers();
+        GameUIManager.s.OrganizeNotFlags();
+    }
     public void NoticeFlag(Type type) {
 		flagsSeen.Add(type);
 		flagsUnseen.Remove(type);
@@ -62,9 +96,11 @@ public class PlayerUIItemModule : MonoBehaviour {
         flags.Add(flag.gameObject);
         Type type = flag.GetType();
         NoticeFlag(type);
+        OrganizeFlags();
     }
     public void ProcessRemovedFlag(Flag flag) {
         flags.Remove(flag.gameObject);
+        OrganizeFlags();
     }
     public void ProcessAddedCurse(Curse curse) {
         curses.Add(curse.gameObject);
@@ -72,9 +108,11 @@ public class PlayerUIItemModule : MonoBehaviour {
         Type type = curse.GetType();
 		cursesSeen.Add(type);
 		cursesUnseen.Remove(type);
+        OrganizeNotFlags();
     }
     public void ProcessRemovedCurse(Curse curse) {
         curses.Remove(curse.gameObject);
+        OrganizeNotFlags();
     }
     public void ProcessAddedMine(Mine mine) {
         mines.Add(mine.gameObject);
@@ -82,8 +120,16 @@ public class PlayerUIItemModule : MonoBehaviour {
         Type type = mine.GetType();
         minesSeen.Add(type);
         minesUnseen.Remove(type);
+        OrganizeNotFlags();
     }
     public void ProcessRemovedMine(Mine mine) {
         mines.Remove(mine.gameObject);
+        OrganizeNotFlags();
+    }
+    private void OnEnable() {
+        EventManager.s.OnPlayerAliveChange += OrganizeFlags;
+    }
+    private void OnDisable() {
+        EventManager.s.OnPlayerAliveChange -= OrganizeFlags;
     }
 }

@@ -1,7 +1,6 @@
 using UnityEngine;
 
-public class StartUIManager : MonoBehaviour
-{
+public class StartUIManager : MonoBehaviour {
     public static StartUIManager s;
 
     public GameObject startUIGroup, 

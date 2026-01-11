@@ -33,6 +33,7 @@ public class GameUIManager : MonoBehaviour {
             });
         } 
     }
+    // only organizes the positions of flags and paws in ui
     public void OrganizeFlags() {
         MatchPawsToFlags();
         bool variableSpacing = PlayerUIItemModule.s.flags.Count * 100 > (UIManager.s.canvas.transform as RectTransform).rect.height;
@@ -40,7 +41,6 @@ public class GameUIManager : MonoBehaviour {
             GameObject f = PlayerUIItemModule.s.flags[i], p = paws[i];
             RectTransform prt = p.transform as RectTransform;
             Flag flag = f.GetComponent<Flag>();
-            flag.UpdateUsable();
 
             LeanTween.cancel(f);
             LeanTween.cancel(p);
@@ -73,33 +73,9 @@ public class GameUIManager : MonoBehaviour {
                 });
             }
         }
-		Player.s.RecalculateModifiers();
     }
+    // only organizes the positions of curses and mines in ui
 	public void OrganizeNotFlags() {
-		//counting sort in the right order
-		List<GameObject>[] sortedNotFlags = new List<GameObject>[4];
-		for (int i = 0; i < 4; i++) {
-			sortedNotFlags[i] = new List<GameObject>();
-		}
-		foreach (GameObject notFlag in PlayerUIItemModule.s.notFlags) {
-			UIItem uiItem = notFlag.GetComponent<UIItem>();
-			if (uiItem is MineUIItem) {
-				sortedNotFlags[0].Add(notFlag);
-			} else if (uiItem is Intensify){
-				sortedNotFlags[1].Add(notFlag);
-			} else if (uiItem is Curse) {
-				sortedNotFlags[2].Add(notFlag);
-			} else if (uiItem is Mine) {
-				sortedNotFlags[3].Add(notFlag);
-			}
-		}
-		PlayerUIItemModule.s.notFlags.Clear();
-		for (int i = 0; i < sortedNotFlags.Length; i++) {
-			foreach (GameObject g in sortedNotFlags[i]) {
-				PlayerUIItemModule.s.notFlags.Add(g);
-			}
-		}
-		//then move items in their places
         bool variableSpacing = PlayerUIItemModule.s.notFlags.Count * 100 > (UIManager.s.canvas.transform as RectTransform).rect.height;
         for (int i = 0; i < PlayerUIItemModule.s.notFlags.Count; i++) {
             GameObject g = PlayerUIItemModule.s.notFlags[i];
@@ -117,20 +93,16 @@ public class GameUIManager : MonoBehaviour {
                     item.rt.anchoredPosition, new Vector2(60, destinationY), 0.5f).setEase(LeanTweenType.easeInOutCubic);
             } 
 		}
-		Player.s.RecalculateModifiers();
 	}
     public void OnGameStart() {
-        OrganizeFlags();
         LeanTween.value(gameObject, (float f) => {
             gameUIGroup.GetComponent<CanvasGroup>().alpha = 1 - f;
         }, 1, 0, ConstantsManager.s.gameStartTransitionDuration).setEase(LeanTweenType.easeInOutCubic);
     }
     private void OnEnable() {
         EventManager.s.OnGameStart += OnGameStart;
-        EventManager.s.OnPlayerAliveChange += OrganizeFlags;
     }
     private void OnDisable() {
         EventManager.s.OnGameStart -= OnGameStart;
-        EventManager.s.OnPlayerAliveChange -= OrganizeFlags;
     }
 }

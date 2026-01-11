@@ -20,7 +20,7 @@ public class HelperManager : MonoBehaviour {
     // Loads a resource from Assets/Resources/path, but is safer if a resource isn't found.
 	public T LoadResourceSafe<T>(string path) where T : UnityEngine.Object {
 		T resource = Resources.Load<T>(path);
-        if (resource != null) {
+        if (resource == null) {
             Debug.LogError("Couldn't load resource at path: " + path);
         }
 		if (typeof(T) == typeof(Texture2D)) {

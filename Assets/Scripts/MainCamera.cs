@@ -33,18 +33,20 @@ public class MainCamera : MonoBehaviour
         s = this;
     }
 	private void Update() {
-		if (!locked) {	
-			Vector3 playerPos = Floor.s.CoordToPos(Player.s.GetCoord().x, Player.s.GetCoord().y);
-   			Vector3 targetPos = playerPos - .25f * playerPos.normalized * Camera.main.orthographicSize + cameraShakeOffset;
-			transform.position = Vector3.Lerp(transform.position, targetPos, 1-Mathf.Pow(0.65f, Time.deltaTime/.15f));
-			updateZoom(Mathf.Lerp(Camera.main.orthographicSize, targetOrthographicSize, 1-Mathf.Pow(0.65f, Time.deltaTime/.15f)));
-		}
-		targetOrthographicSize = Mathf.Clamp(targetOrthographicSize + Input.mouseScrollDelta.y, 0.8f, Player.s.modifiers.vision);
-		//shake at varying intervals
-		shakeTimer -= Time.deltaTime;
-		if (shakeTimer <= 0) {
-			cameraShakeOffset = Player.s.modifiers.cameraShakeStrength * Random.insideUnitSphere;
-			shakeTimer = Player.s.modifiers.cameraShakePeriod * Random.Range(0.5f, 1.5f);
-		}
+        if (GameManager.s.gameState == GameManager.GameState.GAME) {
+            if (!locked) {	
+                Vector3 playerPos = Floor.s.CoordToPos(Player.s.GetCoord().x, Player.s.GetCoord().y);
+                Vector3 targetPos = playerPos - .25f * playerPos.normalized * Camera.main.orthographicSize + cameraShakeOffset;
+                transform.position = Vector3.Lerp(transform.position, targetPos, 1-Mathf.Pow(0.65f, Time.deltaTime/.15f));
+                updateZoom(Mathf.Lerp(Camera.main.orthographicSize, targetOrthographicSize, 1-Mathf.Pow(0.65f, Time.deltaTime/.15f)));
+            }
+            targetOrthographicSize = Mathf.Clamp(targetOrthographicSize + Input.mouseScrollDelta.y, 0.8f, Player.s.modifiers.vision);
+            //shake at varying intervals
+            shakeTimer -= Time.deltaTime;
+            if (shakeTimer <= 0) {
+                cameraShakeOffset = Player.s.modifiers.cameraShakeStrength * Random.insideUnitSphere;
+                shakeTimer = Player.s.modifiers.cameraShakePeriod * Random.Range(0.5f, 1.5f);
+            }
+        }
 	}
 }

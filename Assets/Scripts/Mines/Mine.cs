@@ -4,11 +4,14 @@ using System;
 
 public class Mine : UIItem {
 	public Type spriteType;
+
+    protected virtual void Awake() {
+        transform.SetParent(GameUIManager.s.notFlagGroup.transform, false);
+    }
 	protected override void Start() {
 		base.Start();
 		
         PlayerUIItemModule.s.ProcessAddedMine(this);
-		GameUIManager.s.OrganizeNotFlags();
 	}
 	public virtual void SetInitialData(Texture2D? tex2d = null,
 										TooltipData tooltipData = null,
@@ -33,6 +36,5 @@ public class Mine : UIItem {
     protected override void OnDestroy() {
         base.OnDestroy();
         PlayerUIItemModule.s.ProcessRemovedMine(this);
-        GameUIManager.s.OrganizeNotFlags();
     }
 }

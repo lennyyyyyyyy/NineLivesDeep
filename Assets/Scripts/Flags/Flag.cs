@@ -18,7 +18,7 @@ public class Flag : UIItem {
     protected TMP_Text tmpro;
 
     protected virtual void Awake() {
-        transform.SetParent(GameUIManager.s.flagGroup.transform);
+        transform.SetParent(GameUIManager.s.flagGroup.transform, false);
     }
     protected override void Start() {
 		base.Start();
@@ -28,7 +28,6 @@ public class Flag : UIItem {
         tmpro.enabled = showCount;
     
         PlayerUIItemModule.s.ProcessAddedFlag(this);
-        GameUIManager.s.OrganizeFlags(); // organize flags in ui
     }
 	public virtual void SetInitialData(Texture2D? tex2d = null,
 										TooltipData tooltipData = null,
@@ -76,6 +75,5 @@ public class Flag : UIItem {
     protected override void OnDestroy() {
         base.OnDestroy();
         PlayerUIItemModule.s.ProcessRemovedFlag(this);
-        GameUIManager.s.OrganizeFlags();
     }
 }

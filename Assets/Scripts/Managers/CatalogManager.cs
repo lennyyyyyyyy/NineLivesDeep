@@ -175,7 +175,5 @@ public class CatalogManager : MonoBehaviour {
 			new MineData(typeof(Chief), "chief", new TooltipData("Chief Mine", "It calls to its cronies.", "When triggered, moves mines closer to you."), typeof(ChiefSprite)),
 			new MineData(typeof(Telemine), "telemine", new TooltipData("Telemine", "Explosion so powerful it makes a wormhole.", "Teleports you to a nearby undiscovered tile."), typeof(TelemineSprite))
 		};
-
-		PlayerUIItemModule.s.InitializeUnseenFlags();
     }
 }

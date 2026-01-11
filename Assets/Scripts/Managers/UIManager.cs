@@ -18,7 +18,6 @@ public class UIManager : MonoBehaviour {
     public RectTransform canvasRt;
     [System.NonSerialized]
     public Vector3 lastMousePos, mouseVelocity = Vector2.zero;
-    private float mouseTimer = 0;
     [System.NonSerialized]
     public Material alphaEdgeBlueMat,
                     tileNormalMat,
@@ -32,6 +31,8 @@ public class UIManager : MonoBehaviour {
                   mineDebugSprite;
     [System.NonSerialized]
     public VolumeProfile ppvp;
+
+    private float mouseTimer = 0;
 
     private void Awake() {
         s = this;

@@ -22,7 +22,7 @@ public class FlagSprite : CorrespondingSprite {
         heldOffset = Random.Range(0f, 1f);
         heldPeriod = 0.65f + 0.15f * Random.Range(-1f, 1f);
         // update parent usable state
-        GameUIManager.s.OrganizeFlags();
+        PlayerUIItemModule.s.OrganizeFlags();
         //hide map layers and prints
         Player.s.UpdateSecondaryMapActive();
         Player.s.UpdateActivePrints();
@@ -119,7 +119,7 @@ public class FlagSprite : CorrespondingSprite {
             //brighten under
             ShaderManager.s.TweenUnderDarken(1f, overToUnderDuration);
             //replace parent with cat paw animation
-            GameUIManager.s.OrganizeFlags();
+            PlayerUIItemModule.s.OrganizeFlags();
         }
     }
     protected virtual void OnPlace() {

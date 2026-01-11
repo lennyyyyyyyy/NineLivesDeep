@@ -95,7 +95,7 @@ public class Floor : MonoBehaviour {
 			PositionTilesUnbuilt();
 			BuildTiles(2f, 2f);
 			MainCamera.s.ZoomTo(12.5f, 1f);	
-			GameUIManager.s.OrganizeFlags();
+            PlayerUIItemModule.s.OrganizeFlags();
         }, time);
 		time += 3.8f;
 
@@ -529,13 +529,11 @@ public class Floor : MonoBehaviour {
 		windZone.directionX = windDirection.x * Player.s.modifiers.windStrength * 1.5f;
 		windZone.directionY = windDirection.y * Player.s.modifiers.windStrength * 1.5f;
 	}
-    private void OnGameStart() {
-        HelperManager.s.DelayAction(() => { IntroAndCreateFloor("minefield", 0); }, 1f);
-    }
     private void OnEnable() {
-        EventManager.s.OnGameStart += OnGameStart;
     }
     private void OnDisable() {
-        EventManager.s.OnGameStart -= OnGameStart;
+    }
+    private void OnDestroy() {
+        s = null;
     }
 }

@@ -150,7 +150,7 @@ GameObject:
   - component: {fileID: 8640348216104479802}
   - component: {fileID: 9080984458713395954}
   m_Layer: 5
-  m_Name: MineIcon
+  m_Name: MineUIItem
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

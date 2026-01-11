@@ -348,10 +348,13 @@ public class Player : Entity {
 	public override bool CoordAllowed(int x, int y) {
 		return true;
 	}
-    void OnEnable() {
+    private void OnEnable() {
         EventManager.s.OnFloorChangeAfterEntities += OnFloorChange;
     }
-    void OnDisable() {
+    private void OnDisable() {
         EventManager.s.OnFloorChangeAfterEntities -= OnFloorChange;
+    }
+    private void OnDestroy() {
+        s = null;
     }
 }

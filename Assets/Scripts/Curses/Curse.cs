@@ -5,13 +5,12 @@ public class Curse : UIItem {
 	public bool intensified = false;
 
     protected virtual void Awake() {
-        transform.SetParent(GameUIManager.s.notFlagGroup.transform);
+        transform.SetParent(GameUIManager.s.notFlagGroup.transform, false);
     }
     protected override void Start() {
 		base.Start();
 		
         PlayerUIItemModule.s.ProcessAddedCurse(this);
-		GameUIManager.s.OrganizeNotFlags();
 	}
 	protected override void SetDefaultData() {
 		if (CatalogManager.s.typeToData.ContainsKey(GetType())) {
@@ -22,6 +21,5 @@ public class Curse : UIItem {
     protected override void OnDestroy() {
         base.OnDestroy();
         PlayerUIItemModule.s.ProcessRemovedCurse(this);
-        GameUIManager.s.OrganizeNotFlags();
     }
 }
