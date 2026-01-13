@@ -66,9 +66,9 @@ public class PickupSprite : CorrespondingSprite {
 		SetInitialData(correspondingUIType, price, spawnType, spawnCoord);
 		ApplyInitialData();	
 	}
-	public override void Move(GameObject tile, bool reposition = true) {
-		base.Move(tile, reposition);
+	public override bool Move(GameObject tile, bool reposition = true) {
 		transform.localScale = droppedScale * Vector3.one;
+		return base.Move(tile, reposition);
 	}
     protected override void OnMouseEnterCustom() {
 		base.OnMouseEnterCustom();

@@ -16,8 +16,6 @@ public class Floor : MonoBehaviour {
     public int floor, width, height;
     [System.NonSerialized]
     public string floorType = "none";
-	[System.NonSerialized]
-	public int floorDeathCount = 0;
     public HashSet<Vector2Int> rainCoords = new HashSet<Vector2Int>();
 
     // unsaved data
@@ -28,8 +26,8 @@ public class Floor : MonoBehaviour {
     
     private ParticleSystem ambientDust;
 	private ParticleSystemForceField windZone;
-
-	public void IntroAndCreateFloor(string newFloorType, int newFloor) {
+    
+    public float Intro(string newFloorType, int newFloor) {
 		// FLOOR TRANSITION FIRST STEP - INTRO SEQUENCE
 		floorType = newFloorType;
 		floor = newFloor;
@@ -51,6 +49,10 @@ public class Floor : MonoBehaviour {
         }, time);
 		time += 2.8f;
 
+        return time;
+    }
+	public void IntroAndCreateFloor(string newFloorType, int newFloor) {
+        float time = Intro(newFloorType, newFloor);
 		if (floorType == "minefield") {
 			HelperManager.s.DelayAction(() => {
 				HelperManager.s.InstantiateBubble(Vector3.zero, "a mine appears...", new Color(0.5f, 0.5f, 0.5f), 2f, 2f);
@@ -76,7 +78,6 @@ public class Floor : MonoBehaviour {
 			}, time + 1f);
 			time += 2.8f;
 		}
-
 		// FLOOR TRANSITION SECOND STEP - DESTROY THE PREVIOUS FLOOR AND RENEW ARRAYS
         HelperManager.s.DelayAction(() => {
 			EventManager.s.OnFloorChangeBeforeNewLayout?.Invoke();
@@ -90,8 +91,7 @@ public class Floor : MonoBehaviour {
 			
 			// FLOOR TRANSITION FOURTH STEP - BUILD NEW FLOOR
 			EventManager.s.OnFloorChangeAfterEntities?.Invoke();	
-			
-			floorDeathCount = 0;
+            Player.s.Move(0, 0, animate: false);
 			PositionTilesUnbuilt();
 			BuildTiles(2f, 2f);
 			MainCamera.s.ZoomTo(12.5f, 1f);	
@@ -101,7 +101,34 @@ public class Floor : MonoBehaviour {
 
 		HelperManager.s.DelayAction(() => { MainCamera.s.locked = false; }, time);
 	}	
-    public void InitLayout(int newWidth, int newHeight, string newFloorType) {
+    public void IntroAndLoadFloor(LoadData loadData) {
+        float time = Intro(loadData.floorType, loadData.floor);
+        HelperManager.s.DelayAction(() => {
+            InitLayout(loadData.width, loadData.height);
+		    foreach (TileLoadData tld in loadData.tiles) {
+                PrefabData pd = CatalogManager.s.typeToData[tld.type] as PrefabData;
+                GameObject tile = ReplaceTile(pd.prefab, tld.coord.x, tld.coord.y);
+                if (typeof(ActionTile).IsAssignableFrom(pd.type)) {
+                    ActionTile at = tile.GetComponent<ActionTile>();
+                    at.Init(tld.actionCode);
+                    at.amount = tld.amount;
+                }
+                //foreach (EntityLoadData eld in tld.nonPlayerEntities) {
+                //    GameObject entity;
+                //    if (typeof(FlagSprite).IsAssignableFrom(eld.type)) {
+                //        entity = Instantiate(PrefabManager.s.flagSpritePrefab);
+            }
+            Player.s.Move(loadData.playerCoord.x, loadData.playerCoord.y, animate: false);
+			PositionTilesUnbuilt();
+			BuildTiles(2f, 2f);
+			MainCamera.s.ZoomTo(12.5f, 1f);	
+            PlayerUIItemModule.s.OrganizeFlags();
+        }, time);
+		time += 3.8f;
+
+		HelperManager.s.DelayAction(() => { MainCamera.s.locked = false; }, time);
+    }
+    public void InitLayout(int newWidth, int newHeight) {
 		// FLOOR TRANSITION SECOND STEP - DESTROY THE PREVIOUS FLOOR AND RENEW ARRAYS
 		
 		//destroy previous tiles
@@ -136,14 +163,14 @@ public class Floor : MonoBehaviour {
         float variation = Random.value;
         List<Vector2Int> potentialTiles = new List<Vector2Int>();
         if (variation < 0.33f) { // normal shape
-            InitLayout(2 * floor + 7 + Player.s.modifiers.floorExpansion, 2 * floor + 7 + Player.s.modifiers.floorExpansion, "minefield");
+            InitLayout(2 * floor + 7 + Player.s.modifiers.floorExpansion, 2 * floor + 7 + Player.s.modifiers.floorExpansion);
             for (int i=0; i<width; i++) {
                 for (int j=0; j<height; j++) {
                     potentialTiles.Add(new Vector2Int(i, j));
                 }
             }
         } else if (variation < 0.66f) { // donut shape
-            InitLayout(2 * floor + 8 + Player.s.modifiers.floorExpansion, 2 * floor + 8 + Player.s.modifiers.floorExpansion, "minefield");
+            InitLayout(2 * floor + 8 + Player.s.modifiers.floorExpansion, 2 * floor + 8 + Player.s.modifiers.floorExpansion);
             float centerX = (width - 1) / 2f;
             float centerY = (height - 1) / 2f;
             float innerRadius = (3 + Player.s.modifiers.floorExpansion) / 2f;
@@ -156,7 +183,7 @@ public class Floor : MonoBehaviour {
                 }
             }
         } else { // heart / corner shape
-            InitLayout(2 * floor + 8 + Player.s.modifiers.floorExpansion, 2 * floor + 8 + Player.s.modifiers.floorExpansion, "minefield");
+            InitLayout(2 * floor + 8 + Player.s.modifiers.floorExpansion, 2 * floor + 8 + Player.s.modifiers.floorExpansion);
             int xCutoff = (int) Mathf.Ceil((width - 1) / 2f);
             int yCutoff = (int) Mathf.Ceil((height - 1) / 2f);
             for (int i=0; i<width; i++) {
@@ -267,7 +294,7 @@ public class Floor : MonoBehaviour {
         Vector2Int exitCoord;
         float layoutVariation = Random.value;
         if (layoutVariation < 0.33f) { // square arrangement
-            InitLayout(5, 5, "shop");
+            InitLayout(5, 5);
             for (int i = 0; i < 5; i++) {
                 for (int j = 0; j < 5; j++) {
                     tileCoords.Add(new Vector2Int(i, j));
@@ -279,7 +306,7 @@ public class Floor : MonoBehaviour {
                                               new Vector2Int(3, 3), };
             exitCoord = new Vector2Int(4, 4);
         } else if (layoutVariation < 0.66f) { // line arrangement
-            InitLayout(9, 3, "shop");
+            InitLayout(9, 3);
             for (int i = 0; i < 9; i++) {
                 for (int j = 0; j < 3; j++) {
                     tileCoords.Add(new Vector2Int(i, j));
@@ -291,7 +318,7 @@ public class Floor : MonoBehaviour {
                                               new Vector2Int(7, 1), };
             exitCoord = new Vector2Int(8, 0);
         } else { // diagonal arrangement
-            InitLayout(6, 6, "shop");
+            InitLayout(6, 6);
             pickupCoords = new Vector2Int[] { new Vector2Int(1, 1),
                                               new Vector2Int(2, 2),
                                               new Vector2Int(3, 3),
@@ -319,7 +346,7 @@ public class Floor : MonoBehaviour {
         }
     }
 	public void InitTrial() {
-		InitLayout(floor + 7 + Player.s.modifiers.floorExpansion, floor + 7 + Player.s.modifiers.floorExpansion, "trial");
+		InitLayout(floor + 7 + Player.s.modifiers.floorExpansion, floor + 7 + Player.s.modifiers.floorExpansion);
 		
 		ReplaceTile(PrefabManager.s.tileActionPrefab, width-2, height-2).GetComponent<ActionTile>().Init(ActionTile.ActionCode.GIVETRIALREWARD);
 		ReplaceTile(PrefabManager.s.tileActionPrefab, width-1, height-1).GetComponent<ActionTile>().Init(ActionTile.ActionCode.EXITTOSHOP);

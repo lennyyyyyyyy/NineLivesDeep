@@ -52,11 +52,16 @@ public class Entity : VerticalObject {
 			return Floor.INVALID_COORD;
 		}
 	}
-	public virtual void Move(GameObject tile, bool reposition = true) {
+	public virtual bool Move(GameObject tile, bool reposition = true) {
+        Tile tileComponent = tile.GetComponent<Tile>();
+        if (tile == null || !CoordAllowed(tileComponent.coord.x, tileComponent.coord.y)) {
+			Debug.Log("Tried to move entity to invalid coord " + tileComponent.coord.ToString());
+			return false;
+        }
 		if (transform.parent != null && transform.parent.GetComponent<Tile>() != null) {
 			transform.parent.GetComponent<Tile>().entities.Remove(gameObject);
 		}
-		tile.GetComponent<Tile>().AddEntity(gameObject);
+		tileComponent.AddEntity(gameObject);
 		Vector3 oldScale = transform.localScale;
 		transform.parent = tile.transform;
 		transform.localScale = oldScale;	
@@ -65,15 +70,10 @@ public class Entity : VerticalObject {
 		}
         Player.s.destroyPrints();
         Player.s.updatePrints();
+        return true;
 	}
 	public virtual bool Move(int x, int y, bool reposition = true) {
-		if (CoordAllowed(x, y)) {
-			Move(Floor.s.GetTile(x, y), reposition);
-			return true;
-		} else {
-			Debug.Log("Tried to move entity to invalid coord " + x + ", " + y);
-			return false;
-		}
+        return Move(Floor.s.GetTile(x, y), reposition);
 	}
 	public virtual void Remove() {
 		if (GetTile() != null) {

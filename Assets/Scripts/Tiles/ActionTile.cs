@@ -12,9 +12,10 @@ public class ActionTile : Tile {
 
     [System.NonSerialized]
     public ActionCode actionCode;
+    [System.NonSerialized]
+	public int amount = 1;
 	protected Action action;
 	protected Material m;
-	protected int amount = 1;
     // Creates the default sequence for exiting a floor into a new floor
 	protected Action ExitAction(string newFloorType, int newFloor) {
 		return () => { 
@@ -41,7 +42,7 @@ public class ActionTile : Tile {
 				Tile t = Floor.s.ReplaceTile(PrefabManager.s.tilePrefab, Floor.s.width-1, Floor.s.height-2).GetComponent<Tile>();
 				t.PositionUnbuilt();
 				t.Build(2f);
-				if (Floor.s.floorDeathCount > 0) {
+				if (Player.s.floorDeathCount > 0) {
 					Floor.s.PlacePickupSprite(CatalogManager.s.allConsumableFlagTypes, PickupSprite.SpawnType.TRIAL, 0, new Vector2Int(Floor.s.width-1, Floor.s.height-2));
 				} else {
 					Floor.s.PlacePickupSprite(PlayerUIItemModule.s.flagsUnseen, PickupSprite.SpawnType.TRIAL, 0, new Vector2Int(Floor.s.width-1, Floor.s.height-2));

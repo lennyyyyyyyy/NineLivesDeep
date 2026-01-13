@@ -41,11 +41,27 @@ public class GameManager : MonoBehaviour {
         baseComponent.count = 10;
         HelperManager.s.DelayAction(() => { Floor.s.IntroAndCreateFloor("minefield", 0); }, 1f);
     }
+    private void OnGameLoad() {
+        gameState = GameState.GAME;
+        Instantiate(PrefabManager.s.runPrefab);
+        Instantiate(PrefabManager.s.mineUIItemPrefab);
+        GameObject brain = Instantiate(PrefabManager.s.flagPrefab);
+        brain.AddComponent<Brain>();
+        GameObject you = Instantiate(PrefabManager.s.flagPrefab); 
+        You youComponent = you.AddComponent<You>();
+        youComponent.count = 8;
+        GameObject baseFlag = Instantiate(PrefabManager.s.flagPrefab);
+        Base baseComponent = baseFlag.AddComponent<Base>();
+        baseComponent.count = 10;
+        HelperManager.s.DelayAction(() => { Floor.s.IntroAndLoadFloor(SaveManager.s.GetLoadData()); }, 1f);
+    }
     private void OnEnable() {
         EventManager.s.OnGameStart += OnGameStart;
+        EventManager.s.OnGameLoad += OnGameLoad;
     }
     private void OnDisable() {
         EventManager.s.OnGameStart -= OnGameStart;
+        EventManager.s.OnGameLoad -= OnGameLoad;
     }
 
 }

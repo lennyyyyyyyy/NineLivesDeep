@@ -35,8 +35,10 @@ public class StartUIManager : MonoBehaviour {
     }
     private void OnEnable() {
         EventManager.s.OnGameStart += OnGameStart;
+        EventManager.s.OnGameLoad += OnGameStart;
     }
     private void OnDisable() {
         EventManager.s.OnGameStart -= OnGameStart;
+        EventManager.s.OnGameLoad -= OnGameStart;
     }
 }

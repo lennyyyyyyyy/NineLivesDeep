@@ -140,8 +140,8 @@ public class FlagSprite : CorrespondingSprite {
 		//give tile momentum downward
 		GetTile().GetComponent<Tile>().externalDepthImpulse += placeImpulse;	
     }
-	public override void Move(GameObject tile, bool reposition = true) {
-		base.Move(tile, reposition);
+	public override bool Move(GameObject tile, bool reposition = true) {
+		return base.Move(tile, reposition);
 	}
 	public override void Remove() {
 		base.Remove();

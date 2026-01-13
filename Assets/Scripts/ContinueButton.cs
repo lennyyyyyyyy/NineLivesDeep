@@ -26,9 +26,7 @@ class ContinueButton : MonoBehaviour {
     }
     public void OnPointerUp() {
         pressed = false;
-        if (!finished) {
-
-        }
+        if (!finished) { EventManager.s.OnGameLoad?.Invoke(); }
         finished = true;
     }
     void Update() {

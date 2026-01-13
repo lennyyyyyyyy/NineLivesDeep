@@ -14,9 +14,9 @@ public class TypeData {
 		CatalogManager.s.typeToData[this.type] = this;
     }
 }
-public class EntityData : TypeData {
+public class PrefabData : TypeData {
     public GameObject prefab;
-    public EntityData(Type type, GameObject prefab) : base(type) {
+    public PrefabData(Type type, GameObject prefab) : base(type) {
         this.prefab = prefab;
     }
 }
@@ -103,15 +103,15 @@ public class CatalogManager : MonoBehaviour {
     private void Awake() {
         s = this;
         //entities
-        new EntityData(typeof(Crank), PrefabManager.s.crankPrefab);
-        new EntityData(typeof(Pillar), PrefabManager.s.pillarPrefab);
-        new EntityData(typeof(Vase), PrefabManager.s.vasePrefab);
-        new EntityData(typeof(Tunnel), PrefabManager.s.tunnelPrefab);
+        new PrefabData(typeof(Crank), PrefabManager.s.crankPrefab);
+        new PrefabData(typeof(Pillar), PrefabManager.s.pillarPrefab);
+        new PrefabData(typeof(Vase), PrefabManager.s.vasePrefab);
+        new PrefabData(typeof(Tunnel), PrefabManager.s.tunnelPrefab);
         //tiles
-        new TypeData(typeof(NormalTile));
-        new TypeData(typeof(ActionTile));
-        new TypeData(typeof(MossyTile));
-        new TypeData(typeof(Puddle));
+        new PrefabData(typeof(NormalTile), PrefabManager.s.tilePrefab);
+        new PrefabData(typeof(ActionTile), PrefabManager.s.tileActionPrefab);
+        new PrefabData(typeof(MossyTile), PrefabManager.s.tileMossyPrefab);
+        new PrefabData(typeof(Puddle), PrefabManager.s.tilePuddlePrefab);
         //placeable flags
         new FlagData(typeof(Base), "base", new TooltipData("Flag", "Nostalgic, isn't it?", "Drag and drop these wherever you think mines are."),
                      placeableSpriteType: typeof(BaseSprite),

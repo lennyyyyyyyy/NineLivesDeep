@@ -78,6 +78,8 @@ public class Player : Entity {
     public float money = 0;
     [System.NonSerialized]
 	public int tempChanges = 0;
+	[System.NonSerialized]
+	public int floorDeathCount = 0;
     public HashSet<GameObject> tilesVisited = new HashSet<GameObject>();
 	[System.NonSerialized]
 	public List<Vector2Int> moveHistory = new List<Vector2Int>();
@@ -136,7 +138,7 @@ public class Player : Entity {
 		}
 	}
     public void Die() {
-		Floor.s.floorDeathCount++;
+		floorDeathCount++;
         alive = false;
         sr.enabled = false;
         EventManager.s.OnPlayerAliveChange?.Invoke();
@@ -269,7 +271,9 @@ public class Player : Entity {
             }
         }
     } 
-    private void OnFloorChange() {
+    private void OnFloorChangeAfterEntities() {
+        floorDeathCount = 0;
+		tempChanges = 0;
         tilesVisited.Clear();
 		tilesUnvisited.Clear();
 		foreach (GameObject tile in Floor.s.tiles.Values) {
@@ -277,8 +281,6 @@ public class Player : Entity {
 				tilesUnvisited.Add(tile);
 			}
 		}
-        Move(0, 0, true, false);
-		tempChanges = 0;
     }
 	public override bool Move(int x, int y, bool reposition = true) {
 		return Move(x, y, reposition, true);
@@ -349,10 +351,10 @@ public class Player : Entity {
 		return true;
 	}
     private void OnEnable() {
-        EventManager.s.OnFloorChangeAfterEntities += OnFloorChange;
+        EventManager.s.OnFloorChangeAfterEntities += OnFloorChangeAfterEntities;
     }
     private void OnDisable() {
-        EventManager.s.OnFloorChangeAfterEntities -= OnFloorChange;
+        EventManager.s.OnFloorChangeAfterEntities -= OnFloorChangeAfterEntities;
     }
     private void OnDestroy() {
         s = null;

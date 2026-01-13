@@ -27,10 +27,13 @@ public class MineSprite : Entity {
         Player.s.Die();
 		Remove();
     }
-	public override void Move(GameObject tile, bool reposition = true) {
-		base.Move(tile, reposition);
-		Player.s.triggerMines();
-		Player.s.discoverTiles();
+	public override bool Move(GameObject tile, bool reposition = true) {
+        bool success = base.Move(tile, reposition);
+		if (success) {
+            Player.s.triggerMines();
+            Player.s.discoverTiles();
+        }
+        return success;
 	}
 	public override void Remove() {
 		base.Remove();

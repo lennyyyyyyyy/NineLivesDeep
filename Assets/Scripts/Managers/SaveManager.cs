@@ -35,7 +35,9 @@ public class TileSaveData {
     public int typeID;
     public Vector2Int coord;
     public List<EntitySaveData> nonPlayerEntities = new List<EntitySaveData>();
+    // action tiles
     public ActionTile.ActionCode actionCode;
+    public int amount;
 }
 [Serializable]
 public class SaveData {
@@ -44,6 +46,7 @@ public class SaveData {
     public bool playerTrapped, playerAlive;
     public float money;
     public int tempChanges;
+    public int floorDeathCount;
     public List<CurseSaveData> curses = new List<CurseSaveData>();
     public List<int> mines = new List<int>();
     public List<FlagSaveData> flags = new List<FlagSaveData>(); 
@@ -56,7 +59,7 @@ public class SaveData {
     public List<Vector2Int> rainCoords;
 
     //floor data
-    public int floor, width, height, floorDeathCount;
+    public int floor, width, height;
     public string floorType;
     public List<TileSaveData> tiles = new List<TileSaveData>();
 }
@@ -86,7 +89,9 @@ public class TileLoadData {
     public Type type;
     public Vector2Int coord;
     public List<EntityLoadData> nonPlayerEntities = new List<EntityLoadData>();
+    // action tiles
     public ActionTile.ActionCode actionCode;
+    public int amount;
 }
 public class LoadData {
     //player data
@@ -94,6 +99,7 @@ public class LoadData {
     public bool playerTrapped, playerAlive;
     public float money;
     public int tempChanges;
+    public int floorDeathCount;
     public List<CurseLoadData> curses = new List<CurseLoadData>();
     public List<Type> mines = new List<Type>();
     public List<FlagLoadData> flags = new List<FlagLoadData>(); 
@@ -106,7 +112,7 @@ public class LoadData {
     public List<Vector2Int> rainCoords;
 
     //floor data
-    public int floor, width, height, floorDeathCount;
+    public int floor, width, height;
     public string floorType;
     public List<TileLoadData> tiles = new List<TileLoadData>();
 }
@@ -144,11 +150,11 @@ public class SaveManager : MonoBehaviour {
             playerAlive = Player.s.alive,
             money = Player.s.money,
             tempChanges = Player.s.tempChanges,
+            floorDeathCount = Player.s.floorDeathCount,
             floor = Floor.s.floor,
             width = Floor.s.width,
             height = Floor.s.height,
             floorType = Floor.s.floorType,
-            floorDeathCount = Floor.s.floorDeathCount,
             rainCoords = Floor.s.rainCoords.ToList(),
             moveHistory = Player.s.moveHistory.ToList(),
         };
@@ -208,6 +214,7 @@ public class SaveManager : MonoBehaviour {
             };
             if (t is ActionTile) {
                 data.actionCode = ((ActionTile)t).actionCode;
+                data.amount = ((ActionTile)t).amount;
             }
             foreach (GameObject entity in t.entities) {
                 if (entity != Player.s.gameObject) {
@@ -230,10 +237,10 @@ public class SaveManager : MonoBehaviour {
         File.WriteAllText(filepath, json);
         Debug.Log("Saved to " + filepath);
     }
-    public void Load() {
+    public LoadData GetLoadData() {
         if (!saveDataValid) {
             Debug.LogError("No valid save data to load!");
-            return;
+            return null;
         }
         LoadData loadData = new LoadData() {
             playerCoord = saveData.playerCoord,
@@ -241,6 +248,7 @@ public class SaveManager : MonoBehaviour {
             playerAlive = saveData.playerAlive,
             money = saveData.money,
             tempChanges = saveData.tempChanges,
+            floorDeathCount = saveData.floorDeathCount,
             tilesVisited = saveData.tilesVisited.ToList(),
             moveHistory = saveData.moveHistory.ToList(),
             rainCoords = saveData.rainCoords.ToList(),
@@ -248,7 +256,6 @@ public class SaveManager : MonoBehaviour {
             width = saveData.width,
             height = saveData.height,
             floorType = saveData.floorType,
-            floorDeathCount = saveData.floorDeathCount
         };
         foreach (CurseSaveData data in saveData.curses) {
             loadData.curses.Add(new CurseLoadData() {
@@ -289,7 +296,8 @@ public class SaveManager : MonoBehaviour {
             TileLoadData tdata = new TileLoadData() {
                 type = CatalogManager.s.idToData[data.typeID].type,
                 coord = data.coord,
-                actionCode = data.actionCode
+                actionCode = data.actionCode,
+                amount = data.amount
             };
             foreach (EntitySaveData edata in data.nonPlayerEntities) {
                 tdata.nonPlayerEntities.Add(new EntityLoadData() {
@@ -298,7 +306,9 @@ public class SaveManager : MonoBehaviour {
                     pickupCount = edata.pickupCount 
                 });
             }
+            loadData.tiles.Add(tdata);
         }
+        return loadData;
     }
 }
 
