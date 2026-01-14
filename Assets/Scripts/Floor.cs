@@ -113,10 +113,17 @@ public class Floor : MonoBehaviour {
                     at.Init(tld.actionCode);
                     at.amount = tld.amount;
                 }
-                //foreach (EntityLoadData eld in tld.nonPlayerEntities) {
-                //    GameObject entity;
-                //    if (typeof(FlagSprite).IsAssignableFrom(eld.type)) {
-                //        entity = Instantiate(PrefabManager.s.flagSpritePrefab);
+                foreach (EntityLoadData eld in tld.nonPlayerEntities) {
+                    if (typeof(FlagSprite).IsAssignableFrom(eld.type)) {
+                        PlaceFlagSpriteWithoutOnPlace(eld.type, tld.coord.x, tld.coord.y);
+                    } else if (typeof(MineSprite).IsAssignableFrom(eld.type)) {
+                        PlaceMine(eld.type, tld.coord.x, tld.coord.y);
+                    } else if (typeof(PickupSprite).IsAssignableFrom(eld.type)) {
+                        PlacePickupSprite(eld.type, eld.pickupCount, eld.pickupPrice, tld.coord);
+                    } else {
+                        PlaceMiscEntity(eld.type, tld.coord.x, tld.coord.y);
+                    }
+                }
             }
             Player.s.Move(loadData.playerCoord.x, loadData.playerCoord.y, animate: false);
 			PositionTilesUnbuilt();
@@ -248,12 +255,11 @@ public class Floor : MonoBehaviour {
                 // put misc entities
                 float entityRand = Random.value;
                 if (entityRand < 0.06f) {
-                    GameObject entityChoice = new GameObject[] { PrefabManager.s.crankPrefab,
-                                                                 PrefabManager.s.pillarPrefab,
-                                                                 PrefabManager.s.tunnelPrefab,
-                                                                 PrefabManager.s.vasePrefab, }[Random.Range(0, 4)];
-                    GameObject entity = Instantiate(entityChoice);
-                    entity.GetComponent<Entity>().Move(i, j);
+                    Type entityChoice = new Type[] { typeof(Crank),
+                                                     typeof(Pillar),
+                                                     typeof(Tunnel),
+                                                     typeof(Vase), }[Random.Range(0, 4)];
+                    PlaceMiscEntity(entityChoice, i, j);
                 }
             }
             //generate mines
@@ -491,20 +497,39 @@ public class Floor : MonoBehaviour {
             HelperManager.s.DelayAction(() => { tile.Build(buildDuration); }, totalDuration * i / tileList.Count);
         }
     }
+    public GameObject PlaceFlagSpriteWithoutOnPlace(Type type, int x, int y) {
+        GameObject g = Instantiate(PrefabManager.s.flagSpritePrefab);
+        FlagSprite fs = g.AddComponent(type) as FlagSprite;
+        // unfinished
+        return g;
+    }
     public GameObject PlaceMine(Type t, int x, int y) {
         GameObject g = Instantiate(PrefabManager.s.mineSpritePrefab);
         MineSprite m = g.AddComponent(t) as MineSprite;
-		if (m.Move(x, y)) {
-			return g;
+		if (!m.Move(x, y)) {
+            Destroy(g);
 		}
-		Destroy(g);
-		return null;
+		return g;
     }
-    public void PlacePickupSprite(List<Type> pool, PickupSprite.SpawnType spawnType, int price, Vector2Int spawnCoord) {
+    public GameObject PlacePickupSprite(List<Type> pool, PickupSprite.SpawnType spawnType, int price, Vector2Int spawnCoord) {
         GameObject g = Instantiate(PrefabManager.s.flagSpritePrefab);
         PickupSprite ps = g.AddComponent(typeof(PickupSprite)) as PickupSprite;
         ps.SetInitialData(pool[Random.Range(0, pool.Count)], price, spawnType, spawnCoord);
         PlayerUIItemModule.s.NoticeFlag(ps.correspondingUIType);
+        return g;
+    }
+    public GameObject PlacePickupSprite(Type type, int count, int price, Vector2Int spawnCoord) {
+        GameObject g = Instantiate(PrefabManager.s.flagSpritePrefab);
+        PickupSprite ps = g.AddComponent(typeof(PickupSprite)) as PickupSprite;
+        ps.SetInitialData(type, price, PickupSprite.SpawnType.RANDOM, spawnCoord, count);
+        PlayerUIItemModule.s.NoticeFlag(ps.correspondingUIType);
+        return g;
+    }
+    public GameObject PlaceMiscEntity(Type type, int x, int y) {
+        PrefabData pd = CatalogManager.s.typeToData[type] as PrefabData;
+        GameObject g = Instantiate(pd.prefab);
+        g.GetComponent<Entity>().Move(x, y);
+        return g;
     }
 	public bool PrelimMineSpawnCheck(int x, int y) {
 		return (x != 0 || y != 0) && GetTile(x, y) != null;

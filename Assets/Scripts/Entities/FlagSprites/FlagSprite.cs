@@ -12,10 +12,11 @@ public class FlagSprite : CorrespondingSprite {
     protected Light2D light;
 	protected float placeImpulse = 0.2f;
 
-    protected override void Start() {
+    protected virtual void Awake() {
         light = GetComponentInChildren<Light2D>();
         marker = transform.Find("Marker").gameObject;
-
+    }
+    protected override void Start() {
         base.Start();
 
         // init random properties
@@ -58,10 +59,11 @@ public class FlagSprite : CorrespondingSprite {
             }
         }
     }
-	public virtual void SetInitialData(Placeable parent) {
+	public virtual void SetInitialData(Placeable parent, string state = null) {
 		setInitialData = true;
 		this.parent = parent;
 		base.SetInitialData(parent.GetType());
+        this.state = state ?? this.state;
 		//amnesia curse only for placed flag sprites, not pickup sprites in the shop
 		if (Player.s.modifiers.amnesiaUITypes.Contains(typeof(Flag))) {
 			tooltipData.name = "???";
@@ -71,10 +73,14 @@ public class FlagSprite : CorrespondingSprite {
 	}
 	protected override void ApplyInitialData() {
 		base.ApplyInitialData();
+        if (state == "dropped") {
+            transform.localScale = droppedScale * Vector3.one; 
+            sr.sortingLayerName = "Player";
+        }
 		light.color = tooltipData.color;
 	}
-	public virtual void SetData(Placeable parent) {
-		SetInitialData(parent);
+	public virtual void SetData(Placeable parent, string state = null) {
+		SetInitialData(parent, state);
 		ApplyInitialData();
     }
     protected virtual void OnMouseUp() {

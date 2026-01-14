@@ -31,7 +31,7 @@ public class PickupSprite : CorrespondingSprite {
             HelperManager.s.FloatingHover(transform, hoveredScale, hoveredOffset, Vector3.zero);
         }
     }
-	public virtual void SetInitialData(Type correspondingUIType, int? price = null, SpawnType? spawnType = null, Vector2Int? spawnCoord = null) {
+	public virtual void SetInitialData(Type correspondingUIType, int? price = null, SpawnType? spawnType = null, Vector2Int? spawnCoord = null, int? count = null) {
 		setInitialData = true;
 
 		this.price = price ?? this.price;
@@ -40,9 +40,10 @@ public class PickupSprite : CorrespondingSprite {
 		base.SetInitialData(correspondingUIType);
 		this.tooltipData.showPrice = true;
 		this.tooltipData.price = this.price;
+        this.count = count ?? this.count;
 
 		//consumable count numbers based on the way it spawns
-		if (typeof(Consumable).IsAssignableFrom(this.correspondingUIType)) {
+        if (count == null && typeof(Consumable).IsAssignableFrom(this.correspondingUIType)) {
 			FlagData parentFlagData = CatalogManager.s.typeToData[this.correspondingUIType] as FlagData;
 			if (this.spawnType == SpawnType.RANDOM) {
 				this.count = 1;
