@@ -5,11 +5,7 @@ using System;
 // abstract class implementing setting a sprite texture and tooltip based on a corresponding ui type
 public class CorrespondingSprite : Entity {
 	public Type correspondingUIType;
-	protected override void Start() {
-		base.Start();
-	}
-	public virtual void SetInitialData(Type correspondingUIType) {
-		setInitialData = true;
+    public virtual void Init(Type correspondingUIType) {
 		this.correspondingUIType = correspondingUIType;
 		UIItemData uiItemData;
 		// cataract curse
@@ -18,17 +14,7 @@ public class CorrespondingSprite : Entity {
 		} else {
 			uiItemData = CatalogManager.s.typeToData[this.correspondingUIType] as UIItemData;
 		}
-		base.SetInitialData(uiItemData.sprite, uiItemData.tooltipData);
-	}
-	protected override void ApplyInitialData() {
-		base.ApplyInitialData();
-	}
-	public virtual void SetData(Type correspondingUIType) {
-		SetInitialData(correspondingUIType);
-		ApplyInitialData();
-	}
-	protected override void SetDefaultData() {
-		base.SetDefaultData();
+		base.Init(uiItemData.sprite, uiItemData.tooltipData);
 	}
 }
 

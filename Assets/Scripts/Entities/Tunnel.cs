@@ -6,8 +6,9 @@ public class Tunnel : Entity {
     private static List<Tunnel> tunnels = new List<Tunnel>();
     private static bool playerTeleportedLast = false;
 
-    private void Awake() {
+    protected override void Awake() {
         tunnels.Add(this);
+        base.Awake();
     }
     private void OnPlayerMoveToCoord(int x, int y) {
         if (GetCoord().x == x && GetCoord().y == y && tunnels.Count > 1) {

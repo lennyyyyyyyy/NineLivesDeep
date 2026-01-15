@@ -35,6 +35,9 @@ public class EventManager : MonoBehaviour {
 			if (Input.GetMouseButtonDown(0)) {
 				c.SendMessage("OnMouseDownCustom", SendMessageOptions.DontRequireReceiver);
 			}
+			if (Input.GetMouseButtonUp(0)) {
+				c.SendMessage("OnMouseUpCustom", SendMessageOptions.DontRequireReceiver);
+			}
         }
 		foreach (Collider2D c in collidersUnderMouseLastFrame) {
 			if (c != null && !collidersUnderMouse.Contains(c)) {

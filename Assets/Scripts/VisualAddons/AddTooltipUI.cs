@@ -5,14 +5,12 @@ using System;
 
 public class AddTooltipUI : AddTooltip {
     protected RawImage image;
-    protected override void Start() {
+    protected override void Awake() {
         image = GetComponent<RawImage>();
-
 		HelperManager.s.SetupUIEventTriggers(gameObject,
                                              new EventTriggerType[] {EventTriggerType.PointerEnter, EventTriggerType.PointerExit},
                                              new Action<PointerEventData>[] {OnPointerEnter, OnPointerExit});
-
-		base.Start();
+		base.Awake();
     }
     protected override void Update() {
         if (tooltip != null && tooltip.activeSelf) {

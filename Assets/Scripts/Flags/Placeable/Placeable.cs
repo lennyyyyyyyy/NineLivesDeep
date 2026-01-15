@@ -17,7 +17,7 @@ public class Placeable : Flag {
             sprite = Instantiate(PrefabManager.s.flagSpritePrefab, Camera.main.ScreenToWorldPoint(Input.mousePosition), Quaternion.identity);
             FlagSprite flagSprite = sprite.AddComponent(placeableSpriteType) as FlagSprite;
 			FlagData flagData = CatalogManager.s.typeToData[GetType()] as FlagData;
-			flagSprite.SetInitialData(this); 
+			flagSprite.Init(this); 
             base.OnPointerExit(null);
         }
     }

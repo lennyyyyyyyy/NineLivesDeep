@@ -1,12 +1,6 @@
 using UnityEngine;
 
-public class RahhhSprite : FlagSprite
-{
-    protected override void Start()
-    {
-        base.Start();
-    }
-
+public class RahhhSprite : FlagSprite {
     protected override void OnPlace() {
         base.OnPlace();
         for (int dx=-1; dx<=1; dx++) {

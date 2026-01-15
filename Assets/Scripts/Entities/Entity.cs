@@ -1,7 +1,6 @@
 using UnityEngine;
 
 public class Entity : VerticalObject {
-	public bool setInitialData = false;
 	public Sprite sprite;
 	public TooltipData tooltipData;
 	public bool obstacle = true;
@@ -11,33 +10,17 @@ public class Entity : VerticalObject {
 
 	protected bool hovered = false;
 	
-	protected override void Start() {
-		base.Start();
-
+	protected override void Awake() {
+		base.Awake();
 		addTooltip = (GetComponent<AddTooltipScene>() == null ? gameObject.AddComponent(typeof(AddTooltipScene)) as AddTooltipScene : GetComponent<AddTooltipScene>());
-
-		if (setInitialData) {
-			ApplyInitialData();
-		} else {
-			SetDefaultData();
-		}
+        Init();
 	}
-	public virtual void SetInitialData(Sprite? sprite = null, TooltipData tooltipData = null, bool? obstacle = null) {
-		setInitialData = true;
+    public virtual void Init(Sprite? sprite = null, TooltipData? tooltipData = null, bool? obstacle = null) {
 		this.sprite = sprite ?? this.sprite;
 		this.tooltipData = tooltipData ?? this.tooltipData;
 		this.obstacle = obstacle ?? this.obstacle;
-	}
-	protected virtual void ApplyInitialData() {
-		sr.sprite = this.sprite;
-		addTooltip.SetData(this.tooltipData, true);
-	}
-	public virtual void SetData(Sprite? sprite = null, TooltipData tooltipData = null, bool? obstacle = null) {
-		SetInitialData(sprite, tooltipData, obstacle);
-		ApplyInitialData();
-	}
-	protected virtual void SetDefaultData() {
-	}
+        addTooltip.Init(this.tooltipData, true);
+    }
 	public virtual GameObject GetTile() {
 		if (transform.parent != null && transform.parent.GetComponent<Tile>() != null) {
 			return transform.parent.gameObject;

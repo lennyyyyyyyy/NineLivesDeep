@@ -4,8 +4,8 @@ public class VerticalObject : MonoBehaviour
 {
     public GameObject marker;
     public SpriteRenderer sr;
-    protected virtual void Start() {
-		if (sr == null) { sr = GetComponent<SpriteRenderer>(); }
+    protected virtual void Awake() {
+		if (sr == null) { sr = GetComponentInChildren<SpriteRenderer>(); }
 		if (marker == null) { marker = gameObject; }
     }
     protected virtual void Update()

@@ -4,21 +4,18 @@ using UnityEngine.Rendering.Universal;
 using System;
 
 public class FlagSprite : CorrespondingSprite {
-	public Placeable parent;
-
     public static float droppedScale = 0.6f, heldPower = .8f, heldOffset, heldPeriod, overToUnderDuration = 0.5f;
+
+    [System.NonSerialized]
+	public Placeable parent;
     [System.NonSerialized]
     public string state = "held";
     protected Light2D light;
 	protected float placeImpulse = 0.2f;
 
-    protected virtual void Awake() {
+    protected override void Awake() {
         light = GetComponentInChildren<Light2D>();
         marker = transform.Find("Marker").gameObject;
-    }
-    protected override void Start() {
-        base.Start();
-
         // init random properties
         heldOffset = Random.Range(0f, 1f);
         heldPeriod = 0.65f + 0.15f * Random.Range(-1f, 1f);
@@ -35,6 +32,7 @@ public class FlagSprite : CorrespondingSprite {
         }
         //darken under
         ShaderManager.s.TweenUnderDarken(0.1f, overToUnderDuration);
+        base.Awake();
     }
     protected override void Update() {
         base.Update();
@@ -53,37 +51,35 @@ public class FlagSprite : CorrespondingSprite {
             if (UIManager.s.mouseVelocity.magnitude > 0) {
                 ShaderManager.s.DisturbShaders(transform.position.x, transform.position.y);
             }
-            //OnMouseUp bug
-            if (!UnityEngine.InputSystem.Mouse.current.leftButton.isPressed) {
-                OnMouseUp();
-            }
         }
     }
-	public virtual void SetInitialData(Placeable parent, string state = null) {
-		setInitialData = true;
+    public virtual void Init(Placeable parent) {
+        this.state = "held";
 		this.parent = parent;
-		base.SetInitialData(parent.GetType());
-        this.state = state ?? this.state;
+		base.Init(parent.GetType());
 		//amnesia curse only for placed flag sprites, not pickup sprites in the shop
 		if (Player.s.modifiers.amnesiaUITypes.Contains(typeof(Flag))) {
 			tooltipData.name = "???";
 			tooltipData.flavor = "???";
 			tooltipData.info = "???";
 		}
-	}
-	protected override void ApplyInitialData() {
-		base.ApplyInitialData();
-        if (state == "dropped") {
-            transform.localScale = droppedScale * Vector3.one; 
-            sr.sortingLayerName = "Player";
-        }
 		light.color = tooltipData.color;
-	}
-	public virtual void SetData(Placeable parent, string state = null) {
-		SetInitialData(parent, state);
-		ApplyInitialData();
     }
-    protected virtual void OnMouseUp() {
+    public virtual void Init(Vector2Int spawnCoord) {
+        this.state = "dropped";
+        transform.localScale = droppedScale * Vector3.one; 
+        sr.sortingLayerName = "Player";
+        base.Init(CatalogManager.s.spriteTypeToUIType[GetType()]);
+        Move(spawnCoord.x, spawnCoord.y);
+		//amnesia curse only for placed flag sprites, not pickup sprites in the shop
+		if (Player.s.modifiers.amnesiaUITypes.Contains(typeof(Flag))) {
+			tooltipData.name = "???";
+			tooltipData.flavor = "???";
+			tooltipData.info = "???";
+		}
+		light.color = tooltipData.color;
+    }
+    protected virtual void OnMouseUpCustom() {
         if (state == "held") {
             state = "falling";
 			// if windy flag may land somewhere nearby

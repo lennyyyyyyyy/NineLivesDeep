@@ -500,7 +500,7 @@ public class Floor : MonoBehaviour {
     public GameObject PlaceFlagSpriteWithoutOnPlace(Type type, int x, int y) {
         GameObject g = Instantiate(PrefabManager.s.flagSpritePrefab);
         FlagSprite fs = g.AddComponent(type) as FlagSprite;
-        // unfinished
+        fs.Init(new Vector2Int(x, y));
         return g;
     }
     public GameObject PlaceMine(Type t, int x, int y) {
@@ -514,14 +514,14 @@ public class Floor : MonoBehaviour {
     public GameObject PlacePickupSprite(List<Type> pool, PickupSprite.SpawnType spawnType, int price, Vector2Int spawnCoord) {
         GameObject g = Instantiate(PrefabManager.s.flagSpritePrefab);
         PickupSprite ps = g.AddComponent(typeof(PickupSprite)) as PickupSprite;
-        ps.SetInitialData(pool[Random.Range(0, pool.Count)], price, spawnType, spawnCoord);
+        ps.Init(pool[Random.Range(0, pool.Count)], price, spawnType, spawnCoord);
         PlayerUIItemModule.s.NoticeFlag(ps.correspondingUIType);
         return g;
     }
     public GameObject PlacePickupSprite(Type type, int count, int price, Vector2Int spawnCoord) {
         GameObject g = Instantiate(PrefabManager.s.flagSpritePrefab);
         PickupSprite ps = g.AddComponent(typeof(PickupSprite)) as PickupSprite;
-        ps.SetInitialData(type, price, PickupSprite.SpawnType.RANDOM, spawnCoord, count);
+        ps.Init(type, price, PickupSprite.SpawnType.RANDOM, spawnCoord, count);
         PlayerUIItemModule.s.NoticeFlag(ps.correspondingUIType);
         return g;
     }

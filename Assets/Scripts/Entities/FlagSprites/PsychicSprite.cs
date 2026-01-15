@@ -5,10 +5,10 @@ public class PsychicSprite : FlagSprite
     private PsychicEye eye;
     private float timer = 4;
 
-    protected virtual void Start(){
-        base.Start();
+    protected override void Awake() {
         eye = Instantiate(PrefabManager.s.psychicEyePrefab, transform).GetComponent<PsychicEye>();
         sr.sprite = Resources.Load<Sprite>("Textures/flag_psychic_sprite");
+        base.Awake();
     }
     protected virtual void Update() {
         base.Update();

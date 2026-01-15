@@ -17,13 +17,11 @@ public class PickupSprite : CorrespondingSprite {
 	protected TMP_Text tmpro;
     public static float droppedScale = 0.6f, hoveredScale = 0.8f, hoveredOffset;
 
-    protected override void Start() {
+    protected override void Awake() {
         marker = transform.Find("Marker").gameObject;
-        sr = GetComponent<SpriteRenderer>();
         light = GetComponentInChildren<Light2D>();
 		tmpro = GetComponentInChildren<TMP_Text>();
-
-        base.Start();
+        base.Awake();
     }
     protected override void Update() {
         base.Update();
@@ -31,17 +29,14 @@ public class PickupSprite : CorrespondingSprite {
             HelperManager.s.FloatingHover(transform, hoveredScale, hoveredOffset, Vector3.zero);
         }
     }
-	public virtual void SetInitialData(Type correspondingUIType, int? price = null, SpawnType? spawnType = null, Vector2Int? spawnCoord = null, int? count = null) {
-		setInitialData = true;
-
+    public virtual void Init(Type correspondingUIType, int? price = null, SpawnType? spawnType = null, Vector2Int? spawnCoord = null, int? count = null) {
 		this.price = price ?? this.price;
 		this.spawnType = spawnType ?? this.spawnType;
 		this.spawnCoord = spawnCoord ?? this.spawnCoord;
-		base.SetInitialData(correspondingUIType);
+		base.Init(correspondingUIType);
 		this.tooltipData.showPrice = true;
 		this.tooltipData.price = this.price;
         this.count = count ?? this.count;
-
 		//consumable count numbers based on the way it spawns
         if (count == null && typeof(Consumable).IsAssignableFrom(this.correspondingUIType)) {
 			FlagData parentFlagData = CatalogManager.s.typeToData[this.correspondingUIType] as FlagData;
@@ -53,20 +48,13 @@ public class PickupSprite : CorrespondingSprite {
 				this.count = parentFlagData.consumableDefaultCount;
 			}
 		}
-	}
-	protected override void ApplyInitialData() {
-		base.ApplyInitialData();
-		light.color = tooltipData.color;
-		Move(spawnCoord.x, spawnCoord.y);
-		if (count > 0) {
+		light.color = this.tooltipData.color;
+		Move(this.spawnCoord.x, this.spawnCoord.y);
+		if (this.count > 0) {
 			tmpro.enabled = true;
-			tmpro.text = count.ToString();
+			tmpro.text = this.count.ToString();
 		}
-	}
-	public virtual void SetData(Type correspondingUIType, int? price = null, SpawnType? spawnType = null, Vector2Int? spawnCoord = null) {
-		SetInitialData(correspondingUIType, price, spawnType, spawnCoord);
-		ApplyInitialData();	
-	}
+    }
 	public override bool Move(GameObject tile, bool reposition = true) {
 		transform.localScale = droppedScale * Vector3.one;
 		return base.Move(tile, reposition);

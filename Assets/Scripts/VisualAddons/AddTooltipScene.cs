@@ -2,9 +2,9 @@ using UnityEngine;
 
 public class AddTooltipScene : AddTooltip {
     protected SpriteRenderer sr;
-    protected override void Start() {
+    protected override void Awake() {
         sr = GetComponent<SpriteRenderer>();
-		base.Start();
+		base.Awake();
     }
     protected override void Update() {
         if (tooltip != null && tooltip.activeSelf) {

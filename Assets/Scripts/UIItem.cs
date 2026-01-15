@@ -36,7 +36,7 @@ public class UIItem : MonoBehaviour {
 	}
 	protected virtual void ApplyInitialData() {
 		GetComponent<RawImage>().texture = tex2d;
-		addTooltip.SetData(tooltipData);
+		addTooltip.Init(tooltipData);
 	}
     public virtual void SetData(Texture2D? tex2d = null, TooltipData tooltipData = null) {
 		SetInitialData(tex2d, tooltipData);
@@ -58,10 +58,10 @@ public class UIItem : MonoBehaviour {
 			}
 		}
 		if (amnesiaApplies && addTooltip.tooltipData.name != "???") {
-			addTooltip.SetData(new TooltipData("???", "???", "???", color: (CatalogManager.s.typeToData[GetType()] as UIItemData).tooltipData.color), true);
+			addTooltip.Init(new TooltipData("???", "???", "???", color: (CatalogManager.s.typeToData[GetType()] as UIItemData).tooltipData.color), true);
 			addTooltip.MouseEnter();
 		} else if (!amnesiaApplies && addTooltip.tooltipData.name == "???") {
-			addTooltip.SetData((CatalogManager.s.typeToData[GetType()] as UIItemData).tooltipData, true);
+			addTooltip.Init((CatalogManager.s.typeToData[GetType()] as UIItemData).tooltipData, true);
 			addTooltip.MouseEnter();
 		}
 	}

@@ -2,7 +2,6 @@
 using UnityEngine;
 
 public class AddTooltip : MonoBehaviour {
-	public bool setInitialData = false;
 	public TooltipData tooltipData;
 	public bool addHoverEffect = true;
 
@@ -11,33 +10,23 @@ public class AddTooltip : MonoBehaviour {
 	protected bool hovered = false;
 	protected Material savedMaterial;
 
-	protected virtual void Start() {
-		if (setInitialData) {
-			ApplyInitialData();
-		}
-		SaveMaterial();
-	}
+    protected virtual void Awake() {
+        SaveMaterial();
+        Init();
+    }
 	protected virtual void Update() {}
-	public virtual void SetInitialData(TooltipData tooltipData = null, bool? addHoverEffect = null) {
-		setInitialData = true;
+	public virtual void Init(TooltipData tooltipData = null, bool? addHoverEffect = null) {
 		this.tooltipData = tooltipData ?? this.tooltipData;
 		this.addHoverEffect = addHoverEffect ?? this.addHoverEffect;
-	}
-	protected virtual void ApplyInitialData() {
-		if (tooltipData == null) {
+		if (this.tooltipData == null) {
 			Destroy(tooltip);
 			return;
 		}
-
 		if (tooltip == null) {
 			tooltip = Instantiate(PrefabManager.s.tooltipPrefab, GameUIManager.s.tooltipGroup.transform);
 		}
-		tooltip.GetComponent<Tooltip>().SetData(tooltipData);
+	    tooltip.GetComponent<Tooltip>().SetData(this.tooltipData);
 		tooltip.SetActive(false);
-	}
-	public virtual void SetData(TooltipData tooltipData = null, bool? addHoverEffect = null) {
-		SetInitialData(tooltipData, addHoverEffect);
-		ApplyInitialData();
 	}
 	protected virtual void SaveMaterial() {}
 	public virtual void MouseEnter() {

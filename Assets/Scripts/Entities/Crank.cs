@@ -6,8 +6,8 @@ public class Crank : Entity {
 	private bool direction; // false is ccw, true is cw
 	private bool isRotating = false;
 
-	protected override void Start() {
-		base.Start();
+	protected override void Awake() {
+		base.Awake();
 	 	direction = Random.value < 0.5f;
 	}
 	public void ToggleDirection() {
