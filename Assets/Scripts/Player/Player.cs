@@ -83,6 +83,8 @@ public class Player : Entity {
     public HashSet<GameObject> tilesVisited = new HashSet<GameObject>();
 	[System.NonSerialized]
 	public List<Vector2Int> moveHistory = new List<Vector2Int>();
+    [System.NonSerialized]
+    public bool tunneledLastMove = false;
 
     // unsaved data
     [System.NonSerialized]
@@ -124,6 +126,12 @@ public class Player : Entity {
 		if (modifiers.watched) {
 			watchedMineJumpTimer += Time.deltaTime;
 		}
+    }
+    public void Load(LoadData loadData) {
+        money = loadData.money;
+        if (!loadData.playerAlive) {
+            Die();
+        }
     }
 	public void RecalculateModifiers() {
 		modifiers.Reset();

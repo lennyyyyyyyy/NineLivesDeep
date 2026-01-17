@@ -28,7 +28,8 @@ public class EntitySaveData {
     // pickup sprites
     public int pickupPrice;
     public int pickupCount;
-    // misc entities - nothing extra
+    // misc entities     
+    public bool crankDirection;
 }
 [Serializable]
 public class TileSaveData {
@@ -43,7 +44,7 @@ public class TileSaveData {
 public class SaveData {
     //player data
     public Vector2Int playerCoord; 
-    public bool playerTrapped, playerAlive;
+    public bool playerAlive;
     public float money;
     public int tempChanges;
     public int floorDeathCount;
@@ -57,6 +58,7 @@ public class SaveData {
     public List<Vector2Int> tilesVisited = new List<Vector2Int>();
     public List<Vector2Int> moveHistory;
     public List<Vector2Int> rainCoords;
+    public bool tunneledLastMove;
 
     //floor data
     public int floor, width, height;
@@ -83,7 +85,8 @@ public class EntityLoadData {
     // pickup sprites
     public int pickupPrice;
     public int pickupCount;
-    // misc entities - nothing extra
+    // misc entities
+    public bool crankDirection;
 }
 public class TileLoadData {
     public Type type;
@@ -96,7 +99,7 @@ public class TileLoadData {
 public class LoadData {
     //player data
     public Vector2Int playerCoord; 
-    public bool playerTrapped, playerAlive;
+    public bool playerAlive;
     public float money;
     public int tempChanges;
     public int floorDeathCount;
@@ -110,6 +113,7 @@ public class LoadData {
     public List<Vector2Int> tilesVisited = new List<Vector2Int>();
     public List<Vector2Int> moveHistory;
     public List<Vector2Int> rainCoords;
+    public bool tunneledLastMove;
 
     //floor data
     public int floor, width, height;
@@ -146,7 +150,6 @@ public class SaveManager : MonoBehaviour {
     public void Save() {
         saveData = new SaveData() {
             playerCoord = Player.s.GetCoord(),
-            playerTrapped = Player.s.trapped,
             playerAlive = Player.s.alive,
             money = Player.s.money,
             tempChanges = Player.s.tempChanges,
@@ -157,6 +160,7 @@ public class SaveManager : MonoBehaviour {
             floorType = Floor.s.floorType,
             rainCoords = Floor.s.rainCoords.ToList(),
             moveHistory = Player.s.moveHistory.ToList(),
+            tunneledLastMove = Player.s.tunneledLastMove
         };
         foreach (GameObject g in PlayerUIItemModule.s.curses) {
             Curse c = g.GetComponent<Curse>();
@@ -226,7 +230,9 @@ public class SaveManager : MonoBehaviour {
                         PickupSprite ps = (PickupSprite) e;
                         edata.pickupPrice = ps.price;
                         edata.pickupCount = ps.count;
-                    } 
+                    } else if (e is Crank) {
+                        edata.crankDirection = ((Crank) e).direction;
+                    }
                     data.nonPlayerEntities.Add(edata);
                 }
             }
@@ -244,13 +250,13 @@ public class SaveManager : MonoBehaviour {
         }
         LoadData loadData = new LoadData() {
             playerCoord = saveData.playerCoord,
-            playerTrapped = saveData.playerTrapped,
             playerAlive = saveData.playerAlive,
             money = saveData.money,
             tempChanges = saveData.tempChanges,
             floorDeathCount = saveData.floorDeathCount,
             tilesVisited = saveData.tilesVisited.ToList(),
             moveHistory = saveData.moveHistory.ToList(),
+            tunneledLastMove = saveData.tunneledLastMove,
             rainCoords = saveData.rainCoords.ToList(),
             floor = saveData.floor,
             width = saveData.width,
@@ -303,7 +309,8 @@ public class SaveManager : MonoBehaviour {
                 tdata.nonPlayerEntities.Add(new EntityLoadData() {
                     type = CatalogManager.s.idToData[edata.typeID].type,
                     pickupPrice = edata.pickupPrice,
-                    pickupCount = edata.pickupCount 
+                    pickupCount = edata.pickupCount,
+                    crankDirection = edata.crankDirection
                 });
             }
             loadData.tiles.Add(tdata);

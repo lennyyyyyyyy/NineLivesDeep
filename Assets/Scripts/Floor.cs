@@ -23,6 +23,8 @@ public class Floor : MonoBehaviour {
 	public Vector3 windDirection;
     [System.NonSerialized]
     public List<GameObject> backgroundTiles = new List<GameObject>();
+    [System.NonSerialized]
+    public List<Tunnel> tunnels = new List<Tunnel>();
     
     private ParticleSystem ambientDust;
 	private ParticleSystemForceField windZone;
@@ -104,7 +106,6 @@ public class Floor : MonoBehaviour {
     public void IntroAndLoadFloor(LoadData loadData) {
         float time = Intro(loadData.floorType, loadData.floor);
         HelperManager.s.DelayAction(() => {
-            InitLayout(loadData.width, loadData.height);
 		    foreach (TileLoadData tld in loadData.tiles) {
                 PrefabData pd = CatalogManager.s.typeToData[tld.type] as PrefabData;
                 GameObject tile = ReplaceTile(pd.prefab, tld.coord.x, tld.coord.y);
@@ -114,14 +115,18 @@ public class Floor : MonoBehaviour {
                     at.amount = tld.amount;
                 }
                 foreach (EntityLoadData eld in tld.nonPlayerEntities) {
+                    GameObject entity;
                     if (typeof(FlagSprite).IsAssignableFrom(eld.type)) {
-                        PlaceFlagSpriteWithoutOnPlace(eld.type, tld.coord.x, tld.coord.y);
+                        entity = PlaceFlagSpriteWithoutOnPlace(eld.type, tld.coord.x, tld.coord.y);
                     } else if (typeof(MineSprite).IsAssignableFrom(eld.type)) {
-                        PlaceMine(eld.type, tld.coord.x, tld.coord.y);
+                        entity = PlaceMine(eld.type, tld.coord.x, tld.coord.y);
                     } else if (typeof(PickupSprite).IsAssignableFrom(eld.type)) {
-                        PlacePickupSprite(eld.type, eld.pickupCount, eld.pickupPrice, tld.coord);
+                        entity = PlacePickupSprite(eld.type, eld.pickupCount, eld.pickupPrice, tld.coord);
                     } else {
-                        PlaceMiscEntity(eld.type, tld.coord.x, tld.coord.y);
+                        entity = PlaceMiscEntity(eld.type, tld.coord.x, tld.coord.y);
+                        if (eld.type == typeof(Crank)) {
+                            entity.GetComponent<Crank>().Init(eld.crankDirection);
+                        }
                     }
                 }
             }
@@ -571,11 +576,9 @@ public class Floor : MonoBehaviour {
 	}
     private void Awake() {
         s = this;
-    }
-	private void Start() {
 		ambientDust = GetComponent<ParticleSystem>();
 		windZone = GetComponent<ParticleSystemForceField>();
-	}
+    }
 	private void Update() {
 		windDirection = Quaternion.AngleAxis(Mathf.PerlinNoise(Player.s.modifiers.windFluctuation * Time.time, 0) * 1000f, Vector3.forward) * Vector3.right;
 		windZone.directionX = windDirection.x * Player.s.modifiers.windStrength * 1.5f;

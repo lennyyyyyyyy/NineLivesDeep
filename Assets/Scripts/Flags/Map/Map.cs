@@ -77,6 +77,7 @@ public class Map : Flag {
 		} else {
 			GameObject n = numbers[new Vector2Int(x, y)] = Instantiate(PrefabManager.s.numberPrefab, Floor.s.transform);
 			n.transform.position = Floor.s.CoordToIdealPos(x, y); 
+            Debug.Log(Floor.s.CoordToIdealPos(x, y));
 			n.transform.localScale = Vector3.one;
 			n.GetComponent<Number>().Init(this, new Vector2Int(x, y));
 			n.GetComponent<Number>().SetNum(num);

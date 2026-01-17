@@ -3,13 +3,17 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class Crank : Entity {
-	private bool direction; // false is ccw, true is cw
+    [System.NonSerialized]
+	public bool direction; // false is ccw, true is cw
 	private bool isRotating = false;
 
 	protected override void Awake() {
-		base.Awake();
 	 	direction = Random.value < 0.5f;
+		base.Awake();
 	}
+    public virtual void Init(bool? direction = null) {
+        this.direction = direction ?? this.direction; 
+    }
 	public void ToggleDirection() {
 		direction = !direction;
 	}

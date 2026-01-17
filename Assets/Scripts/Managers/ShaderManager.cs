@@ -19,7 +19,8 @@ public class ShaderManager : MonoBehaviour {
                         DTimes2ID = Shader.PropertyToID("_DisturbanceTimes2"),
                         WorldPosID = Shader.PropertyToID("_WorldPosition"), 
                         WorldSizeID = Shader.PropertyToID("_WorldSize"),
-                        SeedID = Shader.PropertyToID("_Seed");
+                        SeedID = Shader.PropertyToID("_Seed"),
+                        ThemeID = Shader.PropertyToID("_Theme");
     private void Awake() {
         s = this;
         for (int i=0; i<4; i++) {

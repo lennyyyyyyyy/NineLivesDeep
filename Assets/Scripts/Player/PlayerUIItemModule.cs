@@ -32,10 +32,31 @@ public class PlayerUIItemModule : MonoBehaviour {
 		cursesUnseen = CatalogManager.s.allCurseTypes.ToList();
 		minesUnseen = CatalogManager.s.allMineTypes.ToList();
     }
+    public void LoadUIItems(LoadData loadData) {
+        foreach (CurseLoadData curseData in loadData.curses) {
+            GameObject g = Instantiate(PrefabManager.s.cursePrefab);
+            Curse curse = g.AddComponent(curseData.type) as Curse;
+        }
+        foreach (Type mineType in loadData.mines) {
+            GameObject g = Instantiate(PrefabManager.s.minePrefab);
+            Mine mine = g.AddComponent(mineType) as Mine;
+        }
+        foreach (FlagLoadData flagData in loadData.flags) {
+            GameObject g = Instantiate(PrefabManager.s.flagPrefab);
+            Flag flag = g.AddComponent(flagData.type) as Flag;
+            flag.count = flagData.count;
+            flag.usable = flagData.usable;
+            if (typeof(Map).IsAssignableFrom(flagData.type)) {
+                Map mapFlag = flag as Map;
+                foreach (NumberLoadData numberData in flagData.numbers) {
+                    mapFlag.SetNumber(numberData.coord.x, numberData.coord.y, numberData.num);
+                }
+            }
+        }
+    }
     public bool HasUIItem(Type type) {
         return typeToInstances.ContainsKey(type) && typeToInstances[type].Count > 0;
     }
-
     public void ProcessAddedUIItem(UIItem uiItem) {
         Type type = uiItem.GetType();
         if (!typeToInstances.ContainsKey(type)) {
