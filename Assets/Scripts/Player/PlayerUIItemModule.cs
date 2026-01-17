@@ -33,18 +33,24 @@ public class PlayerUIItemModule : MonoBehaviour {
 		minesUnseen = CatalogManager.s.allMineTypes.ToList();
     }
     public void LoadUIItems(LoadData loadData) {
-        foreach (CurseLoadData curseData in loadData.curses) {
-            GameObject g = Instantiate(PrefabManager.s.cursePrefab);
-            Curse curse = g.AddComponent(curseData.type) as Curse;
-        }
         foreach (Type mineType in loadData.mines) {
             GameObject g = Instantiate(PrefabManager.s.minePrefab);
             Mine mine = g.AddComponent(mineType) as Mine;
         }
+        foreach (CurseLoadData curseData in loadData.curses) {
+            GameObject g = Instantiate(PrefabManager.s.cursePrefab);
+            Curse curse = g.AddComponent(curseData.type) as Curse;
+            if (curseData.type == typeof(Intensify)) {
+                Intensify intensify = curse as Intensify;
+                if (curseData.intensifiedCurseIndex != -1) {
+                    intensify.SetIntensifiedCurse(curses[curseData.intensifiedCurseIndex].GetComponent<Curse>());
+                }
+            }
+        }
         foreach (FlagLoadData flagData in loadData.flags) {
             GameObject g = Instantiate(PrefabManager.s.flagPrefab);
             Flag flag = g.AddComponent(flagData.type) as Flag;
-            flag.count = flagData.count;
+            flag.Init(initialCount: flagData.count);
             flag.usable = flagData.usable;
             if (typeof(Map).IsAssignableFrom(flagData.type)) {
                 Map mapFlag = flag as Map;
@@ -93,9 +99,9 @@ public class PlayerUIItemModule : MonoBehaviour {
 				sortedNotFlags[0].Add(notFlag);
 			} else if (uiItem is Mine) {
 				sortedNotFlags[1].Add(notFlag);
-			} else if (uiItem is Intensify){
+			} else if (uiItem is Curse){
 				sortedNotFlags[2].Add(notFlag);
-			} else if (uiItem is Curse) {
+			} else if (uiItem is Intensify) {
 				sortedNotFlags[3].Add(notFlag);
 			}
         }
@@ -124,6 +130,7 @@ public class PlayerUIItemModule : MonoBehaviour {
         OrganizeFlags();
     }
     public void ProcessAddedCurse(Curse curse) {
+        Debug.Log("processing added curse");
         curses.Add(curse.gameObject);
         notFlags.Add(curse.gameObject);
         Type type = curse.GetType();

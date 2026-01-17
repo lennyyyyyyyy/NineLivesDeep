@@ -2,7 +2,7 @@ using UnityEngine;
 
 class Windy : Curse {
 	public override void Modify(ref Modifiers modifiers) {
-		if (intensified) {
+		if (intensifiedBy.Count > 0) {
 			modifiers.windStrength += 2f;
 			modifiers.windFluctuation *= 0.3f;
 		} else {

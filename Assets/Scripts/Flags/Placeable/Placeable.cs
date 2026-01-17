@@ -5,12 +5,11 @@ using System;
 public class Placeable : Flag {
     [System.NonSerialized]
     public GameObject sprite;
-    protected override void Start() {
-        base.Start();
-
+    protected override void Awake() {
 		HelperManager.s.SetupUIEventTriggers(gameObject,
                                              new EventTriggerType[] {EventTriggerType.PointerDown},
                                              new Action<PointerEventData>[] {OnPointerDown});
+        base.Awake();
     }
     protected virtual void OnPointerDown(PointerEventData data) {
         if (usable) {

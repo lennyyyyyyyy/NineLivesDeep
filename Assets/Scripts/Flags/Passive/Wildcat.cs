@@ -1,10 +1,16 @@
 using UnityEngine;
 
 class Wildcat : Passive {
-    protected override void Start() {
-        showCount = true;
-        count = 5;
-        base.Start();
+    public override void Init() {
+        FlagData flagData = CatalogManager.s.typeToData[GetType()] as FlagData;
+        Init(tex2d: flagData.tex2d,
+             tooltipData: flagData.tooltipData,
+             placeableSpriteType: flagData.placeableSpriteType,
+             placeableRemovesMines: flagData.placeableRemovesMines,
+             consumableDefaultCount: flagData.consumableDefaultCount,
+             showCount: flagData.showCount,
+             initialCount: 5,
+             allowedFloorTypes: flagData.allowedFloorTypes);
     }
     public override void UpdateCount(int newCount) {
         if (newCount == 0) {

@@ -80,6 +80,8 @@ public class GameUIManager : MonoBehaviour {
         for (int i = 0; i < PlayerUIItemModule.s.notFlags.Count; i++) {
             GameObject g = PlayerUIItemModule.s.notFlags[i];
             LeanTween.cancel(g);
+            Debug.Log(g);
+            Debug.Log(g.GetComponent<UIItem>());
 			UIItem item = g.GetComponent<UIItem>();
 
             float destinationY;

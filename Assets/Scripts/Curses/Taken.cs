@@ -5,7 +5,7 @@ using System.Linq;
 class Taken : Curse {
 	public static HashSet<GameObject> takenFlags = new HashSet<GameObject>();
 	public override void Modify(ref Modifiers modifiers) {
-		if (intensified) {
+		if (intensifiedBy.Count > 0) {
 			modifiers.takenCurseCount += 2;
 		} else {
 			modifiers.takenCurseCount += 1;
@@ -20,7 +20,7 @@ class Taken : Curse {
 		}
 		// tooltip update
 		tooltipData.flavor = "Currently taking " + string.Join(", ", takenFlags.Select(f => f.GetComponent<Flag>().tooltipData.name));
-		SetData(tooltipData: tooltipData);
+		Init(tooltipData: tooltipData);
 	}
 }
 

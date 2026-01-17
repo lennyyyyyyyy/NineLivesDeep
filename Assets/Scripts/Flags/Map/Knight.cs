@@ -14,7 +14,4 @@ class Knight : Map {
         }
 		SetNumber(x, y, count);
     }
-    protected override void Start() {
-        base.Start();
-    }
 }

@@ -16,7 +16,4 @@ public class Brain : Map
         }
 		SetNumber(x, y, count);
     }
-    protected override void Start() {
-        base.Start();
-    }
 }

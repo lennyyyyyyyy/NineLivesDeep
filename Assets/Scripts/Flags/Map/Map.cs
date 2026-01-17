@@ -9,9 +9,8 @@ public class Map : Flag {
     [System.NonSerialized]
     public bool active = false;
 
-    protected override void Start() {
-        base.Start();
-
+    protected override void BeforeInit() {
+        base.BeforeInit();
 		HelperManager.s.SetupUIEventTriggers(gameObject,
                                              new EventTriggerType[] {EventTriggerType.PointerClick},
                                              new Action<PointerEventData>[] {OnPointerClick});

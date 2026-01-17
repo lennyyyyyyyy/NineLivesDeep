@@ -7,30 +7,29 @@ public class Intensify : Curse {
 	public Curse intensifiedCurse;
 
 	public override void Modify(ref Modifiers modifiers) {
-		if (intensifiedCurse != null) {
-			intensifiedCurse.intensified = true;
-			tooltipData.flavor =  "Currently intensifying " + intensifiedCurse.tooltipData.name;
-			SetData(tooltipData: tooltipData);	
-		}
 	}
-	private void SwitchIntensifiedCurse() {
+    public void SetIntensifiedCurse(Curse curse) {
 		if (intensifiedCurse != null) {
-			intensifiedCurse.intensified = false;
+			intensifiedCurse.intensifiedBy.Remove(this);
 		}
-		
+        intensifiedCurse = curse;
+        intensifiedCurse.intensifiedBy.Add(this);
+        tooltipData.flavor =  "Currently intensifying " + intensifiedCurse.tooltipData.name;
+        Init(tooltipData: tooltipData);	
+		Player.s.RecalculateModifiers();
+    }
+	private void SetRandomIntensifiedCurse() {
 		List<GameObject> options = new List<GameObject>(PlayerUIItemModule.s.curses);
 		options = options.Where(curse => curse.GetComponent<Intensify>() == null).ToList();
         if (options.Count > 0) {
-            intensifiedCurse = options[Random.Range(0, options.Count)].GetComponent<Curse>();
+            SetIntensifiedCurse(options[Random.Range(0, options.Count)].GetComponent<Curse>());
         }
-
-		Player.s.RecalculateModifiers();
 	}
 	private void OnEnable() {
-		EventManager.s.OnFloorChangeBeforeNewLayout += SwitchIntensifiedCurse;
+		EventManager.s.OnFloorChangeBeforeNewLayout += SetRandomIntensifiedCurse;
 	}
 	private void OnDisable() {
-		EventManager.s.OnFloorChangeBeforeNewLayout -= SwitchIntensifiedCurse;
+		EventManager.s.OnFloorChangeBeforeNewLayout -= SetRandomIntensifiedCurse;
 	}
 }
 

@@ -3,7 +3,7 @@ using UnityEngine;
 class Watched : Curse {
 	public override void Modify(ref Modifiers modifiers) {
 		modifiers.watched = true;
-		if (intensified) {
+		if (intensifiedBy.Count > 0) {
 			modifiers.watchedMineJumpTime = 4f;
 			modifiers.watchedMineJumpChancePerSecond = 0.2f;
 		} else {

@@ -6,7 +6,8 @@ using System.IO;
 
 [Serializable]
 public class CurseSaveData {
-    public int typeID, intensifiedTypeID;
+    public int typeID;
+    public int intensifiedCurseIndex = -1;
 }
 [Serializable]
 public class NumberSaveData {
@@ -66,7 +67,8 @@ public class SaveData {
     public List<TileSaveData> tiles = new List<TileSaveData>();
 }
 public class CurseLoadData {
-    public Type type, intensifiedType;
+    public Type type;
+    public int intensifiedCurseIndex;
 }
 public class NumberLoadData {
     public Vector2Int coord;
@@ -168,7 +170,12 @@ public class SaveManager : MonoBehaviour {
                 typeID = CatalogManager.s.typeToData[c.GetType()].id
             };
             if (c is Intensify) {
-                data.intensifiedTypeID = CatalogManager.s.typeToData[((Intensify)c).intensifiedCurse.GetType()].id;
+                Intensify intensify = c as Intensify;
+                if (intensify.intensifiedCurse != null) {
+                    data.intensifiedCurseIndex = PlayerUIItemModule.s.curses.IndexOf(intensify.intensifiedCurse.gameObject);
+                } else {
+                    data.intensifiedCurseIndex = -1;
+                }
             }
             saveData.curses.Add(data);
         }
@@ -266,7 +273,7 @@ public class SaveManager : MonoBehaviour {
         foreach (CurseSaveData data in saveData.curses) {
             loadData.curses.Add(new CurseLoadData() {
                 type = CatalogManager.s.idToData[data.typeID].type,
-                intensifiedType = CatalogManager.s.idToData[data.intensifiedTypeID].type
+                intensifiedCurseIndex = data.intensifiedCurseIndex
             });
         }
         foreach (int typeID in saveData.mines) {

@@ -70,13 +70,18 @@ public class Floor : MonoBehaviour {
 			time += 2.8f;
 		}
 
-		if (floorType == "minefield" && floor % 3 == 0) {
+		//if (floorType == "minefield" && floor % 3 == 0) {
+		if (floorType == "minefield") {
 			HelperManager.s.DelayAction(() => {
 				HelperManager.s.InstantiateBubble(Vector3.zero, "CURSED", new Color(0.5f, 0, 0), 2f, 2f);
 			}, time);
 			HelperManager.s.DelayAction(() => {
 				GameObject curse = Instantiate(PrefabManager.s.cursePrefab, Vector3.zero, Quaternion.identity);
-				curse.AddComponent(PlayerUIItemModule.s.cursesUnseen[Random.Range(0, PlayerUIItemModule.s.cursesUnseen.Count)]);
+                if (floor > 0) {
+                    curse.AddComponent(typeof(Intensify));
+                } else {
+                    curse.AddComponent(PlayerUIItemModule.s.cursesUnseen[Random.Range(0, PlayerUIItemModule.s.cursesUnseen.Count)]);
+                }
 			}, time + 1f);
 			time += 2.8f;
 		}

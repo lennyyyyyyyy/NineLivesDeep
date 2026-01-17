@@ -3,12 +3,11 @@ using UnityEngine.EventSystems;
 using System;
 
 public class Consumable : Flag {
-    protected override void Start() {
-        base.Start();
-
+    protected override void Awake() {
 		HelperManager.s.SetupUIEventTriggers(gameObject,
                                              new EventTriggerType[] {EventTriggerType.PointerClick},
                                              new Action<PointerEventData>[] {OnPointerClick});
+        base.Awake();
     }
     protected virtual void OnPointerClick(PointerEventData data) {}
 }

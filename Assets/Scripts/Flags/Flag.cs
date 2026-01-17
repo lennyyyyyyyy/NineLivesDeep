@@ -17,50 +17,50 @@ public class Flag : UIItem {
     public int count;
     protected TMP_Text tmpro;
 
-    protected virtual void Awake() {
+    protected override void BeforeInit() {
+        base.BeforeInit();
         transform.SetParent(GameUIManager.s.flagGroup.transform, false);
-    }
-    protected override void Start() {
-		base.Start();
-		
         tmpro = GetComponentInChildren<TMP_Text>(); // enable or disable count
-        UpdateCount(count);
-        tmpro.enabled = showCount;
-    
+    }
+    protected override void AfterInit() {
+        base.AfterInit();
         PlayerUIItemModule.s.ProcessAddedFlag(this);
     }
-	public virtual void SetInitialData(Texture2D? tex2d = null,
-										TooltipData tooltipData = null,
-										Type placeableSpriteType = null,
-										bool? placeableRemovesMines = null, 
-										int? consumableDefaultCount = null, 
-										bool? showCount = null,
-										List<string> allowedFloorTypes = null) {
-		setInitialData = true;
+    public virtual void Init(Texture2D? tex2d = null,
+                            TooltipData tooltipData = null,
+                            Type placeableSpriteType = null,
+                            bool? placeableRemovesMines = null, 
+                            int? consumableDefaultCount = null, 
+                            bool? showCount = null,
+                            int? initialCount = null,
+                            List<string> allowedFloorTypes = null) {
 		this.tex2d = tex2d ?? this.tex2d;
 		this.tooltipData = tooltipData ?? this.tooltipData;
 		this.placeableSpriteType = placeableSpriteType ?? this.placeableSpriteType;
 		this.placeableRemovesMines = placeableRemovesMines ?? this.placeableRemovesMines;
 		this.consumableDefaultCount = consumableDefaultCount ?? this.consumableDefaultCount;
 		this.showCount = showCount ?? this.showCount;
+        this.count = initialCount ?? this.count;
 		this.allowedFloorTypes = allowedFloorTypes ?? this.allowedFloorTypes;
-	}
-	public virtual void SetData(Texture2D? tex2d = null,
-								 TooltipData tooltipData = null,
-								 Type placeableSpriteType = null,
-								 bool? placeableRemovesMines = null, 
-								 int? consumableDefaultCount = null, 
-								 bool? showCount = null,
-								 List<string> allowedFloorTypes = null) {
-		SetInitialData(tex2d, tooltipData, placeableSpriteType, placeableRemovesMines, consumableDefaultCount, showCount, allowedFloorTypes);
-		ApplyInitialData();
+		GetComponent<RawImage>().texture = this.tex2d;
+		addTooltip.Init(this.tooltipData);
+        UpdateCount(this.count);
+        tmpro.enabled = this.showCount;
     }
-	protected override void SetDefaultData() {
-		if (CatalogManager.s.typeToData.ContainsKey(GetType())) {
-			FlagData flagData = CatalogManager.s.typeToData[GetType()] as FlagData;
-			SetData(flagData.tex2d, flagData.tooltipData, flagData.placeableSpriteType, flagData.placeableRemovesMines, flagData.consumableDefaultCount, flagData.showCount, flagData.allowedFloorTypes);
-		}
-	}
+    public override void Init() {
+        Debug.Log("new flag init");
+        if (CatalogManager.s.typeToData.ContainsKey(GetType())) {
+            FlagData flagData = CatalogManager.s.typeToData[GetType()] as FlagData;
+            Init(tex2d: flagData.tex2d,
+                 tooltipData: flagData.tooltipData,
+                 placeableSpriteType: flagData.placeableSpriteType,
+                 placeableRemovesMines: flagData.placeableRemovesMines,
+                 consumableDefaultCount: flagData.consumableDefaultCount,
+                 showCount: flagData.showCount,
+                 initialCount: flagData.consumableDefaultCount,
+                 allowedFloorTypes: flagData.allowedFloorTypes);
+        }
+    }
     public virtual void UpdateCount(int newCount) {
         HelperManager.s.InstantiateBubble(gameObject, (newCount - count >= 0 ? "+" : "-") + Mathf.Abs(newCount - count).ToString(), Color.white);
         count = newCount;

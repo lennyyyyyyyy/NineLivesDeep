@@ -14,7 +14,4 @@ class Manhattan : Map {
         }
 		SetNumber(x, y, min);
     }
-    protected override void Start() {
-        base.Start();
-    }
 }

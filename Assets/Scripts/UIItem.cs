@@ -4,7 +4,6 @@ using UnityEngine.EventSystems;
 using System;
 
 public class UIItem : MonoBehaviour {
-	public bool setInitialData = false;
 	public Texture2D tex2d;
 	public TooltipData tooltipData;
 
@@ -12,42 +11,35 @@ public class UIItem : MonoBehaviour {
 
 	[System.NonSerialized]
 	public RectTransform rt;
-
-	protected virtual void Start() {
+    
+    protected virtual void BeforeInit() {
 		rt = (transform as RectTransform);
 		addTooltip = (GetComponent<AddTooltipUI>() == null ? gameObject.AddComponent(typeof(AddTooltipUI)) as AddTooltipUI : GetComponent<AddTooltipUI>());
-
 		HelperManager.s.SetupUIEventTriggers(gameObject,
                                              new EventTriggerType[] {EventTriggerType.PointerEnter, EventTriggerType.PointerExit},
                                              new Action<PointerEventData>[] {OnPointerEnter, OnPointerExit});
-
-		if (setInitialData) {
-			ApplyInitialData();
-		} else {
-			SetDefaultData();
-		}
-
+    }
+    protected virtual void AfterInit() {
         PlayerUIItemModule.s.ProcessAddedUIItem(this);
-	}		
-	public virtual void SetInitialData(Texture2D? tex2d = null, TooltipData tooltipData = null) {
-		setInitialData = true;
+    }
+    protected virtual void Awake() {
+        BeforeInit();
+        Init();
+        AfterInit();
+    }
+    public virtual void Init(Texture2D? tex2d = null, TooltipData tooltipData = null) {
 		this.tex2d = tex2d ?? this.tex2d;
 		this.tooltipData = tooltipData ?? this.tooltipData; 
+		GetComponent<RawImage>().texture = this.tex2d;
+		addTooltip.Init(this.tooltipData);
 	}
-	protected virtual void ApplyInitialData() {
-		GetComponent<RawImage>().texture = tex2d;
-		addTooltip.Init(tooltipData);
-	}
-    public virtual void SetData(Texture2D? tex2d = null, TooltipData tooltipData = null) {
-		SetInitialData(tex2d, tooltipData);
-		ApplyInitialData();
+    public virtual void Init() {
+        Debug.Log("old init");
+        if (CatalogManager.s.typeToData.ContainsKey(GetType())) {
+            UIItemData uiItemData = CatalogManager.s.typeToData[GetType()] as UIItemData;
+            Init(tex2d: uiItemData.tex2d, tooltipData: uiItemData.tooltipData);
+        }
     }
-	protected virtual void SetDefaultData() {
-		if (CatalogManager.s.typeToData.ContainsKey(GetType())) {
-			UIItemData uiItemData = CatalogManager.s.typeToData[GetType()] as UIItemData;
-			SetData(uiItemData.tex2d, uiItemData.tooltipData);
-		}
-	}
 	protected virtual void OnPointerEnter(PointerEventData data) {
 		//amensia curse passive
 		bool amnesiaApplies = false;
