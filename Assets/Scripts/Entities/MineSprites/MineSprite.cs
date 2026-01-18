@@ -1,10 +1,6 @@
 using UnityEngine;
 
 public class MineSprite : Entity {
-    protected override void Awake() {
-        base.Awake();
-        Init();
-    }
 	protected override void Update() {
 		base.Update();
 		// watched mine jumping on player
@@ -20,7 +16,7 @@ public class MineSprite : Entity {
 		}
 			
 	}	
-	protected virtual void Init() {
+	public override void Init() {
 		Init(sprite: UIManager.s.mineDebugSprite, obstacle: false);
 	}
     public virtual void Trigger() {

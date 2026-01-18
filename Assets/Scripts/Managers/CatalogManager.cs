@@ -102,6 +102,7 @@ public class CatalogManager : MonoBehaviour {
 	public List<Type> allMineTypes = new List<Type>();
     private void Awake() {
         s = this;
+        new TypeData(typeof(PickupSprite));
         //entities
         new PrefabData(typeof(Crank), PrefabManager.s.crankPrefab);
         new PrefabData(typeof(Pillar), PrefabManager.s.pillarPrefab);

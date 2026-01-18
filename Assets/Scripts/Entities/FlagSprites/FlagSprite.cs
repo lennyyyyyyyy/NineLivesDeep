@@ -13,7 +13,8 @@ public class FlagSprite : CorrespondingSprite {
     protected Light2D light;
 	protected float placeImpulse = 0.2f;
 
-    protected override void Awake() {
+    protected override void BeforeInit() {
+        base.BeforeInit();
         light = GetComponentInChildren<Light2D>();
         marker = transform.Find("Marker").gameObject;
         // init random properties
@@ -32,7 +33,6 @@ public class FlagSprite : CorrespondingSprite {
         }
         //darken under
         ShaderManager.s.TweenUnderDarken(0.1f, overToUnderDuration);
-        base.Awake();
     }
     protected override void Update() {
         base.Update();
@@ -56,7 +56,7 @@ public class FlagSprite : CorrespondingSprite {
     public virtual void Init(Placeable parent) {
         this.state = "held";
 		this.parent = parent;
-		base.Init(parent.GetType());
+		Init(parent.GetType());
 		//amnesia curse only for placed flag sprites, not pickup sprites in the shop
 		if (Player.s.modifiers.amnesiaUITypes.Contains(typeof(Flag))) {
 			tooltipData.name = "???";
@@ -69,7 +69,7 @@ public class FlagSprite : CorrespondingSprite {
         this.state = "dropped";
         transform.localScale = droppedScale * Vector3.one; 
         sr.sortingLayerName = "Player";
-        base.Init(CatalogManager.s.spriteTypeToUIType[GetType()]);
+        Init(CatalogManager.s.spriteTypeToUIType[GetType()]);
         Move(spawnCoord.x, spawnCoord.y);
 		//amnesia curse only for placed flag sprites, not pickup sprites in the shop
 		if (Player.s.modifiers.amnesiaUITypes.Contains(typeof(Flag))) {

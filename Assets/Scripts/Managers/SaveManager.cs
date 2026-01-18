@@ -27,6 +27,7 @@ public class EntitySaveData {
     // flag sprites - nothing extra
     // mine sprites - nothing extra
     // pickup sprites
+    public int correspondingUITypeID;
     public int pickupPrice;
     public int pickupCount;
     // misc entities     
@@ -85,6 +86,7 @@ public class EntityLoadData {
     // flag sprites - nothing extra
     // mine sprites - nothing extra
     // pickup sprites
+    public Type correspondingUIType;
     public int pickupPrice;
     public int pickupCount;
     // misc entities
@@ -235,6 +237,7 @@ public class SaveManager : MonoBehaviour {
                     };
                     if (e is PickupSprite) {
                         PickupSprite ps = (PickupSprite) e;
+                        edata.correspondingUITypeID = CatalogManager.s.typeToData[ps.correspondingUIType].id;
                         edata.pickupPrice = ps.price;
                         edata.pickupCount = ps.count;
                     } else if (e is Crank) {
@@ -315,6 +318,7 @@ public class SaveManager : MonoBehaviour {
             foreach (EntitySaveData edata in data.nonPlayerEntities) {
                 tdata.nonPlayerEntities.Add(new EntityLoadData() {
                     type = CatalogManager.s.idToData[edata.typeID].type,
+                    correspondingUIType = CatalogManager.s.idToData[edata.correspondingUITypeID].type,
                     pickupPrice = edata.pickupPrice,
                     pickupCount = edata.pickupCount,
                     crankDirection = edata.crankDirection

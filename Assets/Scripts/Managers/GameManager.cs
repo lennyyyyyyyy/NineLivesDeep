@@ -35,10 +35,10 @@ public class GameManager : MonoBehaviour {
         brain.AddComponent<Brain>();
         GameObject you = Instantiate(PrefabManager.s.flagPrefab); 
         You youComponent = you.AddComponent<You>();
-        youComponent.count = 8;
+        youComponent.Init(initialCount: 8);
         GameObject baseFlag = Instantiate(PrefabManager.s.flagPrefab);
         Base baseComponent = baseFlag.AddComponent<Base>();
-        baseComponent.count = 10;
+        baseComponent.Init(initialCount: 10);
         HelperManager.s.DelayAction(() => { Floor.s.IntroAndCreateFloor("minefield", 0); }, 1f);
     }
     private void OnGameLoad() {

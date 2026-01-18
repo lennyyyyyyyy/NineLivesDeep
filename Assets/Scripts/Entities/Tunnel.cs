@@ -3,9 +3,9 @@ using System.Linq;
 using System.Collections.Generic;
 
 public class Tunnel : Entity {
-    protected override void Awake() {
+    protected override void BeforeInit() {
+        base.BeforeInit();
         Floor.s.tunnels.Add(this);
-        base.Awake();
     }
     private void OnPlayerMoveToCoord(int x, int y) {
         if (GetCoord().x == x && GetCoord().y == y && Floor.s.tunnels.Count > 1) {

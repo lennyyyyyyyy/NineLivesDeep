@@ -126,7 +126,7 @@ public class Floor : MonoBehaviour {
                     } else if (typeof(MineSprite).IsAssignableFrom(eld.type)) {
                         entity = PlaceMine(eld.type, tld.coord.x, tld.coord.y);
                     } else if (typeof(PickupSprite).IsAssignableFrom(eld.type)) {
-                        entity = PlacePickupSprite(eld.type, eld.pickupCount, eld.pickupPrice, tld.coord);
+                        entity = PlacePickupSprite(eld.correspondingUIType, eld.pickupCount, eld.pickupPrice, tld.coord);
                     } else {
                         entity = PlaceMiscEntity(eld.type, tld.coord.x, tld.coord.y);
                         if (eld.type == typeof(Crank)) {

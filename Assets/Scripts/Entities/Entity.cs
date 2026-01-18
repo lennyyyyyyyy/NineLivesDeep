@@ -6,20 +6,29 @@ public class Entity : VerticalObject {
 	public bool obstacle = true;
 
 	protected AddTooltipScene addTooltip;
-	protected SpriteRenderer spriteRenderer;
-
 	protected bool hovered = false;
 	
+    protected virtual void BeforeInit() {
+        sprite = sr.sprite;
+		addTooltip = (GetComponent<AddTooltipScene>() == null ? gameObject.AddComponent(typeof(AddTooltipScene)) as AddTooltipScene : GetComponent<AddTooltipScene>());
+    }
+    protected virtual void AfterInit() {
+    }
 	protected override void Awake() {
 		base.Awake();
-		addTooltip = (GetComponent<AddTooltipScene>() == null ? gameObject.AddComponent(typeof(AddTooltipScene)) as AddTooltipScene : GetComponent<AddTooltipScene>());
+        BeforeInit();
         Init();
+        AfterInit();
 	}
     public virtual void Init(Sprite? sprite = null, TooltipData? tooltipData = null, bool? obstacle = null) {
 		this.sprite = sprite ?? this.sprite;
 		this.tooltipData = tooltipData ?? this.tooltipData;
 		this.obstacle = obstacle ?? this.obstacle;
+        sr.sprite = this.sprite;
         addTooltip.Init(this.tooltipData, true);
+    }
+    public virtual void Init() {
+        Init(sprite: null, tooltipData: null, obstacle: null);
     }
 	public virtual GameObject GetTile() {
 		if (transform.parent != null && transform.parent.GetComponent<Tile>() != null) {

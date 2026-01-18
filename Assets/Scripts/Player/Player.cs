@@ -103,10 +103,10 @@ public class Player : Entity {
 	[System.NonSerialized]
 	public float watchedMineJumpTimer = 0f;
 
-    protected override void Awake() {
+    protected override void BeforeInit() {
+        base.BeforeInit();
         s = this;
 		obstacle = false; // for Entity
-        sr = GetComponent<SpriteRenderer>();
 		marker = feet; // for VerticalObject
         animator = GetComponent<Animator>();
         // initialize player bits
@@ -119,7 +119,9 @@ public class Player : Entity {
                 playerBits[i, j].GetComponent<PlayerBit>().Init(i, j);
             }
         }
-        base.Awake();
+    }
+    public override void Init() {
+        Init(obstacle: false);
     }
     protected override void Update() {
         base.Update(); // vertical object order

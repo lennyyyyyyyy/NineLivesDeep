@@ -17,11 +17,11 @@ public class PickupSprite : CorrespondingSprite {
 	protected TMP_Text tmpro;
     public static float droppedScale = 0.6f, hoveredScale = 0.8f, hoveredOffset;
 
-    protected override void Awake() {
+    protected override void BeforeInit() {
+        base.BeforeInit();
         marker = transform.Find("Marker").gameObject;
         light = GetComponentInChildren<Light2D>();
 		tmpro = GetComponentInChildren<TMP_Text>();
-        base.Awake();
     }
     protected override void Update() {
         base.Update();

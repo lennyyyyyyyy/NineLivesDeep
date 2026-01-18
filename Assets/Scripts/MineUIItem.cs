@@ -4,7 +4,7 @@ using TMPro;
 public class MineUIItem : UIItem {
 	public static MineUIItem s;
 	public TMP_Text count;
-	protected virtual void BeforeInit() {
+	protected override void BeforeInit() {
         base.BeforeInit();
 		s = this;
         transform.SetParent(GameUIManager.s.notFlagGroup.transform, false);
