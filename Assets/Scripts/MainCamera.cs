@@ -21,7 +21,7 @@ public class MainCamera : MonoBehaviour
         LeanTween.move(gameObject, Player.s.transform.position, 0.5f).setEase(LeanTweenType.easeInOutCubic);
 		ZoomTo(0.01f, 0.5f);
     }
-	public void SetupFloorIntro() {
+	private void SetupFloorIntro() {
         UIManager.s.ppv.weight = 0;
         HelperManager.s.DelayActionFrames(() => {
             transform.position = Vector3.zero;
@@ -29,6 +29,11 @@ public class MainCamera : MonoBehaviour
         }, 3);
         HelperManager.s.DelayActionFrames(() => { UIManager.s.ppv.weight = 1; }, 6);
 	}	
+    private void SetupStartScreen() {
+        locked = true;
+        transform.position = Vector3.zero;
+        Camera.main.orthographicSize = 11.25f;
+    }
     void Awake() {
         s = this;
     }
@@ -49,4 +54,14 @@ public class MainCamera : MonoBehaviour
             }
         }
 	}
+    private void OnEnable() {
+        EventManager.s.OnGameStart += SetupFloorIntro;
+        EventManager.s.OnGameLoad += SetupFloorIntro;
+        EventManager.s.OnGameExit += SetupStartScreen;
+    }
+    private void OnDisable() {
+        EventManager.s.OnGameStart -= SetupFloorIntro;
+        EventManager.s.OnGameLoad -= SetupFloorIntro;
+        EventManager.s.OnGameExit -= SetupStartScreen;
+    }
 }

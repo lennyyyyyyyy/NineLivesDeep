@@ -15,7 +15,7 @@ public class StartUIManager : MonoBehaviour {
         s = this;
     }
     private void Start() {
-        continuebutton.SetActive(SaveManager.s.saveDataValid);
+        Reset();
     }
     private void Update() {
         if (GameManager.s.gameState == GameManager.GameState.START) {
@@ -26,19 +26,35 @@ public class StartUIManager : MonoBehaviour {
             continuebutton.transform.localPosition = new Vector3(continuebutton.transform.localPosition.x, 106.0f + 0.5f * startIdleStrength * Mathf.Sin(startIdleSpeed * 0.8f * Time.time + 1.5f), 0);
         }
     }
+    private void Reset() {
+        continuebutton.SetActive(SaveManager.s.saveDataValid);
+        ContinueButton.s.Reset();
+        StartButton.s.Reset();
+    }
     private void OnGameStart() {
+        LeanTween.cancel(gameObject);
         LeanTween.value(gameObject, (float f) => {
             startUIGroup.GetComponent<CanvasGroup>().alpha = f;
-        }, 1, 0, ConstantsManager.s.gameStartTransitionDuration).setEase(LeanTweenType.easeInOutCubic).setOnComplete(() => {
+        }, 1, 0, ConstantsManager.s.gameUITransitionDuration).setEase(LeanTweenType.easeInOutCubic).setOnComplete(() => {
             startUIGroup.SetActive(false);
         });
+    }
+    private void OnGameExit() {
+        Reset();
+        LeanTween.cancel(gameObject);
+        startUIGroup.SetActive(true);
+        LeanTween.value(gameObject, (float f) => {
+            startUIGroup.GetComponent<CanvasGroup>().alpha = f;
+        }, 0, 1, ConstantsManager.s.gameUITransitionDuration).setEase(LeanTweenType.easeInOutCubic);
     }
     private void OnEnable() {
         EventManager.s.OnGameStart += OnGameStart;
         EventManager.s.OnGameLoad += OnGameStart;
+        EventManager.s.OnGameExit += OnGameExit;
     }
     private void OnDisable() {
         EventManager.s.OnGameStart -= OnGameStart;
         EventManager.s.OnGameLoad -= OnGameStart;
+        EventManager.s.OnGameExit -= OnGameExit;
     }
 }

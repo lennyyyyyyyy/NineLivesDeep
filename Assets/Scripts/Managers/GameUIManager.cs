@@ -97,16 +97,28 @@ public class GameUIManager : MonoBehaviour {
 		}
 	}
     public void OnGameStart() {
+        gameUIGroup.SetActive(true);
+        LeanTween.cancel(gameObject);
         LeanTween.value(gameObject, (float f) => {
-            gameUIGroup.GetComponent<CanvasGroup>().alpha = 1 - f;
-        }, 1, 0, ConstantsManager.s.gameStartTransitionDuration).setEase(LeanTweenType.easeInOutCubic);
+            gameUIGroup.GetComponent<CanvasGroup>().alpha = f;
+        }, 0, 1, ConstantsManager.s.gameUITransitionDuration).setEase(LeanTweenType.easeInOutCubic);
+    }
+    public void OnGameExit() {
+        LeanTween.cancel(gameObject);
+        LeanTween.value(gameObject, (float f) => {
+            gameUIGroup.GetComponent<CanvasGroup>().alpha = f;
+        }, 1, 0, ConstantsManager.s.gameUITransitionDuration).setEase(LeanTweenType.easeInOutCubic).setOnComplete(() => {
+            gameUIGroup.SetActive(false);
+        });
     }
     private void OnEnable() {
         EventManager.s.OnGameStart += OnGameStart;
         EventManager.s.OnGameLoad += OnGameStart;
+        EventManager.s.OnGameExit += OnGameExit;
     }
     private void OnDisable() {
         EventManager.s.OnGameStart -= OnGameStart;
         EventManager.s.OnGameLoad -= OnGameStart;
+        EventManager.s.OnGameExit -= OnGameExit;
     }
 }

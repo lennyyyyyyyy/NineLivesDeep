@@ -61,7 +61,4 @@ public class UIItem : MonoBehaviour {
 	}
 	public virtual void Modify(ref Modifiers modifiers) {
 	}
-    protected virtual void OnDestroy() {
-        PlayerUIItemModule.s.ProcessRemovedUIItem(this);
-    }
 }

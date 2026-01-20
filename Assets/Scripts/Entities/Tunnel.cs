@@ -26,6 +26,8 @@ public class Tunnel : Entity {
         EventManager.s.OnPlayerMoveToCoord -= OnPlayerMoveToCoord;
     }
     private void OnDestroy() {
-        Floor.s.tunnels.Remove(this);
+        if (Floor.s != null) {
+            Floor.s.tunnels.Remove(this);
+        }
     }
 }

@@ -29,8 +29,4 @@ public class Mine : UIItem {
             Init(tex2d: mineData.tex2d, tooltipData: mineData.tooltipData, spriteType: mineData.spriteType);
         }
     }
-    protected override void OnDestroy() {
-        base.OnDestroy();
-        PlayerUIItemModule.s.ProcessRemovedMine(this);
-    }
 }

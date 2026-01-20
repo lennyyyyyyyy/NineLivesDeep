@@ -42,7 +42,6 @@ public class Floor : MonoBehaviour {
         } else if (floorType == "trial") {
 			introduction = "Time Trial, Level " + floor.ToString() + " - " + (floor * 10 + 7).ToString() + " meters under";
 		}
-		MainCamera.s.SetupFloorIntro();
 		
 		float time = 1f;
 
@@ -592,8 +591,5 @@ public class Floor : MonoBehaviour {
     private void OnEnable() {
     }
     private void OnDisable() {
-    }
-    private void OnDestroy() {
-        s = null;
     }
 }

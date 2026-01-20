@@ -14,7 +14,8 @@ public class EventManager : MonoBehaviour {
                   OnPlayerAliveChange,
                   OnUpdateSecondaryMapActive,
                   OnGameStart,
-                  OnGameLoad;
+                  OnGameLoad,
+                  OnGameExit;
     public Action<int, int> OnExplosionAtCoord,
                             OnPlayerMoveToCoord;
 

@@ -363,7 +363,4 @@ public class Player : Entity {
     private void OnDisable() {
         EventManager.s.OnFloorChangeAfterEntities -= OnFloorChangeAfterEntities;
     }
-    private void OnDestroy() {
-        s = null;
-    }
 }

@@ -143,14 +143,6 @@ public class SaveManager : MonoBehaviour {
             } catch (Exception e) {}
         }
     }
-    private void Update() {
-        if (CanSave() && Input.GetKeyDown("s")) {
-            Save();
-        }
-    }
-    public bool CanSave() {
-        return true;
-    }
     public void Save() {
         saveData = new SaveData() {
             playerCoord = Player.s.GetCoord(),

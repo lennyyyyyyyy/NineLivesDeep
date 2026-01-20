@@ -31,14 +31,10 @@ public class GameManager : MonoBehaviour {
         gameState = GameState.GAME;
         Instantiate(PrefabManager.s.runPrefab);
         Instantiate(PrefabManager.s.mineUIItemPrefab);
-        GameObject brain = Instantiate(PrefabManager.s.flagPrefab);
-        brain.AddComponent<Brain>();
-        GameObject you = Instantiate(PrefabManager.s.flagPrefab); 
-        You youComponent = you.AddComponent<You>();
-        youComponent.Init(initialCount: 8);
-        GameObject baseFlag = Instantiate(PrefabManager.s.flagPrefab);
-        Base baseComponent = baseFlag.AddComponent<Base>();
-        baseComponent.Init(initialCount: 10);
+        Instantiate(PrefabManager.s.flagPrefab).AddComponent<Brain>();
+        Instantiate(PrefabManager.s.flagPrefab).AddComponent<You>().Init(initialCount: 8);
+        Instantiate(PrefabManager.s.flagPrefab).AddComponent<Base>().Init(initialCount: 10);
+        Instantiate(PrefabManager.s.flagPrefab).AddComponent<Exit>();
         HelperManager.s.DelayAction(() => { Floor.s.IntroAndCreateFloor("minefield", 0); }, 1f);
     }
     private void OnGameLoad() {
@@ -51,13 +47,21 @@ public class GameManager : MonoBehaviour {
         PlayerUIItemModule.s.LoadUIItems(loadData);
         HelperManager.s.DelayAction(() => { Floor.s.IntroAndLoadFloor(loadData); }, 1f);
     }
+    private void OnGameExit() {
+        gameState = GameState.START;
+        SaveManager.s.Save();
+        PlayerUIItemModule.s.DestroyAllUIItemsWithoutProcessing();
+        Destroy(Run.s.gameObject);
+    }
     private void OnEnable() {
         EventManager.s.OnGameStart += OnGameStart;
         EventManager.s.OnGameLoad += OnGameLoad;
+        EventManager.s.OnGameExit += OnGameExit;
     }
     private void OnDisable() {
         EventManager.s.OnGameStart -= OnGameStart;
         EventManager.s.OnGameLoad -= OnGameLoad;
+        EventManager.s.OnGameExit -= OnGameExit;
     }
 
 }

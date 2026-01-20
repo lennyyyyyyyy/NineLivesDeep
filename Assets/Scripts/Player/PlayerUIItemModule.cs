@@ -70,7 +70,7 @@ public class PlayerUIItemModule : MonoBehaviour {
         }
         typeToInstances[type].Add(uiItem.gameObject);
     }
-    public void ProcessRemovedUIItem(UIItem uiItem) {
+    private void ProcessRemovedUIItem(UIItem uiItem) {
         Type type = uiItem.GetType();
         if (typeToInstances.ContainsKey(type)) {
             typeToInstances[type].Remove(uiItem.gameObject);
@@ -125,12 +125,11 @@ public class PlayerUIItemModule : MonoBehaviour {
         NoticeFlag(type);
         OrganizeFlags();
     }
-    public void ProcessRemovedFlag(Flag flag) {
+    private void ProcessRemovedFlag(Flag flag) {
         flags.Remove(flag.gameObject);
         OrganizeFlags();
     }
     public void ProcessAddedCurse(Curse curse) {
-        Debug.Log("processing added curse");
         curses.Add(curse.gameObject);
         notFlags.Add(curse.gameObject);
         Type type = curse.GetType();
@@ -138,7 +137,7 @@ public class PlayerUIItemModule : MonoBehaviour {
 		cursesUnseen.Remove(type);
         OrganizeNotFlags();
     }
-    public void ProcessRemovedCurse(Curse curse) {
+    private void ProcessRemovedCurse(Curse curse) {
         curses.Remove(curse.gameObject);
         OrganizeNotFlags();
     }
@@ -150,9 +149,28 @@ public class PlayerUIItemModule : MonoBehaviour {
         minesUnseen.Remove(type);
         OrganizeNotFlags();
     }
-    public void ProcessRemovedMine(Mine mine) {
+    private void ProcessRemovedMine(Mine mine) {
         mines.Remove(mine.gameObject);
         OrganizeNotFlags();
+    }
+    public void DestroyUIItemWithProcessing(UIItem uiItem) {
+        if (uiItem is Flag) {
+            ProcessRemovedFlag(uiItem as Flag);
+        } else if (uiItem is Curse) {
+            ProcessRemovedCurse(uiItem as Curse);
+        } else if (uiItem is Mine) {
+            ProcessRemovedMine(uiItem as Mine);
+        }
+        ProcessRemovedUIItem(uiItem);
+        Destroy(uiItem.gameObject);
+    }
+    public void DestroyAllUIItemsWithoutProcessing() {
+        foreach (GameObject f in flags.ToList()) {
+            Destroy(f);
+        }
+        foreach (GameObject nf in notFlags.ToList()) {
+            Destroy(nf);
+        }
     }
     private void OnEnable() {
         EventManager.s.OnPlayerAliveChange += OrganizeFlags;

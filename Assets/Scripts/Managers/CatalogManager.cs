@@ -159,6 +159,8 @@ public class CatalogManager : MonoBehaviour {
                      consumableDefaultCount: 10);
         new FlagData(typeof(Shovel), "shovel", new TooltipData("Shovel Flag", "An upgrade for your tiny claws.", "ONE TIME USE - Immediately skip to the start of the next floor."),
                      consumableDefaultCount: 1);
+        new FlagData(typeof(Exit), "exit", new TooltipData("Exit Flag", "get me out get me out", "Save and exit the current run."),
+                     consumableDefaultCount: 1);
         //curses
         new CurseData(typeof(Watched), "watched", new TooltipData("Watched", "They lie in wait...", "Mines jump on you, if you're too still."));
         new CurseData(typeof(Windy), "windy", new TooltipData("Windy", "The ventilation is surprisingly good here.", "Flags may blow and land somewhere else when let go."));

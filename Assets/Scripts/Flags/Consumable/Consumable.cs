@@ -10,4 +10,7 @@ public class Consumable : Flag {
         base.Awake();
     }
     protected virtual void OnPointerClick(PointerEventData data) {}
+    protected override bool IsUsable() {
+        return base.IsUsable() && count > 0;
+    }
 }

@@ -4,7 +4,7 @@ public class ConstantsManager : MonoBehaviour {
     public static ConstantsManager s;
 
     [System.NonSerialized]
-    public float gameStartTransitionDuration = 2f,
+    public float gameUITransitionDuration = 2f,
                  tileAdjacentDragSpeed = 0.50f,
                  tileAdjacentDragPower = 20.0f,
                  tileDampingPower = 0.20f,

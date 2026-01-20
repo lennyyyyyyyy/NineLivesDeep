@@ -12,24 +12,24 @@ class StartButton : MonoBehaviour {
         s = this;
         startText = GetComponentInChildren<TMP_Text>();
     }
-    public void OnPointerEnter() {
+    private void OnPointerEnter() {
         hovered = true;
         hoverOffset = Random.Range(0f, 1f);
         startText.enabled = true;
     }
-    public void OnPointerExit() {
+    private void OnPointerExit() {
         hovered = false;
         startText.enabled = false;
     }
-    public void OnPointerDown() {
+    private void OnPointerDown() {
         pressed = !finished;
     }
-    public void OnPointerUp() {
+    private void OnPointerUp() {
         pressed = false;
         if (!finished) { EventManager.s.OnGameStart?.Invoke(); }
         finished = true;
     }
-    void Update() {
+    private void Update() {
         if (hovered && !pressed) {
             HelperManager.s.FloatingHover(transform, 1.1f, hoverOffset, Vector3.zero);
         } else if (pressed) {
@@ -37,5 +37,8 @@ class StartButton : MonoBehaviour {
         } else {
             HelperManager.s.FloatingHover(transform, 1f, hoverOffset, Vector3.zero, 0, 0);
         }
+    }
+    public void Reset() {
+        finished = false;
     }
 }

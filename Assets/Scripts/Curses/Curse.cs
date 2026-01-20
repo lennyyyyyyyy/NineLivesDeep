@@ -14,8 +14,4 @@ public class Curse : UIItem {
         base.AfterInit();
         PlayerUIItemModule.s.ProcessAddedCurse(this);
     }
-    protected override void OnDestroy() {
-        base.OnDestroy();
-        PlayerUIItemModule.s.ProcessRemovedCurse(this);
-    }
 }

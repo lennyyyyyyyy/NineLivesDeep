@@ -72,8 +72,4 @@ public class Flag : UIItem {
     public virtual void UpdateUsable() {
         usable = IsUsable();
     } 
-    protected override void OnDestroy() {
-        base.OnDestroy();
-        PlayerUIItemModule.s.ProcessRemovedFlag(this);
-    }
 }
