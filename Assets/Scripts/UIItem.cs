@@ -61,4 +61,8 @@ public class UIItem : MonoBehaviour {
 	}
 	public virtual void Modify(ref Modifiers modifiers) {
 	}
+    protected virtual void OnDestroy() {
+        if (GameManager.s.gameState == GameManager.GameState.GAME) {
+            PlayerUIItemModule.s.ProcessRemovedUIItem(this); }
+    }
 }

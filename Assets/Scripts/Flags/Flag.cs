@@ -67,9 +67,15 @@ public class Flag : UIItem {
         tmpro.text = count.ToString();
     }
     protected virtual bool IsUsable() {
-        return Player.s.alive && !Taken.takenFlags.Contains(gameObject) && allowedFloorTypes.Contains(Floor.s.floorType);
+        return Player.s.alive && !Player.s.modifiers.takenFlags.Contains(gameObject) && allowedFloorTypes.Contains(Floor.s.floorType);
     }
     public virtual void UpdateUsable() {
         usable = IsUsable();
     } 
+    protected override void OnDestroy() {
+        base.OnDestroy();
+        if (GameManager.s.gameState == GameManager.GameState.GAME) {
+            PlayerUIItemModule.s.ProcessRemovedFlag(this);
+        }
+    }
 }

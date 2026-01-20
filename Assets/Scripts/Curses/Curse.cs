@@ -14,4 +14,10 @@ public class Curse : UIItem {
         base.AfterInit();
         PlayerUIItemModule.s.ProcessAddedCurse(this);
     }
+    protected override void OnDestroy() {
+        base.OnDestroy();
+        if (GameManager.s.gameState == GameManager.GameState.GAME) {
+            PlayerUIItemModule.s.ProcessRemovedCurse(this);
+        }
+    }
 }

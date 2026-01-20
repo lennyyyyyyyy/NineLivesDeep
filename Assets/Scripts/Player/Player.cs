@@ -23,11 +23,11 @@ public class Modifiers {
 			   discoverRange,
 			   reviveRange,
 			   moveDirectionDisableDuration,
-			   takenCurseCount,
                reflectionPassiveCount;
 	public bool watched;
 	public HashSet<Type> amnesiaUITypes;	
     public List<Vector2Int> moveOptions;
+    public HashSet<GameObject> takenFlags;
 	public void Reset() {
 		mineSpawnMult = 1;
 		mineDefuseMult = 1;
@@ -42,7 +42,6 @@ public class Modifiers {
 		discoverRange = 0;
 		reviveRange = 0;
 		moveDirectionDisableDuration = 0;
-		takenCurseCount = 0;
 		amnesiaUITypes = new HashSet<Type>();
 		cataractConfuseChance = 0f;
 		mapNumberDisappearChancePerSecond = 0;
@@ -61,6 +60,7 @@ public class Modifiers {
             new Vector2Int(1, 0),
             new Vector2Int(1, 1)
         };
+        takenFlags = new HashSet<GameObject>();
 	}
 	public Modifiers() {
 		Reset();
