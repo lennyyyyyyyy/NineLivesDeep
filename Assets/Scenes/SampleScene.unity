@@ -279,10 +279,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   saveData:
     playerCoord: {x: 0, y: 0}
-    playerTrapped: 0
     playerAlive: 0
     money: 0
     tempChanges: 0
+    floorDeathCount: 0
     curses: []
     mines: 
     flags: []
@@ -293,10 +293,10 @@ MonoBehaviour:
     tilesVisited: []
     moveHistory: []
     rainCoords: []
+    tunneledLastMove: 0
     floor: 0
     width: 0
     height: 0
-    floorDeathCount: 0
     floorType: 
     tiles: []
 --- !u!1 &482892912
@@ -2079,7 +2079,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1982705831
 RectTransform:
   m_ObjectHideFlags: 0

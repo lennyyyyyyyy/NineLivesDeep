@@ -10,7 +10,8 @@ public class ConstantsManager : MonoBehaviour {
                  tileDampingPower = 0.20f,
                  playerStepImpulse = 0.20f,
                  playerReviveDuration = 3.0f,
-	             minefieldTrialChance = 0.5f;
+	             minefieldTrialChance = 0.5f,
+                 tooltipPadding = 0.01f;
     [System.NonSerialized]
     public int playerMaxMoveHistory = 10;
 

@@ -25,13 +25,16 @@ public class AddTooltip : MonoBehaviour {
 		if (tooltip == null) {
 			tooltip = Instantiate(PrefabManager.s.tooltipPrefab, GameUIManager.s.tooltipGroup.transform);
 		}
-	    tooltip.GetComponent<Tooltip>().SetData(this.tooltipData);
+	    tooltip.GetComponent<Tooltip>().Init(this.tooltipData);
 		tooltip.SetActive(false);
 	}
 	protected virtual void SaveMaterial() {}
 	public virtual void MouseEnter() {
 		hovered = true;
-		tooltip?.SetActive(true);
+        if (tooltip) {
+            tooltip.SetActive(true);
+            tooltip.transform.position = Tooltip.lastTooltipPos;
+        }
 		if (addHoverEffect) {
 			HoverEffectOn();
 		}

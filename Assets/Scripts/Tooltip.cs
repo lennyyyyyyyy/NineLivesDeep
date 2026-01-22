@@ -27,31 +27,21 @@ public class TooltipData {
 }
 
 public class Tooltip : MonoBehaviour {
-	public bool setInitialData = false;
 	public TooltipData tooltipData;
 
     public TMP_Text name, flavor, info, price;
     public GameObject mineIcon;
-    private static float padding = 0.01f, power = 0.75f;
-    private static Vector3 lastTooltipPos = Vector3.zero;
-    private Vector3 targetPosition;
+    private static float power = 0.75f;
+    [System.NonSerialized]
+    public static Vector3 lastTooltipPos = Vector3.zero;
+    [System.NonSerialized]
+    public Vector3 idealTargetPosition, targetPosition;
 	
-	private void Start() {
-		if (setInitialData) {
-			SetData(tooltipData);
-		}
-	}
-    private void Update() {
-        transform.position = Vector3.Lerp(transform.position, targetPosition, 1 - Mathf.Pow(1 - power, Time.deltaTime / .15f));
-        lastTooltipPos = transform.position;
+    private void Awake() {
+        UIManager.s.tooltips.Add(gameObject);
     }
-	public void SetInitialData(TooltipData tooltipData) {
-		setInitialData = true;
+    public void Init(TooltipData tooltipData) {
 		this.tooltipData = tooltipData;
-	}
-    public void SetData(TooltipData tooltipData) {
-		SetInitialData(tooltipData);
-		
         name.text = tooltipData.name;
         flavor.text = tooltipData.flavor;
         info.text = tooltipData.info;
@@ -62,25 +52,31 @@ public class Tooltip : MonoBehaviour {
         GetComponent<Outline>().effectColor = tooltipData.color;
         LayoutRebuilder.ForceRebuildLayoutImmediate(transform as RectTransform);
     }
+    private void Update() {
+        transform.position = Vector3.Lerp(transform.position, targetPosition, 1 - Mathf.Pow(1 - power, Time.deltaTime / .15f));
+        lastTooltipPos = transform.position;
+    }
     public void Position(float x, float y, float width) {
-        transform.position = lastTooltipPos;
         Vector2 size = HelperManager.s.WorldSizeFromRT(transform as RectTransform);
         Vector2 canvasSize = HelperManager.s.WorldSizeFromRT(UIManager.s.canvasRt);
         float targetY = Mathf.Clamp(y, MainCamera.s.transform.position.y - canvasSize.y/2 + size.y/2, MainCamera.s.transform.position.y + canvasSize.y/2 - size.y/2);
         
-        if (x - width/2 - size.x - 2 * padding * canvasSize.x > MainCamera.s.transform.position.x-canvasSize.x/2 && 
-            x + width/2 + size.x + 2 * padding * canvasSize.x > MainCamera.s.transform.position.x+canvasSize.x/2) {
-            targetPosition = new Vector3(x - width/2 - size.x/2 - padding * canvasSize.x, targetY, 0);
+        if (x - width/2 - size.x - 2 * ConstantsManager.s.tooltipPadding * canvasSize.x > MainCamera.s.transform.position.x-canvasSize.x/2 && 
+            x + width/2 + size.x + 2 * ConstantsManager.s.tooltipPadding * canvasSize.x > MainCamera.s.transform.position.x+canvasSize.x/2) {
+            idealTargetPosition = new Vector3(x - width/2 - size.x/2 - ConstantsManager.s.tooltipPadding * canvasSize.x, targetY, 0);
             name.alignment = TMPro.TextAlignmentOptions.Right;
             flavor.alignment = TMPro.TextAlignmentOptions.Right;
             info.alignment = TMPro.TextAlignmentOptions.Right;
             name.gameObject.transform.SetAsLastSibling();
         } else {
-            targetPosition = new Vector3(x + width/2 + size.x/2 + padding * canvasSize.x, targetY, 0);
+            idealTargetPosition = new Vector3(x + width/2 + size.x/2 + ConstantsManager.s.tooltipPadding * canvasSize.x, targetY, 0);
             name.alignment = TMPro.TextAlignmentOptions.Left;
             flavor.alignment = TMPro.TextAlignmentOptions.Left;
             info.alignment = TMPro.TextAlignmentOptions.Left;
             name.gameObject.transform.SetAsFirstSibling();
         }
+    }
+    private void OnDestroy() {
+        UIManager.s.tooltips.Remove(gameObject);
     }
 }

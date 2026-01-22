@@ -31,6 +31,8 @@ public class UIManager : MonoBehaviour {
                   mineDebugSprite;
     [System.NonSerialized]
     public VolumeProfile ppvp;
+    [System.NonSerialized]
+    public HashSet<GameObject> tooltips = new HashSet<GameObject>();
 
     private float mouseTimer = 0;
 
@@ -58,6 +60,26 @@ public class UIManager : MonoBehaviour {
             mouseVelocity = (Camera.main.ScreenToWorldPoint(UnityEngine.InputSystem.Mouse.current.position.ReadValue()) - lastMousePos) / mouseTimer;
             lastMousePos = Camera.main.ScreenToWorldPoint(UnityEngine.InputSystem.Mouse.current.position.ReadValue());
             mouseTimer = 0;
+        }
+        SetTooltipTargetPositions();
+    }
+    private void SetTooltipTargetPositions() {
+        List<GameObject> activeTooltips = tooltips.Where(t => t.activeSelf).ToList();
+        activeTooltips.Sort((a, b) => a.transform.position.y.CompareTo(b.transform.position.y)); 
+        float averageY = 0, totalY = 0;
+        foreach (GameObject g in activeTooltips) {
+            averageY += g.GetComponent<Tooltip>().idealTargetPosition.y;
+            totalY += HelperManager.s.WorldSizeFromRT(g.transform as RectTransform).y;
+        }
+        averageY /= activeTooltips.Count;
+        totalY += ConstantsManager.s.tooltipPadding * (activeTooltips.Count - 1) * 4;
+        float currentY = averageY - totalY / 2;
+        foreach (GameObject g in activeTooltips) {
+            Vector2 size = HelperManager.s.WorldSizeFromRT(g.transform as RectTransform);
+            float targetY = currentY + size.y / 2;
+            g.GetComponent<Tooltip>().targetPosition = g.GetComponent<Tooltip>().idealTargetPosition;
+            g.GetComponent<Tooltip>().targetPosition.y = targetY;
+            currentY += size.y + ConstantsManager.s.tooltipPadding * 4;
         }
     }
 }
