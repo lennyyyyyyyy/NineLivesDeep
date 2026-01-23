@@ -95,7 +95,6 @@ public class Map : Flag {
 		foreach (GameObject n in numbers.Values) {
 			Destroy(n);
 		}
-        Debug.Log("map reset");
     }
     protected virtual void OnEnable() {
         EventManager.s.OnFloorChangeBeforeEntities += Reset;

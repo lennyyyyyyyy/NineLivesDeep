@@ -5,7 +5,8 @@ using System.Collections.Generic;
 public class EventManager : MonoBehaviour {
     public static EventManager s;
 
-    public Action OnFloorChangeBeforeNewLayout,
+    public Action OnFloorChangeBeforeIntro,
+                  OnFloorChangeBeforeNewLayout,
                   OnFloorChangeBeforeEntities,
                   OnFloorChangeAfterEntities,
                   OnNewMinefield,

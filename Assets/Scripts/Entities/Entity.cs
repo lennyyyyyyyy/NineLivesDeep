@@ -50,9 +50,7 @@ public class Entity : VerticalObject {
 			Debug.Log("Tried to move entity to invalid coord " + tileComponent.coord.ToString());
 			return false;
         }
-		if (transform.parent != null && transform.parent.GetComponent<Tile>() != null) {
-			transform.parent.GetComponent<Tile>().entities.Remove(gameObject);
-		}
+        Remove(false);
 		tileComponent.AddEntity(gameObject);
 		Vector3 oldScale = transform.localScale;
 		transform.parent = tile.transform;
@@ -67,11 +65,12 @@ public class Entity : VerticalObject {
 	public virtual bool Move(int x, int y, bool reposition = true) {
         return Move(Floor.s.GetTile(x, y), reposition);
 	}
-	public virtual void Remove() {
+	public virtual void Remove(bool destroy = true) {
 		if (GetTile() != null) {
-			GetTile().GetComponent<Tile>().entities.Remove(gameObject);
+			GetTile().GetComponent<Tile>().RemoveEntity(gameObject);
+            transform.parent = Floor.s.transform;
 		}
-		Destroy(gameObject);
+        if (destroy) Destroy(gameObject);
 	}
 	public virtual bool CoordAllowed(int x, int y) {
 		return Floor.s.TileExistsAt(x, y) && Floor.s.GetTile(x, y).GetComponent<ActionTile>() == null; 

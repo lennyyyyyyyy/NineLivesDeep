@@ -32,9 +32,6 @@ public class MineSprite : Entity {
         }
         return success;
 	}
-	public override void Remove() {
-		base.Remove();
-	}
     public override bool CoordAllowed(int x, int y) { 
         return base.CoordAllowed(x, y); 
     }

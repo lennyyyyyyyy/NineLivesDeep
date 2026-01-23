@@ -128,6 +128,7 @@ public class Player : Entity {
 		if (modifiers.watched) {
 			watchedMineJumpTimer += Time.deltaTime;
 		}
+        Debug.Log("Im alive");
     }
     public void Load(LoadData loadData) {
         money = loadData.money;
@@ -258,7 +259,6 @@ public class Player : Entity {
         foreach (GameObject g in PlayerUIItemModule.s.flags) {
             Flag flag = g.GetComponent<Flag>();
             if (flag is Map) {
-                Debug.Log("Discovering tile " + x + ", " + y + " for " + flag.GetType().ToString());
                 Map map = (flag as Map);
                 if (map.usable) {
                     map.OnDiscover(x, y);
@@ -278,17 +278,6 @@ public class Player : Entity {
             }
         }
     } 
-    private void OnFloorChangeAfterEntities() {
-        floorDeathCount = 0;
-		tempChanges = 0;
-        tilesVisited.Clear();
-		tilesUnvisited.Clear();
-		foreach (GameObject tile in Floor.s.tiles.Values) {
-			if (tile != null) {
-				tilesUnvisited.Add(tile);
-			}
-		}
-    }
 	public override bool Move(int x, int y, bool reposition = true) {
 		return Move(x, y, reposition, true);
 	}
@@ -351,16 +340,29 @@ public class Player : Entity {
 	public virtual void Move(GameObject tile, bool reposition = true, bool animate = true) {
 		Move(tile.GetComponent<Tile>().coord.x, tile.GetComponent<Tile>().coord.y, reposition, animate);
 	}
-	public override void Remove() {
-		Floor.s.RemoveEntity(GetCoord().x, GetCoord().y, gameObject);
-	}
 	public override bool CoordAllowed(int x, int y) {
 		return true;
 	}
+    private void OnFloorChangeAfterEntities() {
+        floorDeathCount = 0;
+		tempChanges = 0;
+        tilesVisited.Clear();
+		tilesUnvisited.Clear();
+		foreach (GameObject tile in Floor.s.tiles.Values) {
+			if (tile != null) {
+				tilesUnvisited.Add(tile);
+			}
+		}
+    }
+    private void OnFloorChangeBeforeNewLayout() {
+        Remove(false);
+    }
     private void OnEnable() {
+        EventManager.s.OnFloorChangeBeforeNewLayout += OnFloorChangeBeforeNewLayout;
         EventManager.s.OnFloorChangeAfterEntities += OnFloorChangeAfterEntities;
     }
     private void OnDisable() {
+        EventManager.s.OnFloorChangeBeforeNewLayout -= OnFloorChangeBeforeNewLayout;
         EventManager.s.OnFloorChangeAfterEntities -= OnFloorChangeAfterEntities;
     }
 }

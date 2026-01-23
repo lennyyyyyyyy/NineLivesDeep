@@ -43,6 +43,9 @@ public class Tile : Parallax
 			entities.Add(g);
 		}
 	}
+    public void RemoveEntity(GameObject g) {
+        entities.Remove(g);
+    }
     protected override void Start() {
         base.Start();
         underTile = new GameObject("UnderTile");

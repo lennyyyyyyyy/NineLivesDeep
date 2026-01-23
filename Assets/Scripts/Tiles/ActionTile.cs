@@ -19,7 +19,7 @@ public class ActionTile : Tile {
     // Creates the default sequence for exiting a floor into a new floor
 	protected Action ExitAction(string newFloorType, int newFloor) {
 		return () => { 
-			Player.s.Remove();
+			Player.s.Remove(false);
 			MainCamera.s.locked = true;
 			MainCamera.s.ExitMotion();
 			HelperManager.s.DelayAction(() => {Floor.s.IntroAndCreateFloor(newFloorType, newFloor);}, 0.5f);

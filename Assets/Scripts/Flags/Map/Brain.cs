@@ -14,6 +14,5 @@ public class Brain : Map {
             }
         }
 		SetNumber(x, y, count);
-        Debug.Log($"Brain discovered at ({x}, {y}) with {count} adjacent mines.");
     }
 }

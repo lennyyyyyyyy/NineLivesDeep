@@ -55,13 +55,11 @@ public class MainCamera : MonoBehaviour
         }
 	}
     private void OnEnable() {
-        EventManager.s.OnGameStart += SetupFloorIntro;
-        EventManager.s.OnGameLoad += SetupFloorIntro;
+        EventManager.s.OnFloorChangeBeforeIntro += SetupFloorIntro;
         EventManager.s.OnGameExit += SetupStartScreen;
     }
     private void OnDisable() {
-        EventManager.s.OnGameStart -= SetupFloorIntro;
-        EventManager.s.OnGameLoad -= SetupFloorIntro;
+        EventManager.s.OnFloorChangeBeforeIntro -= SetupFloorIntro;
         EventManager.s.OnGameExit -= SetupStartScreen;
     }
 }

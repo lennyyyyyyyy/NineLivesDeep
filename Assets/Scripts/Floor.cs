@@ -30,6 +30,7 @@ public class Floor : MonoBehaviour {
 	private ParticleSystemForceField windZone;
     
     public float Intro(string newFloorType, int newFloor) {
+        EventManager.s.OnFloorChangeBeforeIntro?.Invoke();
         GameManager.s.floorGameState = GameManager.GameState.FLOOR_UNSTABLE;
 		// FLOOR TRANSITION FIRST STEP - INTRO SEQUENCE
 		floorType = newFloorType;
@@ -70,18 +71,13 @@ public class Floor : MonoBehaviour {
 			time += 2.8f;
 		}
 
-		//if (floorType == "minefield" && floor % 3 == 0) {
-		if (floorType == "minefield") {
+		if (floorType == "minefield" && floor % 3 == 0) {
 			HelperManager.s.DelayAction(() => {
 				HelperManager.s.InstantiateBubble(Vector3.zero, "CURSED", new Color(0.5f, 0, 0), 2f, 2f);
 			}, time);
 			HelperManager.s.DelayAction(() => {
 				GameObject curse = Instantiate(PrefabManager.s.cursePrefab, Vector3.zero, Quaternion.identity);
-                if (floor > 0) {
-                    curse.AddComponent(typeof(Intensify));
-                } else {
-                    curse.AddComponent(PlayerUIItemModule.s.cursesUnseen[Random.Range(0, PlayerUIItemModule.s.cursesUnseen.Count)]);
-                }
+                curse.AddComponent(PlayerUIItemModule.s.cursesUnseen[Random.Range(0, PlayerUIItemModule.s.cursesUnseen.Count)]);
 			}, time + 1f);
 			time += 2.8f;
 		}
@@ -572,15 +568,6 @@ public class Floor : MonoBehaviour {
 			GetTile(x, y).GetComponent<Tile>().AddEntity(g);
 		} else {
 			Debug.Log("Tried to add entity to invalid tile at " + x + ", " + y);
-		}
-	}
-	// note helper - use Entity.Remove() instead
-	public void RemoveEntity(int x, int y, GameObject g) {
-		if (TileExistsAt(x, y)) {
-			GetTile(x, y).GetComponent<Tile>().entities.Remove(g);
-			g.transform.parent = null;
-		} else {
-			Debug.Log("Tried to remove entity from invalid tile at " + x + ", " + y);
 		}
 	}
     private void Awake() {

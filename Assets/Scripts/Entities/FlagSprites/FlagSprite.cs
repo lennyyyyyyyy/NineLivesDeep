@@ -145,9 +145,6 @@ public class FlagSprite : CorrespondingSprite {
 	public override bool Move(GameObject tile, bool reposition = true) {
 		return base.Move(tile, reposition);
 	}
-	public override void Remove() {
-		base.Remove();
-	}
     public override bool CoordAllowed(int x, int y) { 
         return base.CoordAllowed(x, y) && Floor.s.GetUniqueFlag(x, y) == null && !(x == Player.s.GetCoord().x && y == Player.s.GetCoord().y); 
     }
