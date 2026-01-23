@@ -254,9 +254,11 @@ public class Player : Entity {
         UpdateActivePrints();
     }
     public void discover(int x, int y) {
+        if (new Vector2Int(x, y) == Floor.INVALID_COORD) return;
         foreach (GameObject g in PlayerUIItemModule.s.flags) {
             Flag flag = g.GetComponent<Flag>();
             if (flag is Map) {
+                Debug.Log("Discovering tile " + x + ", " + y + " for " + flag.GetType().ToString());
                 Map map = (flag as Map);
                 if (map.usable) {
                     map.OnDiscover(x, y);
@@ -272,9 +274,7 @@ public class Player : Entity {
     public void discoverTiles() {
         for (int dx=-modifiers.discoverRange; dx<=modifiers.discoverRange; dx++) {
             for (int dy=-modifiers.discoverRange; dy<=modifiers.discoverRange; dy++) {
-                if (Floor.s.TileExistsAt(GetCoord().x + dx, GetCoord().y + dy)) {
-					discover(GetCoord().x + dx, GetCoord().y + dy);
-                }
+                discover(GetCoord().x + dx, GetCoord().y + dy);
             }
         }
     } 

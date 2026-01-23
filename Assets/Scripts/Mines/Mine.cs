@@ -23,7 +23,6 @@ public class Mine : UIItem {
 		addTooltip.Init(this.tooltipData);
     }
     public override void Init() {
-        Debug.Log("new mine init");
         if (CatalogManager.s.typeToData.ContainsKey(GetType())) {
             MineData mineData = CatalogManager.s.typeToData[GetType()] as MineData;
             Init(tex2d: mineData.tex2d, tooltipData: mineData.tooltipData, spriteType: mineData.spriteType);

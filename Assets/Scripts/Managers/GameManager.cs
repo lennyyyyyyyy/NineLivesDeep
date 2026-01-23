@@ -10,12 +10,15 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour {
     public enum GameState {
         START,
-        GAME
+        GAME,
+        FLOOR_STABLE,
+        FLOOR_UNSTABLE,
     }
 
     public static GameManager s;
     [System.NonSerialized]
-    public GameState gameState = GameState.START;
+    public GameState gameState = GameState.START, 
+                     floorGameState = GameState.FLOOR_UNSTABLE;
     public Scene scene;
     public PhysicsScene2D physicsScene;
 

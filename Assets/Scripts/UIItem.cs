@@ -34,7 +34,6 @@ public class UIItem : MonoBehaviour {
 		addTooltip.Init(this.tooltipData);
 	}
     public virtual void Init() {
-        Debug.Log("old init");
         if (CatalogManager.s.typeToData.ContainsKey(GetType())) {
             UIItemData uiItemData = CatalogManager.s.typeToData[GetType()] as UIItemData;
             Init(tex2d: uiItemData.tex2d, tooltipData: uiItemData.tooltipData);

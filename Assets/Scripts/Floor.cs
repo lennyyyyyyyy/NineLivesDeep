@@ -30,6 +30,7 @@ public class Floor : MonoBehaviour {
 	private ParticleSystemForceField windZone;
     
     public float Intro(string newFloorType, int newFloor) {
+        GameManager.s.floorGameState = GameManager.GameState.FLOOR_UNSTABLE;
 		// FLOOR TRANSITION FIRST STEP - INTRO SEQUENCE
 		floorType = newFloorType;
 		floor = newFloor;
@@ -84,6 +85,7 @@ public class Floor : MonoBehaviour {
 			}, time + 1f);
 			time += 2.8f;
 		}
+        PlayerUIItemModule.s.OrganizeFlags();
 		// FLOOR TRANSITION SECOND STEP - DESTROY THE PREVIOUS FLOOR AND RENEW ARRAYS
         HelperManager.s.DelayAction(() => {
 			EventManager.s.OnFloorChangeBeforeNewLayout?.Invoke();
@@ -101,6 +103,7 @@ public class Floor : MonoBehaviour {
 			PositionTilesUnbuilt();
 			BuildTiles(2f, 2f);
 			MainCamera.s.ZoomTo(12.5f, 1f);	
+            GameManager.s.floorGameState = GameManager.GameState.FLOOR_STABLE;
             PlayerUIItemModule.s.OrganizeFlags();
         }, time);
 		time += 3.8f;
@@ -109,6 +112,7 @@ public class Floor : MonoBehaviour {
 	}	
     public void IntroAndLoadFloor(LoadData loadData) {
         float time = Intro(loadData.floorType, loadData.floor);
+        PlayerUIItemModule.s.OrganizeFlags();
         HelperManager.s.DelayAction(() => {
 		    foreach (TileLoadData tld in loadData.tiles) {
                 PrefabData pd = CatalogManager.s.typeToData[tld.type] as PrefabData;
@@ -138,6 +142,7 @@ public class Floor : MonoBehaviour {
 			PositionTilesUnbuilt();
 			BuildTiles(2f, 2f);
 			MainCamera.s.ZoomTo(12.5f, 1f);	
+            GameManager.s.floorGameState = GameManager.GameState.FLOOR_STABLE;
             PlayerUIItemModule.s.OrganizeFlags();
         }, time);
 		time += 3.8f;

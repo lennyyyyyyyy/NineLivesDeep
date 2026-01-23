@@ -11,6 +11,6 @@ public class Consumable : Flag {
     }
     protected virtual void OnPointerClick(PointerEventData data) {}
     protected override bool IsUsable() {
-        return base.IsUsable() && count > 0;
+        return base.IsUsable() && count > 0 && GameManager.s.floorGameState == GameManager.GameState.FLOOR_STABLE;
     }
 }

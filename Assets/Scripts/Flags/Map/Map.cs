@@ -76,7 +76,6 @@ public class Map : Flag {
 		} else {
 			GameObject n = numbers[new Vector2Int(x, y)] = Instantiate(PrefabManager.s.numberPrefab, Floor.s.transform);
 			n.transform.position = Floor.s.CoordToIdealPos(x, y); 
-            Debug.Log(Floor.s.CoordToIdealPos(x, y));
 			n.transform.localScale = Vector3.one;
 			n.GetComponent<Number>().Init(this, new Vector2Int(x, y));
 			n.GetComponent<Number>().SetNum(num);
@@ -96,13 +95,14 @@ public class Map : Flag {
 		foreach (GameObject n in numbers.Values) {
 			Destroy(n);
 		}
+        Debug.Log("map reset");
     }
     protected virtual void OnEnable() {
-        EventManager.s.OnFloorChangeAfterEntities += Reset;
+        EventManager.s.OnFloorChangeBeforeEntities += Reset;
 		EventManager.s.OnUpdateSecondaryMapActive += UpdateSecondaryActive;
     }
     protected virtual void OnDisable() {
-        EventManager.s.OnFloorChangeAfterEntities -= Reset;
+        EventManager.s.OnFloorChangeBeforeEntities -= Reset;
 		EventManager.s.OnUpdateSecondaryMapActive -= UpdateSecondaryActive;
     }
     protected override bool IsUsable() {

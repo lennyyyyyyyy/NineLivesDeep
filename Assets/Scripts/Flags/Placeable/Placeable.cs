@@ -21,7 +21,8 @@ public class Placeable : Flag {
         }
     }
     protected override bool IsUsable() {
-        return base.IsUsable() && count > 0 && (sprite == null || sprite.GetComponent<FlagSprite>().state != "held");
+        return base.IsUsable() && count > 0 && (sprite == null || sprite.GetComponent<FlagSprite>().state != "held") 
+            && GameManager.s.floorGameState == GameManager.GameState.FLOOR_STABLE;
     }
     public override void UpdateCount(int newCount) {
         base.UpdateCount(newCount);

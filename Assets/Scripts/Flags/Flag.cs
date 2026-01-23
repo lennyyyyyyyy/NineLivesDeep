@@ -48,7 +48,6 @@ public class Flag : UIItem {
         tmpro.enabled = this.showCount;
     }
     public override void Init() {
-        Debug.Log("new flag init");
         if (CatalogManager.s.typeToData.ContainsKey(GetType())) {
             FlagData flagData = CatalogManager.s.typeToData[GetType()] as FlagData;
             Init(tex2d: flagData.tex2d,

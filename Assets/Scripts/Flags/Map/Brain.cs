@@ -1,7 +1,6 @@
 using UnityEngine;
 
-public class Brain : Map
-{
+public class Brain : Map {
     public override void OnDiscover(int x, int y) {
         bool hasAromatic = PlayerUIItemModule.s.HasUIItem(typeof(Aromatic));
         int count = 0;
@@ -15,5 +14,6 @@ public class Brain : Map
             }
         }
 		SetNumber(x, y, count);
+        Debug.Log($"Brain discovered at ({x}, {y}) with {count} adjacent mines.");
     }
 }
