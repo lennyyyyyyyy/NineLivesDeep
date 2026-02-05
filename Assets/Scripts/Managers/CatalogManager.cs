@@ -153,14 +153,22 @@ public class CatalogManager : MonoBehaviour {
         new FlagData(typeof(Manhattan), "manhattan", new TooltipData("Manhattan Flag", "The nearest mine's just around the block.", "Gives the manhattan distance to the nearest mine."));
         new FlagData(typeof(Knight), "knight", new TooltipData("Knight Flag", "Yee haw", "Gives the number of mines a knight's move away."));
         //consumable flags
-        new FlagData(typeof(Chocolate), "chocolate", new TooltipData("Chocolate Flag", "Curiosity made the cat stronger.", "ONE TIME USE - Sacrifice half your health rounded up for two random flags."),
-                     consumableDefaultCount: 1);
-        new FlagData(typeof(Dog), "dog", new TooltipData("Dog Flag", "Oh, how the tables have turned.", "For your next movement, you are immune to mines, but take damage from safe tiles."),
-                     consumableDefaultCount: 10);
-        new FlagData(typeof(Shovel), "shovel", new TooltipData("Shovel Flag", "An upgrade for your tiny claws.", "ONE TIME USE - Immediately skip to the start of the next floor."),
+        new FlagData(typeof(Chocolate), "chocolate", new TooltipData("Chocolate Flag", "Curiosity made the cat stronger.", "Sacrifice half your health rounded up for two random flags."),
+                     consumableDefaultCount: 2);
+        new FlagData(typeof(Dog), "dog", new TooltipData("Dog Flag", "Oh, how the tables have turned.", "For your next movement, you are immune to mines, but die from safe tiles."),
+                     consumableDefaultCount: 25);
+        new FlagData(typeof(Shovel), "shovel", new TooltipData("Shovel Flag", "An upgrade for your tiny claws.", "Dig, and skip to the start of the next floor."),
                      consumableDefaultCount: 1);
         new FlagData(typeof(Exit), "exit", new TooltipData("Exit Flag", "get me out get me out", "Save and exit the current run."),
                      consumableDefaultCount: 1);
+        new FlagData(typeof(Kamikaze), "kamikaze", new TooltipData("Kamikaze Flag", "C'mon, you've got lives to spare.", "Explode a 3x3 area around you, killing yourself in the process."),
+                     consumableDefaultCount: 10);
+        new FlagData(typeof(Yarn), "yarn", new TooltipData("Yarn Flag", "Cats love yarn.", "Rolls in a chosen direction until hitting an obstacle or detonating a mine."),
+                     consumableDefaultCount: 10);
+        new FlagData(typeof(Fertilizer), "fertilizer", new TooltipData("Fertilizer Flag", "Let it grow.", "Turn one adjacent tile into grass, turn another if you're on grass."),
+                     consumableDefaultCount: 10);
+        new FlagData(typeof(HailMary), "hailmary", new TooltipData("Hail Mary Flag", "Only one way to find out.", "Teleport to a random undiscovered tile."),
+                     consumableDefaultCount: 10);
         //curses
         new CurseData(typeof(Watched), "watched", new TooltipData("Watched", "They lie in wait...", "Mines jump on you, if you're too still."));
         new CurseData(typeof(Windy), "windy", new TooltipData("Windy", "The ventilation is surprisingly good here.", "Flags may blow and land somewhere else when let go."));

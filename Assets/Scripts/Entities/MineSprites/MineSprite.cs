@@ -21,18 +21,29 @@ public class MineSprite : Entity {
 	}
     public virtual void Trigger() {
         EventManager.s.OnExplosionAtCoord?.Invoke(GetCoord().x, GetCoord().y);
-        Player.s.Die();
 		Remove();
     }
 	public override bool Move(GameObject tile, bool reposition = true) {
         bool success = base.Move(tile, reposition);
 		if (success) {
-            Player.s.triggerMines();
+            Player.s.TriggerMines();
             Player.s.discoverTiles();
         }
         return success;
 	}
     public override bool CoordAllowed(int x, int y) { 
         return base.CoordAllowed(x, y); 
+    }
+    protected virtual void OnExplosionAtCoord(int x, int y) {
+        Vector2Int coord = GetCoord();
+        if (coord.x == x && coord.y == y) {
+            Trigger();
+        }
+    }
+    protected virtual void OnEnable() {
+        EventManager.s.OnExplosionAtCoord += OnExplosionAtCoord;
+    }
+    protected virtual void OnDisable() {
+        EventManager.s.OnExplosionAtCoord -= OnExplosionAtCoord;
     }
 }
