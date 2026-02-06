@@ -37,6 +37,9 @@ class StartButton : MonoBehaviour {
         } else {
             HelperManager.s.FloatingHover(transform, 1f, hoverOffset, Vector3.zero, 0, 0);
         }
+        if (hovered) {
+            UIManager.s.cursorInteract = true;
+        }
     }
     public void Reset() {
         finished = false;

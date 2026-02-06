@@ -17,8 +17,8 @@ public class EventManager : MonoBehaviour {
                   OnGameStart,
                   OnGameLoad,
                   OnGameExit;
-    public Action<int, int> OnExplosionAtCoord,
-                            OnPlayerMoveToCoord;
+    public Action<int, int, GameObject> OnExplosionAtCoord;
+    public Action<int, int> OnPlayerMoveToCoord;
 
 	private HashSet<Collider2D> collidersUnderMouse = new HashSet<Collider2D>(),
                                 collidersUnderMouseLastFrame = new HashSet<Collider2D>();

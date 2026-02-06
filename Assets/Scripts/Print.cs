@@ -35,9 +35,10 @@ public class Print : MonoBehaviour {
 			Player.s.moveHistory.RemoveAt(0);
 		}
     }
-    void Update() {
+    private void Update() {
         if (hovered) {
             HelperManager.s.FloatingHover(transform, 1f, hoverOffset, defaultRotation, 0.1f, 10f, hoverPeriod);
+            UIManager.s.cursorInteract = true;
         } 
     }
 }

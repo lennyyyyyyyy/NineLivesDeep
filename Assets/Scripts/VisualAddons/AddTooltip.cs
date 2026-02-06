@@ -7,7 +7,8 @@ public class AddTooltip : MonoBehaviour {
 
 	[System.NonSerialized]
 	public GameObject tooltip;
-	protected bool hovered = false;
+    [System.NonSerialized]
+	public bool hovered = false;
 	protected Material savedMaterial;
 
     protected virtual void Awake() {

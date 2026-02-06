@@ -20,7 +20,7 @@ public class MineSprite : Entity {
 		Init(sprite: UIManager.s.mineDebugSprite, obstacle: false);
 	}
     public virtual void Trigger() {
-        EventManager.s.OnExplosionAtCoord?.Invoke(GetCoord().x, GetCoord().y);
+        EventManager.s.OnExplosionAtCoord?.Invoke(GetCoord().x, GetCoord().y, gameObject);
 		Remove();
     }
 	public override bool Move(GameObject tile, bool reposition = true) {
@@ -34,9 +34,9 @@ public class MineSprite : Entity {
     public override bool CoordAllowed(int x, int y) { 
         return base.CoordAllowed(x, y); 
     }
-    protected virtual void OnExplosionAtCoord(int x, int y) {
+    protected virtual void OnExplosionAtCoord(int x, int y, GameObject source) {
         Vector2Int coord = GetCoord();
-        if (coord.x == x && coord.y == y) {
+        if (coord.x == x && coord.y == y && source != gameObject) {
             Trigger();
         }
     }

@@ -30,6 +30,12 @@ public class Entity : VerticalObject {
     public virtual void Init() {
         Init(sprite: null, tooltipData: null, obstacle: null);
     }
+    protected override void Update() {
+        base.Update();
+        if (hovered && IsInteractable()) {
+            UIManager.s.cursorInteract = true;
+        }
+    }
 	public virtual GameObject GetTile() {
 		if (transform.parent != null && transform.parent.GetComponent<Tile>() != null) {
 			return transform.parent.gameObject;

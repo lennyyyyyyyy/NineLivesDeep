@@ -36,6 +36,7 @@ public class PickupSprite : CorrespondingSprite {
 		base.Init(correspondingUIType);
 		this.tooltipData.showPrice = true;
 		this.tooltipData.price = this.price;
+        base.Init(tooltipData: this.tooltipData);
         this.count = count ?? this.count;
 		//consumable count numbers based on the way it spawns
         if (count == null && typeof(Consumable).IsAssignableFrom(this.correspondingUIType)) {
@@ -54,6 +55,7 @@ public class PickupSprite : CorrespondingSprite {
 			tmpro.enabled = true;
 			tmpro.text = this.count.ToString();
 		}
+        
     }
 	public override bool Move(GameObject tile, bool reposition = true) {
 		transform.localScale = droppedScale * Vector3.one;

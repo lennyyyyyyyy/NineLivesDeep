@@ -6,7 +6,6 @@ using System;
 public class CorrespondingSprite : Entity {
 	public Type correspondingUIType;
     public virtual void Init(Type correspondingUIType) {
-        Debug.Log("Initializing with corresponding UI type: " + correspondingUIType);
 		this.correspondingUIType = correspondingUIType;
 		UIItemData uiItemData;
 		// cataract curse

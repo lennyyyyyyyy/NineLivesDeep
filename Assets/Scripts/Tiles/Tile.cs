@@ -1,8 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class Tile : Parallax
-{
+public class Tile : Parallax {
     protected GameObject underTile;
     public bool underTileActive = true;
     public Vector2Int coord;
@@ -15,8 +14,6 @@ public class Tile : Parallax
     protected BoxCollider2D collider;
 	public SpriteRenderer sr;
 	public List<GameObject> entities = new List<GameObject>();
-    
-	protected static readonly int ThemeID = Shader.PropertyToID("_Theme");
 	
 	public GameObject GetUniqueFlag() {
 		foreach (GameObject g in entities) {
@@ -60,11 +57,10 @@ public class Tile : Parallax
 		//put the correct theme for the floor
 		MaterialPropertyBlock mpb = new MaterialPropertyBlock();
 		sr.GetPropertyBlock(mpb);
-		mpb.SetFloat(ThemeID, Floor.s.floor/3 + 1);
+		mpb.SetFloat(ShaderManager.s.ThemeID, Floor.s.floor/3 + 1);
 		sr.SetPropertyBlock(mpb);
     }
-    protected override void Update()
-    {
+    protected override void Update() {
         base.Update();
         underTile.GetComponent<Parallax>().referencePos = referencePos;
         float prop = 1 - Mathf.Pow(1 - ConstantsManager.s.tileAdjacentDragSpeed, Time.deltaTime / .15f);

@@ -13,6 +13,7 @@ public class UIManager : MonoBehaviour {
 
     public GameObject canvas; 
     public Volume ppv;
+    public bool cursorInteract, cursorInteractLastFrame;
 
     [System.NonSerialized]
     public RectTransform canvasRt;
@@ -30,6 +31,8 @@ public class UIManager : MonoBehaviour {
                   playerTrappedSprite,
                   mineDebugSprite;
     [System.NonSerialized]
+    public Texture2D cursorDefaultTex, cursorInteractTex;
+    [System.NonSerialized]
     public VolumeProfile ppvp;
     [System.NonSerialized]
     public HashSet<GameObject> tooltips = new HashSet<GameObject>();
@@ -38,6 +41,8 @@ public class UIManager : MonoBehaviour {
 
     private void Awake() {
         s = this;
+        cursorInteract = false;
+        cursorInteractLastFrame = true;
 
         alphaEdgeBlueMat = HelperManager.s.LoadResourceSafe<Material>("Materials/AlphaEdgeBlue");
 		tileNormalMat = HelperManager.s.LoadResourceSafe<Material>("Materials/TileNormal");
@@ -49,6 +54,10 @@ public class UIManager : MonoBehaviour {
         playerTrappedSprite = HelperManager.s.LoadResourceSafe<Sprite>("Textures/player_trapped");
 		mineDebugSprite = HelperManager.s.LoadResourceSafe<Sprite>("Textures/mine_debug");
         ppvp = HelperManager.s.LoadResourceSafe<VolumeProfile>("PPVolumeProfile");
+        cursorDefaultTex = HelperManager.s.LoadResourceSafe<Texture2D>("Textures/cursor_default");
+        cursorDefaultTex = HelperManager.s.ScaleTexture(cursorDefaultTex, 2);
+        cursorInteractTex = HelperManager.s.LoadResourceSafe<Texture2D>("Textures/cursor_interact");
+        cursorInteractTex = HelperManager.s.ScaleTexture(cursorInteractTex, 2);
     }
     private void Start() {
         lastMousePos = UnityEngine.InputSystem.Mouse.current.position.ReadValue();
@@ -62,6 +71,9 @@ public class UIManager : MonoBehaviour {
             mouseTimer = 0;
         }
         SetTooltipTargetPositions();
+    }
+    private void LateUpdate() {
+        UpdateCursor();
     }
     private void SetTooltipTargetPositions() {
         List<GameObject> activeTooltips = tooltips.Where(t => t.activeSelf).ToList();
@@ -81,5 +93,13 @@ public class UIManager : MonoBehaviour {
             g.GetComponent<Tooltip>().targetPosition.y = targetY;
             currentY += size.y + ConstantsManager.s.tooltipPadding * 4;
         }
+    }
+    private void UpdateCursor() {
+        cursorInteract &= !Input.GetMouseButton(0);
+        if (cursorInteract != cursorInteractLastFrame) {
+            Cursor.SetCursor(cursorInteract ? cursorInteractTex : cursorDefaultTex, Vector2.zero, CursorMode.Auto);
+        }
+        cursorInteractLastFrame = cursorInteract;
+        cursorInteract = false;
     }
 }

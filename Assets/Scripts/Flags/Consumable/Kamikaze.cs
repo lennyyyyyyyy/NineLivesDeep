@@ -7,7 +7,7 @@ public class Kamikaze : Consumable {
             Vector2Int playerCoord = Player.s.GetCoord();
             for (int dx = -1; dx <= 1; dx++) {
                 for (int dy = -1; dy <= 1; dy++) {
-                    EventManager.s.OnExplosionAtCoord?.Invoke(playerCoord.x + dx, playerCoord.y + dy);
+                    EventManager.s.OnExplosionAtCoord?.Invoke(playerCoord.x + dx, playerCoord.y + dy, Player.s.gameObject);
                 }
             }
             UpdateCount(count - 1);

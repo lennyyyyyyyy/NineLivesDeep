@@ -60,6 +60,11 @@ public class Flag : UIItem {
                  allowedFloorTypes: flagData.allowedFloorTypes);
         }
     }
+    protected virtual void Update() {
+        if (usable && addTooltip.hovered) {
+            UIManager.s.cursorInteract = true;
+        }
+    }
     public virtual void UpdateCount(int newCount) {
         HelperManager.s.InstantiateBubble(gameObject, (newCount - count >= 0 ? "+" : "-") + Mathf.Abs(newCount - count).ToString(), Color.white);
         count = newCount;

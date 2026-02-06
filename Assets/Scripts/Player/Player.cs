@@ -147,6 +147,7 @@ public class Player : Entity {
 		}
 	}
     public void Die() {
+        if (!alive) return;
 		floorDeathCount++;
         alive = false;
         sr.enabled = false;
@@ -368,7 +369,7 @@ public class Player : Entity {
     private void OnFloorChangeBeforeNewLayout() {
         Remove(false);
     }
-    private void OnExplosionAtCoord(int x, int y) {
+    private void OnExplosionAtCoord(int x, int y, GameObject source) {
         Vector2Int coord = GetCoord();
         if (coord.x == x && coord.y == y) {
             Die();

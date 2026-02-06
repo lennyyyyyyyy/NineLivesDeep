@@ -28,6 +28,17 @@ public class HelperManager : MonoBehaviour {
 		}
 		return resource;
 	}
+    public Texture2D ScaleTexture(Texture2D source, int scaleFactor) {
+        Texture2D result = new Texture2D(source.width * scaleFactor, source.height * scaleFactor);
+        for (int x = 0; x < result.width; x++) {
+            for (int y = 0; y < result.height; y++) {
+                Color sourceColor = source.GetPixel(x / scaleFactor, y / scaleFactor);
+                result.SetPixel(x, y, sourceColor);
+            }
+        }
+        result.Apply();
+        return result;
+    }
     public void SetGameLayer(GameObject g, int layer) {
         g.layer = layer;
         SpriteRenderer sr = g.GetComponent<SpriteRenderer>();
