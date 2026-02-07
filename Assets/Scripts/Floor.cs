@@ -544,18 +544,14 @@ public class Floor : MonoBehaviour {
 	public bool PrelimMineSpawnCheck(int x, int y) {
 		return (x != 0 || y != 0) && GetTile(x, y) != null;
 	}
-	public GameObject GetUniqueFlag(int x, int y) {
-		if (TileExistsAt(x, y)) {
-			return GetTile(x, y).GetComponent<Tile>().GetUniqueFlag();
-		}
-		return null;
-	}
 	public GameObject GetUniqueMine(int x, int y) {
-		if (TileExistsAt(x, y)) {
-			return GetTile(x, y).GetComponent<Tile>().GetUniqueMine();
-		}
-		return null;
+		if (!TileExistsAt(x, y)) return null;
+        return GetTile(x, y).GetComponent<Tile>().uniqueMine;
 	}
+    public bool HasEntityOfType<T>(int x, int y) {
+        if (!TileExistsAt(x, y)) return false;
+        return GetTile(x, y).GetComponent<Tile>().HasEntityOfType<T>();
+    }
 	public List<GameObject> GetEntities(int x, int y) {	
 		if (TileExistsAt(x, y)) {
 			return GetTile(x, y).GetComponent<Tile>().entities;

@@ -15,6 +15,10 @@ public class CorrespondingSprite : Entity {
 			uiItemData = CatalogManager.s.typeToData[this.correspondingUIType] as UIItemData;
 		}
 		Init(uiItemData.sprite, uiItemData.tooltipData);
+        if (uiItemData is FlagData) {
+            FlagData flagData = uiItemData as FlagData;
+            Init(obstacle: flagData.placeableObstacle);
+        }
 	}
 }
 

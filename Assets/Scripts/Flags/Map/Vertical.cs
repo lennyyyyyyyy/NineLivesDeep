@@ -6,7 +6,7 @@ public class Vertical : Map
         int count = 0;
 		foreach (GameObject t in Floor.s.tiles.Values) {
 			if (t.GetComponent<Tile>().coord.x == x) {
-				count += (t.GetComponent<Tile>().GetUniqueMine() != null) ? 1 : 0;
+				count += (t.GetComponent<Tile>().uniqueMine != null) ? 1 : 0;
 			}
         }
 		SetNumber(x, y, count);

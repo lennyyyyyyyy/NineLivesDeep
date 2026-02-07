@@ -108,7 +108,6 @@ public class Player : Entity {
     protected override void BeforeInit() {
         base.BeforeInit();
         s = this;
-		obstacle = false; // for Entity
 		marker = feet; // for VerticalObject
         animator = GetComponent<Animator>();
         // initialize player bits
@@ -121,9 +120,6 @@ public class Player : Entity {
                 playerBits[i, j].GetComponent<PlayerBit>().Init(i, j);
             }
         }
-    }
-    public override void Init() {
-        Init(obstacle: false);
     }
     protected override void Update() {
         base.Update(); // vertical object order
@@ -213,16 +209,13 @@ public class Player : Entity {
             }
         }
         //bounce off rubber
-        for (int i = 0; i < filteredPrintLocs.Count; i++) {
-            Vector2Int bouncedPrintLoc = filteredPrintLocs[i];
-            if (!Floor.s.TileExistsAt(GetCoord().x + bouncedPrintLoc.x, GetCoord().y + bouncedPrintLoc.y)) continue;
-            GameObject g = Floor.s.GetUniqueFlag(GetCoord().x + bouncedPrintLoc.x, GetCoord().y + bouncedPrintLoc.y);
-            while (g != null && g.GetComponent<FlagSprite>() is RubberSprite) {
-                bouncedPrintLoc += filteredPrintLocs[i];
-                if (!Floor.s.TileExistsAt(GetCoord().x + bouncedPrintLoc.x, GetCoord().y + bouncedPrintLoc.y)) break;
-            	g = Floor.s.GetUniqueFlag(GetCoord().x + bouncedPrintLoc.x, GetCoord().y + bouncedPrintLoc.y);
+        for (int i=0; i<filteredPrintLocs.Count; i++) {
+            int bounces = 1;
+            while (Floor.s.HasEntityOfType<RubberSprite>(GetCoord().x + filteredPrintLocs[i].x * bounces,
+                                                         GetCoord().y + filteredPrintLocs[i].y * bounces)) {
+                bounces++;
             }
-            filteredPrintLocs[i] = bouncedPrintLoc;
+            filteredPrintLocs[i] *= bounces;
         }
 		//filter out disabled moves from wobbly
 		for (int i = moveHistory.Count - 1; i >= Mathf.Max(0, moveHistory.Count - modifiers.moveDirectionDisableDuration); i--) {
@@ -351,9 +344,6 @@ public class Player : Entity {
 	}
 	public virtual void Move(GameObject tile, bool reposition = true, bool animate = true) {
 		Move(tile.GetComponent<Tile>().coord.x, tile.GetComponent<Tile>().coord.y, reposition, animate);
-	}
-	public override bool CoordAllowed(int x, int y) {
-		return true;
 	}
     private void OnFloorChangeAfterEntities() {
         floorDeathCount = 0;

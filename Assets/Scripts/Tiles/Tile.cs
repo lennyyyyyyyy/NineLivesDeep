@@ -2,46 +2,58 @@ using UnityEngine;
 using System.Collections.Generic;
 
 public class Tile : Parallax {
-    protected GameObject underTile;
-    public bool underTileActive = true;
-    public Vector2Int coord;
-    [System.NonSerialized]
     public float mineMult = 1;
+
+    public Vector2Int coord;
+    public float externalDepthImpulse = 0;
+    public bool underTileActive = true;
+	public SpriteRenderer sr;
+    public GameObject uniqueObstacle;
+    public GameObject uniqueMine;
+	public List<GameObject> entities = new List<GameObject>();
+
+    protected GameObject underTile;
     protected float targetDepth = 1f;
     protected float period;
-    [System.NonSerialized]
-    public float externalDepthImpulse = 0;
     protected BoxCollider2D collider;
-	public SpriteRenderer sr;
-	public List<GameObject> entities = new List<GameObject>();
 	
-	public GameObject GetUniqueFlag() {
-		foreach (GameObject g in entities) {
-			if (g.GetComponent<Flag>() != null) {
-				return g;
-			}
-		}
-		return null;
+	public void AddEntity(GameObject g) { // use Entity.Move() instead
+        Entity e = g.GetComponent<Entity>();
+        if (e == null) return;
+        if (e.obstacle && uniqueObstacle != null) {
+            Debug.Log("Tried to add second obstacle to tile at " + coord.ToString());
+            return;
+        } 
+        if (e is MineSprite && uniqueMine != null) {
+            Debug.Log("Tried to add second mine to tile at " + coord.ToString());
+            return;
+        }
+        entities.Add(g);
+        if (e.obstacle) {
+            uniqueObstacle = g;
+        }
+        if (e is MineSprite) {
+            uniqueMine = g;
+        }
 	}
-	public GameObject GetUniqueMine() {
-		foreach (GameObject g in entities) {
-			if (g.GetComponent<MineSprite>() != null) {
-				return g;
-			}
-		}
-		return null;
-	}
-	public void AddEntity(GameObject g) {
-		if (g.GetComponent<Flag>() != null && GetUniqueFlag() != null) {
-			Debug.Log("Tried to add second flag to tile at " + coord.ToString());
-		} else if (g.GetComponent<MineSprite>() != null && GetUniqueMine() != null) {
-			Debug.Log("Tried to add second mine to tile at " + coord.ToString());
-		} else {
-			entities.Add(g);
-		}
-	}
-    public void RemoveEntity(GameObject g) {
+    public void RemoveEntity(GameObject g) { // use Entity.Remove() instead
         entities.Remove(g);
+        Entity e = g.GetComponent<Entity>();
+        if (e == null) return;
+        if (e.obstacle) {
+            uniqueObstacle = null;
+        } 
+        if (e is MineSprite) {
+            uniqueMine = null;
+        }
+    }
+    public bool HasEntityOfType<T>() {
+        foreach (GameObject g in entities) {
+            if (g.GetComponent<T>() != null) {
+                return true;
+            }
+        }
+        return false;
     }
     protected override void Start() {
         base.Start();

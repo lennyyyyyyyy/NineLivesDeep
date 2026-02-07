@@ -31,8 +31,9 @@ public class MineSprite : Entity {
         }
         return success;
 	}
-    public override bool CoordAllowed(int x, int y) { 
-        return base.CoordAllowed(x, y); 
+    public override bool CoordAllowed(int x, int y) {
+        return base.CoordAllowed(x, y) && 
+               Floor.s.GetTile(x, y).GetComponent<Tile>().uniqueMine != gameObject;
     }
     protected virtual void OnExplosionAtCoord(int x, int y, GameObject source) {
         Vector2Int coord = GetCoord();

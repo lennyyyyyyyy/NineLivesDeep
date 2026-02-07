@@ -44,6 +44,7 @@ public class UIItemData : TypeData {
 public class FlagData : UIItemData {
     public Type placeableSpriteType;
 	public bool placeableRemovesMines = true;
+    public bool placeableObstacle = true;
 	public int consumableDefaultCount = 0; 
 	public bool showCount = false;
 	public List<string> allowedFloorTypes = new List<string>() {"minefield"};
@@ -52,11 +53,13 @@ public class FlagData : UIItemData {
 					  TooltipData tooltipData, 
 					  Type placeableSpriteType = null,
 					  bool? placeableRemovesMines = null,
+                      bool? placeableObstacle = null,
 					  int? consumableDefaultCount = null,
 					  bool? showCount = null,
 					  List<string> allowedFloorTypes = null) : base(type, "flag", resourceName, tooltipData) {
 		this.placeableSpriteType = placeableSpriteType ?? this.placeableSpriteType;
 		this.placeableRemovesMines = placeableRemovesMines ?? this.placeableRemovesMines;
+        this.placeableObstacle = placeableObstacle ?? this.placeableObstacle;
 		this.consumableDefaultCount = consumableDefaultCount ?? this.consumableDefaultCount;
 		this.showCount = showCount ?? (placeableSpriteType != null || consumableDefaultCount != null);
 		this.allowedFloorTypes = allowedFloorTypes ?? this.allowedFloorTypes;	
@@ -128,6 +131,7 @@ public class CatalogManager : MonoBehaviour {
         new FlagData(typeof(You), "you", new TooltipData("You Flag", "For use in the worst case scenario", "Revive yourself whenever you die"),
                      placeableSpriteType: typeof(YouSprite),
                      placeableRemovesMines: false,
+                     placeableObstacle: false,
                      allowedFloorTypes: new List<string>{"minefield", "trial"});
         new FlagData(typeof(Raincloud), "raincloud", new TooltipData("Raincloud Flag", "The tiles are actually pretty porous.", "Guarantees a puddle at the same coordinates on all following floors."),
                      placeableSpriteType: typeof(RaincloudSprite));

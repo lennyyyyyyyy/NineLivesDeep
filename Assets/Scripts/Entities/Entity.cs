@@ -79,7 +79,9 @@ public class Entity : VerticalObject {
         if (destroy) Destroy(gameObject);
 	}
 	public virtual bool CoordAllowed(int x, int y) {
-		return Floor.s.TileExistsAt(x, y) && Floor.s.GetTile(x, y).GetComponent<ActionTile>() == null; 
+		return Floor.s.TileExistsAt(x, y) &&
+               Floor.s.GetTile(x, y).GetComponent<ActionTile>() == null &&
+               (Floor.s.GetTile(x, y).GetComponent<Tile>().uniqueObstacle == null || !obstacle);
 	}
 	public virtual bool IsInteractable() {
 		return Mathf.Abs(GetCoord().x - Player.s.GetCoord().x) <= Player.s.modifiers.interactRange && Mathf.Abs(GetCoord().y - Player.s.GetCoord().y) <= Player.s.modifiers.interactRange;

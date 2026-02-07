@@ -25,6 +25,9 @@ public class FlagSprite : CorrespondingSprite {
         //hide map layers and prints
         Player.s.UpdateSecondaryMapActive();
         Player.s.UpdateActivePrints();
+    }
+    protected override void AfterInit() {
+        base.AfterInit();
         //hide bad tiles
         foreach (GameObject tile in Floor.s.tiles.Values) {
 			if (!CoordAllowed(tile.GetComponent<Tile>().coord.x, tile.GetComponent<Tile>().coord.y)) {
@@ -33,25 +36,6 @@ public class FlagSprite : CorrespondingSprite {
         }
         //darken under
         ShaderManager.s.TweenUnderDarken(0.1f, overToUnderDuration);
-    }
-    protected override void Update() {
-        base.Update();
-        if (state == "held") {
-            HelperManager.s.FloatingHover(transform, 0.8f, 0, transform.localEulerAngles, 0.05f, heldOffset, heldPeriod, heldPower);
-
-            float idleAngle = 5f * Mathf.Sin((heldPeriod*Time.time + heldOffset)*(2*Mathf.PI));
-            Vector3 swingDirection =   1f * new Vector3(-transform.up.x * transform.up.y, 1 - Mathf.Pow(transform.up.y, 2), 0) // gravity pulling center of mass
-                                     + 3f * (1 - 1 / (0.07f * UIManager.s.mouseVelocity.magnitude + 1)) * UIManager.s.mouseVelocity.normalized // pulling force by mouse
-                                     + 1 * transform.up; // inertia force
-            transform.localEulerAngles = new Vector3(transform.localEulerAngles.x, 
-                                                    transform.localEulerAngles.y, 
-                                                    Mathf.LerpAngle(transform.localEulerAngles.z, Quaternion.LookRotation(Vector3.forward, swingDirection).eulerAngles.z + idleAngle, 1 - Mathf.Pow(1 - heldPower, Time.deltaTime / .15f)));
-            transform.position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            //disturb shaders when moving and holding flag
-            if (UIManager.s.mouseVelocity.magnitude > 0) {
-                ShaderManager.s.DisturbShaders(transform.position.x, transform.position.y);
-            }
-        }
     }
     public virtual void Init(Placeable parent) {
         this.state = "held";
@@ -78,6 +62,25 @@ public class FlagSprite : CorrespondingSprite {
 			tooltipData.info = "???";
 		}
 		light.color = tooltipData.color;
+    }
+    protected override void Update() {
+        base.Update();
+        if (state == "held") {
+            HelperManager.s.FloatingHover(transform, 0.8f, 0, transform.localEulerAngles, 0.05f, heldOffset, heldPeriod, heldPower);
+
+            float idleAngle = 5f * Mathf.Sin((heldPeriod*Time.time + heldOffset)*(2*Mathf.PI));
+            Vector3 swingDirection =   1f * new Vector3(-transform.up.x * transform.up.y, 1 - Mathf.Pow(transform.up.y, 2), 0) // gravity pulling center of mass
+                                     + 3f * (1 - 1 / (0.07f * UIManager.s.mouseVelocity.magnitude + 1)) * UIManager.s.mouseVelocity.normalized // pulling force by mouse
+                                     + 1 * transform.up; // inertia force
+            transform.localEulerAngles = new Vector3(transform.localEulerAngles.x, 
+                                                    transform.localEulerAngles.y, 
+                                                    Mathf.LerpAngle(transform.localEulerAngles.z, Quaternion.LookRotation(Vector3.forward, swingDirection).eulerAngles.z + idleAngle, 1 - Mathf.Pow(1 - heldPower, Time.deltaTime / .15f)));
+            transform.position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            //disturb shaders when moving and holding flag
+            if (UIManager.s.mouseVelocity.magnitude > 0) {
+                ShaderManager.s.DisturbShaders(transform.position.x, transform.position.y);
+            }
+        }
     }
     protected virtual void OnMouseUpCustom() {
         if (state == "held") {
@@ -145,7 +148,8 @@ public class FlagSprite : CorrespondingSprite {
 	public override bool Move(GameObject tile, bool reposition = true) {
 		return base.Move(tile, reposition);
 	}
-    public override bool CoordAllowed(int x, int y) { 
-        return base.CoordAllowed(x, y) && Floor.s.GetUniqueFlag(x, y) == null && !(x == Player.s.GetCoord().x && y == Player.s.GetCoord().y); 
+    public override bool CoordAllowed(int x, int y) {
+		return Floor.s.TileExistsAt(x, y) &&
+               (Floor.s.GetTile(x, y).GetComponent<Tile>().uniqueObstacle == null || !obstacle);
     }
 }
