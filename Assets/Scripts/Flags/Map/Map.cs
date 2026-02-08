@@ -17,39 +17,26 @@ public class Map : Flag {
     }
     protected override void OnPointerEnter(PointerEventData data) {
 		base.OnPointerEnter(data);
-        if (active) {
-            LeanTween.value(gameObject, (Vector3 v) => HelperManager.s.UpdateSizeDelta(rt, v), rt.sizeDelta, new Vector2(110, 110), 0.1f).setEase(LeanTweenType.easeInOutCubic);
-        } else {
-            LeanTween.value(gameObject, (Vector3 v) => HelperManager.s.UpdateSizeDelta(rt, v), rt.sizeDelta, new Vector2(100, 100), 0.1f).setEase(LeanTweenType.easeInOutCubic);
-        }
+        LeanTween.value(gameObject, (Vector3 v) => HelperManager.s.UpdateSizeDelta(rt, v), rt.sizeDelta, new Vector2(100, 100), 0.1f).setEase(LeanTweenType.easeInOutCubic);
     } 
     protected override void OnPointerExit(PointerEventData data) {
 		base.OnPointerExit(data);
-        if (active) {
-            LeanTween.value(gameObject, (Vector3 v) => HelperManager.s.UpdateSizeDelta(rt, v), rt.sizeDelta, new Vector2(100, 100), 0.1f).setEase(LeanTweenType.easeInOutCubic);
-        } else {
-            LeanTween.value(gameObject, (Vector3 v) => HelperManager.s.UpdateSizeDelta(rt, v), rt.sizeDelta, new Vector2(80, 80), 0.1f).setEase(LeanTweenType.easeInOutCubic);
-        }
+        LeanTween.value(gameObject, (Vector3 v) => HelperManager.s.UpdateSizeDelta(rt, v), rt.sizeDelta, new Vector2(80, 80), 0.1f).setEase(LeanTweenType.easeInOutCubic);
     }
     protected virtual void Activate() {
-        LeanTween.value(gameObject, (Vector3 v) => HelperManager.s.UpdateSizeDelta(rt, v), rt.sizeDelta, new Vector2(100, 100), 0.1f).setEase(LeanTweenType.easeInOutCubic);
         active = true;
         foreach (GameObject number in numbers.Values) {
 			number.GetComponent<Number>().Enter();
         }
+        addTooltip.ForceHoverEffectOn();
     }
     protected virtual void Deactivate() {
-        LeanTween.value(gameObject, (Vector3 v) => HelperManager.s.UpdateSizeDelta(rt, v), rt.sizeDelta, new Vector2(80, 80), 0.1f).setEase(LeanTweenType.easeInOutCubic);
         active = false;
         foreach (GameObject number in numbers.Values) {
 			number.GetComponent<Number>().Exit();
         }
+        addTooltip.ForceHoverEffectOff();
     }
-	protected virtual void UpdateSecondaryActive() {
-		foreach (GameObject n in numbers.Values) {
-			n.SetActive(Player.s.secondaryMapActive);
-		}
-	}
     protected virtual void OnPointerClick(PointerEventData data) {
         if (active) {
             Deactivate();
@@ -81,7 +68,6 @@ public class Map : Flag {
 			n.GetComponent<Number>().SetNum(num);
 			if (active) {
 				n.GetComponent<Number>().Enter();
-				UpdateSecondaryActive();
 			}
 		}
 	}
@@ -96,13 +82,18 @@ public class Map : Flag {
 			Destroy(n);
 		}
     }
+	private void OnForceMapNumberActive(bool active) {
+		foreach (GameObject n in numbers.Values) {
+			n.SetActive(active);
+		}
+	}
     protected virtual void OnEnable() {
         EventManager.s.OnFloorChangeBeforeEntities += Reset;
-		EventManager.s.OnUpdateSecondaryMapActive += UpdateSecondaryActive;
+        EventManager.s.OnForceMapNumberActive += OnForceMapNumberActive;
     }
     protected virtual void OnDisable() {
         EventManager.s.OnFloorChangeBeforeEntities -= Reset;
-		EventManager.s.OnUpdateSecondaryMapActive -= UpdateSecondaryActive;
+        EventManager.s.OnForceMapNumberActive -= OnForceMapNumberActive;
     }
     protected override bool IsUsable() {
         return base.IsUsable();

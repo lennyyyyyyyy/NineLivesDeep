@@ -17,14 +17,6 @@ public class FlagSprite : CorrespondingSprite {
         base.BeforeInit();
         light = GetComponentInChildren<Light2D>();
         marker = transform.Find("Marker").gameObject;
-        // init random properties
-        heldOffset = Random.Range(0f, 1f);
-        heldPeriod = 0.65f + 0.15f * Random.Range(-1f, 1f);
-        // update parent usable state
-        PlayerUIItemModule.s.OrganizeFlags();
-        //hide map layers and prints
-        Player.s.UpdateSecondaryMapActive();
-        Player.s.UpdateActivePrints();
     }
     protected override void AfterInit() {
         base.AfterInit();
@@ -48,6 +40,13 @@ public class FlagSprite : CorrespondingSprite {
 			tooltipData.info = "???";
 		}
 		light.color = tooltipData.color;
+
+        heldOffset = Random.Range(0f, 1f);
+        heldPeriod = 0.65f + 0.15f * Random.Range(-1f, 1f);
+        PlayerUIItemModule.s.OrganizeFlags();
+        //hide map layers and prints
+        EventManager.s.OnForceMapNumberActive?.Invoke(false);
+        Player.s.UpdateActivePrints();
     }
     public virtual void Init(Vector2Int spawnCoord) {
         this.state = "dropped";
@@ -88,6 +87,7 @@ public class FlagSprite : CorrespondingSprite {
 			// if windy flag may land somewhere nearby
 			Vector3 landingPos = transform.position + Floor.s.windDirection * Player.s.modifiers.windStrength * 1f;
             Vector2Int dropCoord = Floor.s.PosToCoord(landingPos);
+            OnDrop();
             if (CoordAllowed(dropCoord.x, dropCoord.y)) {
 				Move(dropCoord.x, dropCoord.y, false);
 				if (Player.s.modifiers.windStrength != 0) {
@@ -99,10 +99,9 @@ public class FlagSprite : CorrespondingSprite {
                     //disturb shaders when it hits the ground
                     ShaderManager.s.DisturbShaders(transform.position.x, transform.position.y);
                     //show map layers and prints
-                    Player.s.UpdateSecondaryMapActive();
                     Player.s.UpdateActivePrints();
+                    OnPlace();
                 });
-                OnPlace();
             } else {
 				if (Player.s.modifiers.windStrength != 0) {
 					LeanTween.move(gameObject, landingPos, 0.75f);
@@ -113,7 +112,6 @@ public class FlagSprite : CorrespondingSprite {
                     state = "dropped";
                    	Remove();
                     //show map layers and prints
-                    Player.s.UpdateSecondaryMapActive();
                     Player.s.UpdateActivePrints();
                 });
             }
@@ -126,6 +124,9 @@ public class FlagSprite : CorrespondingSprite {
             //replace parent with cat paw animation
             PlayerUIItemModule.s.OrganizeFlags();
         }
+    }
+    protected virtual void OnDrop() {
+        EventManager.s.OnForceMapNumberActive?.Invoke(true);
     }
     protected virtual void OnPlace() {
         parent.UpdateCount(parent.count - 1);

@@ -1,8 +1,7 @@
 using UnityEngine;
 using TMPro;
 
-public class Number : MonoBehaviour
-{
+public class Number : MonoBehaviour {
 	protected Map map;
     [System.NonSerialized]
 	public Vector2Int coord;
@@ -19,6 +18,7 @@ public class Number : MonoBehaviour
 		this.coord = coord;
 		text = GetComponent<TMP_Text>();
         text.enabled = false;
+        gameObject.SetActive(Player.s.mapNumberActive);
     }
     public void SetNum(int num) {
         this.num = num;

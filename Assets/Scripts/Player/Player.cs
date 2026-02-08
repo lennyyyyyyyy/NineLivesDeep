@@ -97,13 +97,12 @@ public class Player : Entity {
     public Animator animator;
     [System.NonSerialized]
     public int texWidth, texHeight;
-	[System.NonSerialized]
-	public bool secondaryMapActive = true;
 	public Modifiers modifiers = new Modifiers();
 	[System.NonSerialized]
 	public float watchedMineJumpTimer = 0f;
     [System.NonSerialized]
-    public bool dogFlagActive = false;
+    public bool dogFlagActive = false,
+                mapNumberActive = true;
 
     protected override void BeforeInit() {
         base.BeforeInit();
@@ -120,6 +119,9 @@ public class Player : Entity {
                 playerBits[i, j].GetComponent<PlayerBit>().Init(i, j);
             }
         }
+    }
+    public override void Init() {
+        Init(obstacle: false);
     }
     protected override void Update() {
         base.Update(); // vertical object order
@@ -149,7 +151,6 @@ public class Player : Entity {
         sr.enabled = false;
         EventManager.s.OnPlayerAliveChange?.Invoke();
         EventManager.s.OnPlayerDie?.Invoke();
-        UpdateSecondaryMapActive();
         UpdateActivePrints();
     }
     public void Revive() {
@@ -158,21 +159,10 @@ public class Player : Entity {
             sr.enabled = true; 
             alive = true;
             EventManager.s.OnPlayerAliveChange?.Invoke();
-            UpdateSecondaryMapActive();
             UpdateActivePrints();
 			tempChanges = 0;
 			TriggerMines();
         }, ConstantsManager.s.playerReviveDuration);
-    }
-    public void UpdateSecondaryMapActive() {
-        secondaryMapActive = alive;
-        foreach (GameObject g in PlayerUIItemModule.s.flags) {
-            Flag flag = g.GetComponent<Flag>();
-            if (flag is Placeable) {
-                secondaryMapActive &= (flag as Placeable).sprite == null || (flag as Placeable).sprite.GetComponent<FlagSprite>().state == "dropped";
-            }
-        }
-		EventManager.s.OnUpdateSecondaryMapActive?.Invoke();
     }
     public void UpdateActivePrints() {
         bool active = alive;
@@ -365,14 +355,19 @@ public class Player : Entity {
             Die();
         }
     }
+    private void OnForceMapNumberActive(bool active) {
+        mapNumberActive = active;
+    }
     private void OnEnable() {
         EventManager.s.OnFloorChangeBeforeNewLayout += OnFloorChangeBeforeNewLayout;
         EventManager.s.OnFloorChangeAfterEntities += OnFloorChangeAfterEntities;
         EventManager.s.OnExplosionAtCoord += OnExplosionAtCoord;
+        EventManager.s.OnForceMapNumberActive += OnForceMapNumberActive;
     }
     private void OnDisable() {
         EventManager.s.OnFloorChangeBeforeNewLayout -= OnFloorChangeBeforeNewLayout;
         EventManager.s.OnFloorChangeAfterEntities -= OnFloorChangeAfterEntities;
         EventManager.s.OnExplosionAtCoord -= OnExplosionAtCoord;
+        EventManager.s.OnForceMapNumberActive -= OnForceMapNumberActive;
     }
 }

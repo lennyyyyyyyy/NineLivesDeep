@@ -10,6 +10,7 @@ public class AddTooltip : MonoBehaviour {
     [System.NonSerialized]
 	public bool hovered = false;
 	protected Material savedMaterial;
+    protected bool forceHoverEffect = false;
 
     protected virtual void Awake() {
         SaveMaterial();
@@ -36,19 +37,27 @@ public class AddTooltip : MonoBehaviour {
             tooltip.SetActive(true);
             tooltip.transform.position = Tooltip.lastTooltipPos;
         }
-		if (addHoverEffect) {
+		if (addHoverEffect && !forceHoverEffect) {
 			HoverEffectOn();
 		}
 	}
 	public virtual void MouseExit() {
 		hovered = false;
 		tooltip?.SetActive(false);
-		if (addHoverEffect) {
+		if (addHoverEffect && !forceHoverEffect) {
 			HoverEffectOff();
 		}
 	}
 	protected virtual void HoverEffectOn() {}
 	protected virtual void HoverEffectOff() {}
+    public void ForceHoverEffectOn() {
+        forceHoverEffect = true;
+        HoverEffectOn();
+    }
+    public void ForceHoverEffectOff() {
+        forceHoverEffect = false;
+        HoverEffectOff();
+    }
     protected virtual void OnDestroy() {
 		Destroy(tooltip);
     }
