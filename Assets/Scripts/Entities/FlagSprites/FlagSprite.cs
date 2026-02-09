@@ -20,6 +20,11 @@ public class FlagSprite : CorrespondingSprite {
     }
     protected override void AfterInit() {
         base.AfterInit();
+    }
+    public virtual void Init(Placeable parent) {
+        this.state = "held";
+		this.parent = parent;
+		Init(parent.GetType());
         //hide bad tiles
         foreach (GameObject tile in Floor.s.tiles.Values) {
 			if (!CoordAllowed(tile.GetComponent<Tile>().coord.x, tile.GetComponent<Tile>().coord.y)) {
@@ -28,11 +33,6 @@ public class FlagSprite : CorrespondingSprite {
         }
         //darken under
         ShaderManager.s.TweenUnderDarken(0.1f, overToUnderDuration);
-    }
-    public virtual void Init(Placeable parent) {
-        this.state = "held";
-		this.parent = parent;
-		Init(parent.GetType());
 		//amnesia curse only for placed flag sprites, not pickup sprites in the shop
 		if (Player.s.modifiers.amnesiaUITypes.Contains(typeof(Flag))) {
 			tooltipData.name = "???";

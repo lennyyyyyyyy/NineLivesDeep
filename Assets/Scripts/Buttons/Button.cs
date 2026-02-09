@@ -1,35 +1,28 @@
 using UnityEngine;
 using TMPro;
 
-class StartButton : MonoBehaviour {
-    public static StartButton s;
-
+public class Button : MonoBehaviour {
     private bool hovered = false, pressed = false, finished = false;
     private float hoverOffset;
-    private TMP_Text startText;
 
-    private void Awake() {
-        s = this;
-        startText = GetComponentInChildren<TMP_Text>();
-    }
-    private void OnPointerEnter() {
+    protected virtual void OnPress() {}
+    protected virtual void Awake() {}
+    protected virtual void OnPointerEnter() {
         hovered = true;
         hoverOffset = Random.Range(0f, 1f);
-        startText.enabled = true;
     }
-    private void OnPointerExit() {
+    protected virtual void OnPointerExit() {
         hovered = false;
-        startText.enabled = false;
     }
-    private void OnPointerDown() {
+    protected virtual void OnPointerDown() {
         pressed = !finished;
     }
-    private void OnPointerUp() {
+    protected virtual void OnPointerUp() {
         pressed = false;
-        if (!finished) { EventManager.s.OnGameStart?.Invoke(); }
+        if (!finished) OnPress();
         finished = true;
     }
-    private void Update() {
+    protected virtual void Update() {
         if (hovered && !pressed) {
             HelperManager.s.FloatingHover(transform, 1.1f, hoverOffset, Vector3.zero);
         } else if (pressed) {
@@ -41,7 +34,7 @@ class StartButton : MonoBehaviour {
             UIManager.s.cursorInteract = true;
         }
     }
-    public void Reset() {
+    public virtual void Reset() {
         finished = false;
     }
 }
