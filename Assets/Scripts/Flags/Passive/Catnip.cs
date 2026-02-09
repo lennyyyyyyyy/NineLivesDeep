@@ -1,9 +1,9 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class Catnip : Passive
-{
+public class Catnip : Passive {
     public override void Modify(ref Modifiers modifiers) {
+        if (!usable) return;
         List<Vector2Int> addedMoveOptions = new List<Vector2Int>() {
             new Vector2Int(-2, -2),
             new Vector2Int(-2, -1),

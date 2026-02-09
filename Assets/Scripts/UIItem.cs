@@ -9,6 +9,8 @@ public class UIItem : MonoBehaviour {
 
 	protected AddTooltipUI addTooltip;
 
+    [System.NonSerialized]
+    public bool usable = true;
 	[System.NonSerialized]
 	public RectTransform rt;
     
@@ -60,6 +62,12 @@ public class UIItem : MonoBehaviour {
 	}
 	public virtual void Modify(ref Modifiers modifiers) {
 	}
+    protected virtual bool IsUsable() {
+        return true;
+    }
+    public void UpdateUsable() {
+        usable = IsUsable();
+    }
     protected virtual void OnDestroy() {
         if (GameManager.s.gameState == GameManager.GameState.GAME) {
             PlayerUIItemModule.s.ProcessRemovedUIItem(this); }

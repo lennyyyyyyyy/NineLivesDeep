@@ -1,17 +1,6 @@
 using UnityEngine;
 
 class Wildcat : Passive {
-    public override void Init() {
-        FlagData flagData = CatalogManager.s.typeToData[GetType()] as FlagData;
-        Init(tex2d: flagData.tex2d,
-             tooltipData: flagData.tooltipData,
-             placeableSpriteType: flagData.placeableSpriteType,
-             placeableRemovesMines: flagData.placeableRemovesMines,
-             consumableDefaultCount: flagData.consumableDefaultCount,
-             showCount: flagData.showCount,
-             initialCount: 5,
-             allowedFloorTypes: flagData.allowedFloorTypes);
-    }
     public override void UpdateCount(int newCount) {
         if (newCount == 0) {
             count = 5;
@@ -25,6 +14,7 @@ class Wildcat : Passive {
         tmpro.text = count.ToString();
     }
 	protected virtual void OnPlayerMoveToCoord(int x, int y) {
+        if (!usable) return;
 		if (Floor.s.GetTile(x, y) && !Player.s.tilesVisited.Contains(Floor.s.GetTile(x, y)) && Floor.s.GetTile(x, y).GetComponent<MossyTile>() != null) {
 			UpdateCount(count - 1);
 		}

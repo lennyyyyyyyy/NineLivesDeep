@@ -4,6 +4,7 @@ using System.Linq;
 
 class Taken : Curse {
 	public override void Modify(ref Modifiers modifiers) {
+        if (!usable) return;
         int takenCurseCount;
 		if (intensifiedBy.Count > 0) {
             takenCurseCount = 2;

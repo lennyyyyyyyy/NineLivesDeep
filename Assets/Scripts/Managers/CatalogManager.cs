@@ -145,6 +145,7 @@ public class CatalogManager : MonoBehaviour {
         new FlagData(typeof(Collector),"collector", new TooltipData("Collector Flag", "Unlike Pokemon cards, high-tech mines are genuinely expensive to produce.", "The more advanced the mine, the more it's worth."));
         new FlagData(typeof(Reflection), "reflection", new TooltipData("Reflection Flag", "Use one get one free!", "Placing a non-base flag in a puddle gives you a base flag back."));
         new FlagData(typeof(Wildcat), "wildcat", new TooltipData("Wildcat Flag", "Born to be wild.", "Every five new grassy tiles you step in gives you an extra life."),
+                     consumableDefaultCount: 5,
                      showCount: true);
         new FlagData(typeof(Curious), "curious", new TooltipData("Curious Flag", "Very wide-eyed.", "Increases vision distance."));
         new FlagData(typeof(Astral), "astral", new TooltipData("Astral Flag", "Your body held you back.", "Respawn in a 3x3 area around where you died."));

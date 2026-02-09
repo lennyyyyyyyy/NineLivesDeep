@@ -2,6 +2,7 @@ using UnityEngine;
 
 class Taxed : Curse {
 	public override void Modify(ref Modifiers modifiers) {
+        if (!usable) return;
 		if (intensifiedBy.Count > 0) {
 			modifiers.mineSpawnMult *= 1.4f;
 			modifiers.mineDefuseMult *= 0.7f;

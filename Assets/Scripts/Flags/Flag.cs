@@ -12,8 +12,6 @@ public class Flag : UIItem {
     public bool showCount;
 	public List<string> allowedFloorTypes;
 
-    [System.NonSerialized]
-    public bool usable = true;
     public int count;
     protected TMP_Text tmpro;
 
@@ -70,12 +68,9 @@ public class Flag : UIItem {
         count = newCount;
         tmpro.text = count.ToString();
     }
-    protected virtual bool IsUsable() {
+    protected override bool IsUsable() {
         return Player.s.alive && !Player.s.modifiers.takenFlags.Contains(gameObject) && allowedFloorTypes.Contains(Floor.s.floorType);
     }
-    public virtual void UpdateUsable() {
-        usable = IsUsable();
-    } 
     protected override void OnDestroy() {
         base.OnDestroy();
         if (GameManager.s.gameState == GameManager.GameState.GAME) {

@@ -9,6 +9,7 @@ public class Intensify : Curse {
 	public override void Modify(ref Modifiers modifiers) {
 	}
     public void SetIntensifiedCurse(Curse curse) {
+        if (!usable) return;
 		if (intensifiedCurse != null) {
 			intensifiedCurse.intensifiedBy.Remove(this);
 		}

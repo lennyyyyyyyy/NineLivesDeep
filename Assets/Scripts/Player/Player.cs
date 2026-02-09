@@ -285,6 +285,10 @@ public class Player : Entity {
                 transform.localScale = Vector3.one;
             } else if (x - GetCoord().x < 0) {
                 transform.localScale = new Vector3(-1, 1, 1);
+            } else if (transform.localScale.x > 0) {
+                transform.localScale = Vector3.one;
+            } else {
+                transform.localScale = new Vector3(-1, 1, 1);
             }
             if (y - GetCoord().y >= 0) {
                 animator.SetTrigger("jumpUpStart");
