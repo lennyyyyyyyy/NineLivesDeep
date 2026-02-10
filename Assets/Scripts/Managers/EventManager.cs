@@ -16,7 +16,8 @@ public class EventManager : MonoBehaviour {
                   OnGameStart,
                   OnGameLoad,
                   OnGameExit;
-    public Action<bool> OnForceMapNumberActive;
+    public Action<bool> OnForceMapNumberActive,
+                        OnMineDefused;
     public Action<int, int, GameObject> OnExplosionAtCoord;
     public Action<int, int> OnPlayerMoveToCoord;
 

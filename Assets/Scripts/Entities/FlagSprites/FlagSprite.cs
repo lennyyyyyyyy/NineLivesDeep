@@ -87,7 +87,7 @@ public class FlagSprite : CorrespondingSprite {
 			// if windy flag may land somewhere nearby
 			Vector3 landingPos = transform.position + Floor.s.windDirection * Player.s.modifiers.windStrength * 1f;
             Vector2Int dropCoord = Floor.s.PosToCoord(landingPos);
-            OnDrop();
+            OnDrop(dropCoord.x, dropCoord.y);
             if (CoordAllowed(dropCoord.x, dropCoord.y)) {
 				Move(dropCoord.x, dropCoord.y, false);
 				if (Player.s.modifiers.windStrength != 0) {
@@ -125,7 +125,7 @@ public class FlagSprite : CorrespondingSprite {
             PlayerUIItemModule.s.OrganizeFlags();
         }
     }
-    protected virtual void OnDrop() {
+    protected virtual void OnDrop(int x, int y) {
         EventManager.s.OnForceMapNumberActive?.Invoke(true);
     }
     protected virtual void OnPlace() {
@@ -134,8 +134,12 @@ public class FlagSprite : CorrespondingSprite {
         Player.s.updatePrints();
         sr.sortingLayerName = "Player";
 		FlagData parentFlagData = CatalogManager.s.typeToData[correspondingUIType] as FlagData;
-        if (parentFlagData.placeableRemovesMines && Floor.s.GetUniqueMine(GetCoord().x, GetCoord().y) != null) {
+        GameObject mine = Floor.s.GetUniqueMine(GetCoord().x, GetCoord().y);
+        if (parentFlagData.placeableRemovesMines && mine != null) {
             Player.s.UpdateMoney(Player.s.money + Player.s.modifiers.mineDefuseMult);
+            Type mineType = mine.GetComponent<MineSprite>().GetType();
+            EventManager.s.OnMineDefused?.Invoke(PlayerUIItemModule.s.minesDefused.Contains(mineType));
+            PlayerUIItemModule.s.NoticeMineDefused(mineType);
             Floor.s.GetUniqueMine(GetCoord().x, GetCoord().y).GetComponent<MineSprite>().Remove();
         }
         //reflection passive

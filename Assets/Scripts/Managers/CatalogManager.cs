@@ -121,7 +121,8 @@ public class CatalogManager : MonoBehaviour {
                      placeableSpriteType: typeof(BaseSprite),
                      allowedFloorTypes: new List<string>{"minefield", "trial"});
         new FlagData(typeof(Anti), "anti", new TooltipData("Anti-Flag", "Anti-matter without the explosion.", "Remove and reuse your placed flags by dropping this flag on them."),
-                     placeableSpriteType: typeof(AntiSprite));
+                     placeableSpriteType: typeof(AntiSprite),
+                     placeableRemovesMines: false);
         new FlagData(typeof(Psychic), "psychic", new TooltipData("Psychic Flag", "I can see what you can't, stupid cat.", "Points its eye to the nearest mine."),
                      placeableSpriteType: typeof(PsychicSprite));	
         new FlagData(typeof(Rahhh), "rahhh", new TooltipData("RAHHH", "Coloni—spread freedom from afar!", "Discovers a 3x3 area, applying to all map flags."),
@@ -142,7 +143,8 @@ public class CatalogManager : MonoBehaviour {
         new FlagData(typeof(OneUp), "1up", new TooltipData("One-Up Flag", "Nintendo please don't sue me.", "Two random squares on the floor gives you an additional life."));
         new FlagData(typeof(Daytrader), "daytrader", new TooltipData("Daytrader Flag", "To the moon!", "Every floor, gain either 50% more mines or 25% less."));
         new FlagData(typeof(Bank), "bank", new TooltipData("Bank Flag", "Heard of compound interest?", "Every floor, gain 10% more mines."));
-        new FlagData(typeof(Collector),"collector", new TooltipData("Collector Flag", "Lowkey the mines are just like Pokemon cards.", "Rarer mines are worth more."));
+        new FlagData(typeof(Collector),"collector", new TooltipData("Collector Flag", "Gotta defuse 'em all!", "Gain a bonus N mines when collecting your N-th unique mine type."),
+                     showCount: true);
         new FlagData(typeof(Reflection), "reflection", new TooltipData("Reflection Flag", "Use one, get one free.", "Placing a non-base flag in a puddle gives you a base flag back."));
         new FlagData(typeof(Wildcat), "wildcat", new TooltipData("Wildcat Flag", "Born to be wild.", "Every five new grassy tiles you step in gives you an extra life."),
                      consumableDefaultCount: 5,

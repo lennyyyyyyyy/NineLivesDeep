@@ -54,10 +54,10 @@ public class SaveData {
     public List<CurseSaveData> curses = new List<CurseSaveData>();
     public List<int> mines = new List<int>();
     public List<FlagSaveData> flags = new List<FlagSaveData>(); 
-    public List<int> flagsUnseen = new List<int>(),
-                     consumableFlagsUnseen = new List<int>(),
-                     cursesUnseen = new List<int>(),
-                     minesUnseen = new List<int>();
+    public List<int> flagsSeen = new List<int>(),
+                     cursesSeen = new List<int>(),
+                     minesSeen = new List<int>(),
+                     minesDefused = new List<int>(); 
     public List<Vector2Int> tilesVisited = new List<Vector2Int>();
     public List<Vector2Int> moveHistory;
     public List<Vector2Int> rainCoords;
@@ -112,10 +112,10 @@ public class LoadData {
     public List<CurseLoadData> curses = new List<CurseLoadData>();
     public List<Type> mines = new List<Type>();
     public List<FlagLoadData> flags = new List<FlagLoadData>(); 
-    public List<Type> flagsUnseen = new List<Type>(),
-                      consumableFlagsUnseen = new List<Type>(),
-                      cursesUnseen = new List<Type>(),
-                      minesUnseen = new List<Type>();
+    public List<Type> flagsSeen = new List<Type>(),
+                         cursesSeen = new List<Type>(),
+                         minesSeen = new List<Type>(),
+                         minesDefused = new List<Type>();
     public List<Vector2Int> tilesVisited = new List<Vector2Int>();
     public List<Vector2Int> moveHistory;
     public List<Vector2Int> rainCoords;
@@ -198,17 +198,17 @@ public class SaveManager : MonoBehaviour {
             }
             saveData.flags.Add(data);
         }
-        foreach (Type t in PlayerUIItemModule.s.flagsUnseen) {
-            saveData.flagsUnseen.Add(CatalogManager.s.typeToData[t].id);
+        foreach (Type t in PlayerUIItemModule.s.flagsSeen) {
+            saveData.flagsSeen.Add(CatalogManager.s.typeToData[t].id);
         }
-        foreach (Type t in PlayerUIItemModule.s.consumableFlagsUnseen) {
-            saveData.consumableFlagsUnseen.Add(CatalogManager.s.typeToData[t].id);
+        foreach (Type t in PlayerUIItemModule.s.cursesSeen) {
+            saveData.cursesSeen.Add(CatalogManager.s.typeToData[t].id);
         }
-        foreach (Type t in PlayerUIItemModule.s.cursesUnseen) {
-            saveData.cursesUnseen.Add(CatalogManager.s.typeToData[t].id);
+        foreach (Type t in PlayerUIItemModule.s.minesSeen) {
+            saveData.minesSeen.Add(CatalogManager.s.typeToData[t].id);
         }
-        foreach (Type t in PlayerUIItemModule.s.minesUnseen) {
-            saveData.minesUnseen.Add(CatalogManager.s.typeToData[t].id);
+        foreach (Type t in PlayerUIItemModule.s.minesDefused) {
+            saveData.minesDefused.Add(CatalogManager.s.typeToData[t].id);
         }
         foreach (GameObject tile in Player.s.tilesVisited) {
             saveData.tilesVisited.Add(tile.GetComponent<Tile>().coord);
@@ -291,17 +291,17 @@ public class SaveManager : MonoBehaviour {
             }
             loadData.flags.Add(fdata);
         }
-        foreach (int typeID in saveData.flagsUnseen) {
-            loadData.flagsUnseen.Add(CatalogManager.s.idToData[typeID].type);
+        foreach (int typeID in saveData.flagsSeen) {
+            loadData.flagsSeen.Add(CatalogManager.s.idToData[typeID].type);
         }
-        foreach (int typeID in saveData.consumableFlagsUnseen) {
-            loadData.consumableFlagsUnseen.Add(CatalogManager.s.idToData[typeID].type);
+        foreach (int typeID in saveData.cursesSeen) {
+            loadData.cursesSeen.Add(CatalogManager.s.idToData[typeID].type);
         }
-        foreach (int typeID in saveData.cursesUnseen) {
-            loadData.cursesUnseen.Add(CatalogManager.s.idToData[typeID].type);
+        foreach (int typeID in saveData.minesSeen) {
+            loadData.minesSeen.Add(CatalogManager.s.idToData[typeID].type);
         }
-        foreach (int typeID in saveData.minesUnseen) {
-            loadData.minesUnseen.Add(CatalogManager.s.idToData[typeID].type);
+        foreach (int typeID in saveData.minesDefused) {
+            loadData.minesDefused.Add(CatalogManager.s.idToData[typeID].type);
         }
         foreach (TileSaveData data in saveData.tiles) {
             TileLoadData tdata = new TileLoadData() {

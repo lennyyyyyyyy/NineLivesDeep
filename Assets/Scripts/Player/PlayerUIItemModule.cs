@@ -19,8 +19,13 @@ public class PlayerUIItemModule : MonoBehaviour {
 							mines = new List<GameObject>();
     public HashSet<Type> flagsSeen = new HashSet<Type>(), 
 		   				 cursesSeen = new HashSet<Type>(),
-						 minesSeen = new HashSet<Type>(); // not in use but holding on to these
-	public List<Type> flagsUnseen, consumableFlagsUnseen, cursesUnseen, minesUnseen;
+						 minesSeen = new HashSet<Type>(),
+                         minesDefused = new HashSet<Type>(); 
+	public List<Type> flagsUnseen,
+                      consumableFlagsUnseen,
+                      cursesUnseen,
+                      minesUnseen,
+                      minesUndefused;
 
     // unsaved data
     public Dictionary<Type, List<GameObject>> typeToInstances = new Dictionary<Type, List<GameObject>>();
@@ -31,8 +36,21 @@ public class PlayerUIItemModule : MonoBehaviour {
 		consumableFlagsUnseen = CatalogManager.s.allFlagTypes.Where(type => typeof(Consumable).IsAssignableFrom(type)).ToList();
 		cursesUnseen = CatalogManager.s.allCurseTypes.ToList();
 		minesUnseen = CatalogManager.s.allMineTypes.ToList();
+        minesUndefused = CatalogManager.s.allMineTypes.ToList();
     }
     public void LoadUIItems(LoadData loadData) {
+        foreach (Type type in loadData.flagsSeen) {
+            NoticeFlag(type);
+        }
+        foreach (Type type in loadData.cursesSeen) {
+            NoticeCurse(type);
+        }
+        foreach (Type type in loadData.minesSeen) {
+            NoticeMine(type);
+        }
+        foreach (Type type in loadData.minesDefused) {
+            NoticeMineDefused(type);
+        }
         foreach (Type mineType in loadData.mines) {
             GameObject g = Instantiate(PrefabManager.s.minePrefab);
             Mine mine = g.AddComponent(mineType) as Mine;
@@ -129,18 +147,29 @@ public class PlayerUIItemModule : MonoBehaviour {
         flags.Remove(flag.gameObject);
         OrganizeFlags();
     }
+    public void NoticeCurse(Type type) {
+        cursesSeen.Add(type);
+        cursesUnseen.Remove(type);
+    }
     public void ProcessAddedCurse(Curse curse) {
         curses.Add(curse.gameObject);
         notFlags.Add(curse.gameObject);
         Type type = curse.GetType();
-		cursesSeen.Add(type);
-		cursesUnseen.Remove(type);
+        NoticeCurse(type);
         OrganizeNotFlags();
     }
     public void ProcessRemovedCurse(Curse curse) {
         curses.Remove(curse.gameObject);
         OrganizeNotFlags();
     }
+    public void NoticeMine(Type type) {
+        minesSeen.Add(type);
+        minesUnseen.Remove(type);
+    }
+    public void NoticeMineDefused(Type type) {
+        minesDefused.Add(type);
+        minesUndefused.Remove(type);
+    } 
     public void ProcessAddedMine(Mine mine) {
         mines.Add(mine.gameObject);
         notFlags.Add(mine.gameObject);
