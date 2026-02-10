@@ -38,6 +38,7 @@ public class TileSaveData {
     public int typeID;
     public Vector2Int coord;
     public List<EntitySaveData> nonPlayerEntities = new List<EntitySaveData>();
+    public int oneUpCount;
     // action tiles
     public ActionTile.ActionCode actionCode;
     public int amount;
@@ -96,6 +97,7 @@ public class TileLoadData {
     public Type type;
     public Vector2Int coord;
     public List<EntityLoadData> nonPlayerEntities = new List<EntityLoadData>();
+    public int oneUpCount;
     // action tiles
     public ActionTile.ActionCode actionCode;
     public int amount;
@@ -216,6 +218,7 @@ public class SaveManager : MonoBehaviour {
             TileSaveData data = new TileSaveData() {
                 typeID = CatalogManager.s.typeToData[t.GetType()].id,
                 coord = t.coord,
+                oneUpCount = t.oneUpCount
             };
             if (t is ActionTile) {
                 data.actionCode = ((ActionTile)t).actionCode;
@@ -304,6 +307,7 @@ public class SaveManager : MonoBehaviour {
             TileLoadData tdata = new TileLoadData() {
                 type = CatalogManager.s.idToData[data.typeID].type,
                 coord = data.coord,
+                oneUpCount = data.oneUpCount,
                 actionCode = data.actionCode,
                 amount = data.amount
             };

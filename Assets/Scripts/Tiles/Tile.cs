@@ -5,13 +5,14 @@ public class Tile : Parallax {
     public float mineMult = 1;
 
     public Vector2Int coord;
+	public List<GameObject> entities = new List<GameObject>();
+    public int oneUpCount = 0;
+
     public float externalDepthImpulse = 0;
-    public bool underTileActive = true;
 	public SpriteRenderer sr;
+    public bool underTileActive = true;
     public GameObject uniqueObstacle;
     public GameObject uniqueMine;
-	public List<GameObject> entities = new List<GameObject>();
-
     protected GameObject underTile;
     protected float targetDepth = 1f;
     protected float period;
@@ -146,5 +147,17 @@ public class Tile : Parallax {
                 }
             }
         });
+    }
+    protected virtual void OnPlayerMoveToCoord(int x, int y) {
+        if (coord.x == x && coord.y == y && oneUpCount > 0) {
+            Instantiate(PrefabManager.s.flagPrefab).AddComponent<You>().Init(initialCount: oneUpCount);
+            oneUpCount = 0;
+        }
+    }
+    protected virtual void OnEnable() {
+        EventManager.s.OnPlayerMoveToCoord += OnPlayerMoveToCoord;
+    }
+    protected virtual void OnDisable() {
+        EventManager.s.OnPlayerMoveToCoord -= OnPlayerMoveToCoord;
     }
 }

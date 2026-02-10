@@ -306,9 +306,6 @@ public class Player : Entity {
                 TriggerMines();
                 TriggerDogEffect();
                 discoverTiles();
-                if (Floor.s.GetTile(x, y).GetComponent<ActionTile>() != null) {
-                    Floor.s.GetTile(x, y).GetComponent<ActionTile>().PerformAction();
-                } 
                 Floor.s.GetTile(x, y).GetComponent<Tile>().externalDepthImpulse += ConstantsManager.s.playerStepImpulse;
                 EventManager.s.OnPlayerMoveToCoord?.Invoke(x, y);
             }).setOnUpdate((float f) => {
@@ -339,6 +336,10 @@ public class Player : Entity {
 	public virtual void Move(GameObject tile, bool reposition = true, bool animate = true) {
 		Move(tile.GetComponent<Tile>().coord.x, tile.GetComponent<Tile>().coord.y, reposition, animate);
 	}
+    public override bool CoordAllowed(int x, int y) {
+		return Floor.s.TileExistsAt(x, y) &&
+               Floor.s.GetTile(x, y).GetComponent<Tile>().uniqueObstacle == null;
+    }
     private void OnFloorChangeAfterEntities() {
         floorDeathCount = 0;
 		tempChanges = 0;

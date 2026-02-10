@@ -133,32 +133,33 @@ public class CatalogManager : MonoBehaviour {
                      placeableRemovesMines: false,
                      placeableObstacle: false,
                      allowedFloorTypes: new List<string>{"minefield", "trial"});
-        new FlagData(typeof(Raincloud), "raincloud", new TooltipData("Raincloud Flag", "The tiles are actually pretty porous.", "Guarantees a puddle at the same coordinates on all following floors."),
+        new FlagData(typeof(Raincloud), "raincloud", new TooltipData("Raincloud Flag", "How does rain even get down here?", "Guarantees a puddle at the same coordinates on all following floors."),
                      placeableSpriteType: typeof(RaincloudSprite));
         //passive flags
-        new FlagData(typeof(Aromatic), "aromatic", new TooltipData("Aromatic Flag", "Your sinuses feel clearer already!", "You can now sniff out mines an extra 1 tile away. Detect mice."));
-        new FlagData(typeof(Catnip), "catnip", new TooltipData("Catnip Flag", "", "You can now jump to tiles two units away."));
+        new FlagData(typeof(Aromatic), "aromatic", new TooltipData("Aromatic Flag", "Breathe it in.", "You can now sniff out mines an extra 1 tile away. Detect mice."));
+        new FlagData(typeof(Catnip), "catnip", new TooltipData("Catnip Flag", "Don't do drugs, gamers.", "You can now jump to tiles two units away."));
         new FlagData(typeof(Gambling), "gambling", new TooltipData("Gambling Addiction", "It's only a crippling addiction if you lose.", "Remove all health. Mines have an 80% chance to do nothing and a 20% chance to kill you instantly."));
-        new FlagData(typeof(OneUp), "1up", new TooltipData("One-Up Flag", "Nintendo please don't sue me.", "One random square on the floor gives you an additional heart."));
-        new FlagData(typeof(Daytrader), "daytrader", new TooltipData("Daytrader Flag", "", "Every floor, gain either 50% more mines or 25% less."));
-        new FlagData(typeof(Bank), "bank", new TooltipData("Bank Flag", "", "Every floor, gain 10% more mines."));
-        new FlagData(typeof(Collector),"collector", new TooltipData("Collector Flag", "Unlike Pokemon cards, high-tech mines are genuinely expensive to produce.", "The more advanced the mine, the more it's worth."));
-        new FlagData(typeof(Reflection), "reflection", new TooltipData("Reflection Flag", "Use one get one free!", "Placing a non-base flag in a puddle gives you a base flag back."));
+        new FlagData(typeof(OneUp), "1up", new TooltipData("One-Up Flag", "Nintendo please don't sue me.", "Two random squares on the floor gives you an additional life."));
+        new FlagData(typeof(Daytrader), "daytrader", new TooltipData("Daytrader Flag", "To the moon!", "Every floor, gain either 50% more mines or 25% less."));
+        new FlagData(typeof(Bank), "bank", new TooltipData("Bank Flag", "Heard of compound interest?", "Every floor, gain 10% more mines."));
+        new FlagData(typeof(Collector),"collector", new TooltipData("Collector Flag", "Lowkey the mines are just like Pokemon cards.", "Rarer mines are worth more."));
+        new FlagData(typeof(Reflection), "reflection", new TooltipData("Reflection Flag", "Use one, get one free.", "Placing a non-base flag in a puddle gives you a base flag back."));
         new FlagData(typeof(Wildcat), "wildcat", new TooltipData("Wildcat Flag", "Born to be wild.", "Every five new grassy tiles you step in gives you an extra life."),
                      consumableDefaultCount: 5,
                      showCount: true);
         new FlagData(typeof(Curious), "curious", new TooltipData("Curious Flag", "Very wide-eyed.", "Increases vision distance."));
         new FlagData(typeof(Astral), "astral", new TooltipData("Astral Flag", "Your body held you back.", "Respawn in a 3x3 area around where you died."));
-        new FlagData(typeof(Milk), "milk", new TooltipData("Milk Flag", "Gives you bigger bones.", "Increases interaction radius"));
+        new FlagData(typeof(Milk), "milk", new TooltipData("Milk Flag", "Grow big and strong buddy.", "Increases interaction radius."));
+        new FlagData(typeof(Car), "car", new TooltipData("Car Flag", "(^o.o^)", "Completing the floor in under two minutes gives you a free flag next shop."));
         //map flags
         new FlagData(typeof(Brain), "brain", new TooltipData("Brain Flag", "Turns out your puny little brain is also a flag.", "Senses the number of mines around you."),
                      allowedFloorTypes: new List<string>{"minefield", "trial"});
-        new FlagData(typeof(Vertical), "vertical", new TooltipData("Vertical Flag", "", "Gives the number of mines in your column."));
-        new FlagData(typeof(Horizontal), "horizontal", new TooltipData("Horizontal Flag", "", "Gives the number of mines in your row."));
-        new FlagData(typeof(Manhattan), "manhattan", new TooltipData("Manhattan Flag", "The nearest mine's just around the block.", "Gives the manhattan distance to the nearest mine."));
-        new FlagData(typeof(Knight), "knight", new TooltipData("Knight Flag", "Yee haw", "Gives the number of mines a knight's move away."));
+        new FlagData(typeof(Vertical), "vertical", new TooltipData("Vertical Flag", "| __ |", "Gives the number of mines in your column."));
+        new FlagData(typeof(Horizontal), "horizontal", new TooltipData("Horizontal Flag", "-- __ --", "Gives the number of mines in your row."));
+        new FlagData(typeof(Manhattan), "manhattan", new TooltipData("Manhattan Flag", "Ay, I'm walkin' here!", "Gives the manhattan distance to the nearest mine."));
+        new FlagData(typeof(Knight), "knight", new TooltipData("Knight Flag", "Deez knights.", "Gives the number of mines a knight's move away."));
         //consumable flags
-        new FlagData(typeof(Chocolate), "chocolate", new TooltipData("Chocolate Flag", "Curiosity made the cat stronger.", "Sacrifice half your health rounded up for two random flags."),
+        new FlagData(typeof(Chocolate), "chocolate", new TooltipData("Chocolate Flag", "What did curiosity do again?", "Sacrifice half your health rounded up for two random flags."),
                      consumableDefaultCount: 2);
         new FlagData(typeof(Dog), "dog", new TooltipData("Dog Flag", "Oh, how the tables have turned.", "For your next movement, you are immune to mines, but die from safe tiles."),
                      consumableDefaultCount: 25);
@@ -170,7 +171,7 @@ public class CatalogManager : MonoBehaviour {
                      consumableDefaultCount: 10);
         new FlagData(typeof(Yarn), "yarn", new TooltipData("Yarn Flag", "Cats love yarn.", "Rolls in a chosen direction until hitting an obstacle or detonating a mine."),
                      consumableDefaultCount: 10);
-        new FlagData(typeof(Fertilizer), "fertilizer", new TooltipData("Fertilizer Flag", "Let it grow.", "Turn one adjacent tile into grass, turn another if you're on grass."),
+        new FlagData(typeof(Fertilizer), "fertilizer", new TooltipData("Fertilizer Flag", "Can't reap what you don't sow.", "Turn one adjacent tile into grass, turn another if you're on grass."),
                      consumableDefaultCount: 10);
         new FlagData(typeof(HailMary), "hailmary", new TooltipData("Hail Mary Flag", "Only one way to find out.", "Teleport to a random undiscovered tile."),
                      consumableDefaultCount: 10);
@@ -180,7 +181,7 @@ public class CatalogManager : MonoBehaviour {
         new CurseData(typeof(Taxed), "taxed", new TooltipData("Taxed", "Can't hide from the IRS.", "More mines, less value"));
         new CurseData(typeof(Expansion), "expansion", new TooltipData("Expansion", "The unknowable will of the tiles.", "All floors become larger."));
         new CurseData(typeof(Decrepit), "decrepit", new TooltipData("Decrepit", "This place is falling apart. Probably the explosions.", "More holes."));
-        new CurseData(typeof(Fragile), "fragile", new TooltipData("Fragile", "You've got sensitive skin.", "Walking into grass or water enough kills you, eventually. Resets on new floors."));
+        new CurseData(typeof(Fragile), "fragile", new TooltipData("Fragile", "Sensitive skin is an understatement.", "Walking into grass or water enough kills you, eventually. Resets on new floors."));
         new CurseData(typeof(Taken), "taken", new TooltipData("Taken", "Currently disabling nothing.", "Takes flags away on every minefield."));
         new CurseData(typeof(Intensify), "intensify", new TooltipData("Intensify", "Currently intensifying nothing.", "One random curse is heightened every floor."));
         new CurseData(typeof(Amnesia), "amnesia", new TooltipData("Amnesia", "Why are you here again?", "Tooltips disappear from items. Map numbers have a chance to disappear."));
