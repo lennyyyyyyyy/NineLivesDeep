@@ -152,7 +152,8 @@ public class CatalogManager : MonoBehaviour {
         new FlagData(typeof(Curious), "curious", new TooltipData("Curious Flag", "Very wide-eyed.", "Increases vision distance."));
         new FlagData(typeof(Astral), "astral", new TooltipData("Astral Flag", "Your body held you back.", "Respawn in a 3x3 area around where you died."));
         new FlagData(typeof(Milk), "milk", new TooltipData("Milk Flag", "Grow big and strong buddy.", "Increases interaction radius."));
-        new FlagData(typeof(Car), "car", new TooltipData("Car Flag", "(^o.o^)", "Completing the floor in under two minutes gives you a free flag next shop."));
+        new FlagData(typeof(Car), "car", new TooltipData("Car Flag", "(^o.o^)", "Completing the floor in under two minutes gives you a free flag next shop."),
+                     allowedFloorTypes: new List<string>{"minefield", "shop"});
         //map flags
         new FlagData(typeof(Brain), "brain", new TooltipData("Brain Flag", "Turns out your puny little brain is also a flag.", "Senses the number of mines around you."),
                      allowedFloorTypes: new List<string>{"minefield", "trial"});

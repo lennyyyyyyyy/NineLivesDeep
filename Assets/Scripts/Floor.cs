@@ -17,6 +17,8 @@ public class Floor : MonoBehaviour {
     [System.NonSerialized]
     public string floorType = "none";
     public HashSet<Vector2Int> rainCoords = new HashSet<Vector2Int>();
+    [System.NonSerialized]
+    public float floorStartTime = -1e9f;
 
     // unsaved data
     [System.NonSerialized]
@@ -101,6 +103,7 @@ public class Floor : MonoBehaviour {
 			MainCamera.s.ZoomTo(12.5f, 1f);	
             GameManager.s.floorGameState = GameManager.GameState.FLOOR_STABLE;
             PlayerUIItemModule.s.OrganizeFlags();
+            floorStartTime = Time.time;
         }, time);
 		time += 3.8f;
 
@@ -140,6 +143,7 @@ public class Floor : MonoBehaviour {
 			MainCamera.s.ZoomTo(12.5f, 1f);	
             GameManager.s.floorGameState = GameManager.GameState.FLOOR_STABLE;
             PlayerUIItemModule.s.OrganizeFlags();
+            floorStartTime = Time.time - loadData.floorStartTime;
         }, time);
 		time += 3.8f;
 
@@ -359,6 +363,15 @@ public class Floor : MonoBehaviour {
         }
         for (int i=0; i<4; i++) {
             PlacePickupSprite(PlayerUIItemModule.s.flagsUnseen, PickupSprite.SpawnType.SHOP, prices[i], pickupCoords[i]);
+        }
+
+        // extra flags - ex. Car passive
+        List<Vector2Int> potentialExtraFlagCoords = tileCoords.Where(c => !pickupCoords.Contains(c) &&
+                                                                     !(c.x == exitCoord.x && c.y == exitCoord.y) &&
+                                                                     !(c.x == 0 && c.y == 0)).ToList();
+        HelperManager.s.Shuffle(ref potentialExtraFlagCoords);
+        for (int i=0; i<Mathf.Min(Player.s.modifiers.extraShopFlags, potentialExtraFlagCoords.Count); i++) {
+            PlacePickupSprite(PlayerUIItemModule.s.flagsUnseen, PickupSprite.SpawnType.SHOP, 0, potentialExtraFlagCoords[i]);
         }
     }
 	public void InitTrial() {

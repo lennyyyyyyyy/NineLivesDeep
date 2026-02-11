@@ -148,16 +148,16 @@ public class Tile : Parallax {
             }
         });
     }
-    protected virtual void OnPlayerMoveToCoord(int x, int y) {
+    protected virtual void OnPlayerArriveAtCoord(int x, int y) {
         if (coord.x == x && coord.y == y && oneUpCount > 0) {
             Instantiate(PrefabManager.s.flagPrefab).AddComponent<You>().Init(initialCount: oneUpCount);
             oneUpCount = 0;
         }
     }
     protected virtual void OnEnable() {
-        EventManager.s.OnPlayerMoveToCoord += OnPlayerMoveToCoord;
+        EventManager.s.OnPlayerArriveAtCoord += OnPlayerArriveAtCoord;
     }
     protected virtual void OnDisable() {
-        EventManager.s.OnPlayerMoveToCoord -= OnPlayerMoveToCoord;
+        EventManager.s.OnPlayerArriveAtCoord -= OnPlayerArriveAtCoord;
     }
 }

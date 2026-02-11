@@ -38,9 +38,6 @@ public class GameManager : MonoBehaviour {
         Instantiate(PrefabManager.s.flagPrefab).AddComponent<You>().Init(initialCount: 8);
         Instantiate(PrefabManager.s.flagPrefab).AddComponent<Base>().Init(initialCount: 10);
         Instantiate(PrefabManager.s.flagPrefab).AddComponent<Exit>();
-        Instantiate(PrefabManager.s.flagPrefab).AddComponent<Collector>();
-        Instantiate(PrefabManager.s.flagPrefab).AddComponent<Collector>();
-        Instantiate(PrefabManager.s.flagPrefab).AddComponent<Wildcat>();
         HelperManager.s.DelayAction(() => { Floor.s.IntroAndCreateFloor("minefield", 0); }, 1f);
     }
     private void OnGameLoad() {

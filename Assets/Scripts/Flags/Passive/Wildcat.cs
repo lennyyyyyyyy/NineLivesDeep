@@ -15,7 +15,7 @@ class Wildcat : Passive {
     }
 	protected virtual void OnPlayerMoveToCoord(int x, int y) {
         if (!usable) return;
-		if (Floor.s.GetTile(x, y) && !Player.s.tilesVisited.Contains(Floor.s.GetTile(x, y)) && Floor.s.GetTile(x, y).GetComponent<MossyTile>() != null) {
+		if (Floor.s.TileExistsAt(x, y) && !Player.s.tilesVisited.Contains(Floor.s.GetTile(x, y)) && Floor.s.GetTile(x, y).GetComponent<MossyTile>() != null) {
 			UpdateCount(count - 1);
 		}
 	}

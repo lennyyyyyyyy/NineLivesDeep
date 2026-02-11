@@ -65,8 +65,8 @@ public class ActionTile : Tile {
 		GetComponent<SpriteRenderer>().material = m;
 		base.Start();
 	}
-    protected override void OnPlayerMoveToCoord(int x, int y) {
-        base.OnPlayerMoveToCoord(x, y);
+    protected override void OnPlayerArriveAtCoord(int x, int y) {
+        base.OnPlayerArriveAtCoord(x, y);
         if (coord.x == x && coord.y == y) {
             PerformAction();
         }

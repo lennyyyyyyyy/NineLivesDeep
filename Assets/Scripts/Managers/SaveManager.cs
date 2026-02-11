@@ -67,6 +67,7 @@ public class SaveData {
     public int floor, width, height;
     public string floorType;
     public List<TileSaveData> tiles = new List<TileSaveData>();
+    public float floorStartTime;
 }
 public class CurseLoadData {
     public Type type;
@@ -125,6 +126,7 @@ public class LoadData {
     public int floor, width, height;
     public string floorType;
     public List<TileLoadData> tiles = new List<TileLoadData>();
+    public float floorStartTime;
 }
 public class SaveManager : MonoBehaviour {
     public static SaveManager s;
@@ -158,7 +160,8 @@ public class SaveManager : MonoBehaviour {
             floorType = Floor.s.floorType,
             rainCoords = Floor.s.rainCoords.ToList(),
             moveHistory = Player.s.moveHistory.ToList(),
-            tunneledLastMove = Player.s.tunneledLastMove
+            tunneledLastMove = Player.s.tunneledLastMove,
+            floorStartTime = Time.time - Floor.s.floorStartTime
         };
         foreach (GameObject g in PlayerUIItemModule.s.curses) {
             Curse c = g.GetComponent<Curse>();
@@ -267,6 +270,7 @@ public class SaveManager : MonoBehaviour {
             width = saveData.width,
             height = saveData.height,
             floorType = saveData.floorType,
+            floorStartTime = saveData.floorStartTime
         };
         foreach (CurseSaveData data in saveData.curses) {
             loadData.curses.Add(new CurseLoadData() {

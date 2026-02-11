@@ -23,7 +23,8 @@ public class Modifiers {
 			   discoverRange,
 			   reviveRange,
 			   moveDirectionDisableDuration,
-               reflectionPassiveCount;
+               reflectionPassiveCount,
+               extraShopFlags;
 	public bool watched;
 	public HashSet<Type> amnesiaUITypes;	
     public List<Vector2Int> moveOptions;
@@ -41,6 +42,7 @@ public class Modifiers {
 		interactRange = 1;
 		discoverRange = 0;
 		reviveRange = 0;
+        extraShopFlags = 0;
 		moveDirectionDisableDuration = 0;
 		amnesiaUITypes = new HashSet<Type>();
 		cataractConfuseChance = 0f;
@@ -265,6 +267,16 @@ public class Player : Entity {
         }
         dogFlagActive = false;
     }
+    public void TriggerFragileEffect() {
+        //fragile curse passive
+        if (alive && Floor.s.GetTile(GetCoord().x, GetCoord().y).GetComponent<MossyTile>() != null ||
+            Floor.s.GetTile(GetCoord().x, GetCoord().y).GetComponent<Puddle>() != null) {
+            tempChanges++;
+            if (tempChanges >= modifiers.tempChangesUntilDeath) {
+                Die();
+            }
+        }
+    }
     public void discoverTiles() {
         for (int dx=-modifiers.discoverRange; dx<=modifiers.discoverRange; dx++) {
             for (int dy=-modifiers.discoverRange; dy<=modifiers.discoverRange; dy++) {
@@ -299,37 +311,20 @@ public class Player : Entity {
             }
             base.Move(x, y, false);
             destroyPrints();
+            EventManager.s.OnPlayerMoveToCoord?.Invoke(x, y);
             LeanTween.moveLocal(gameObject, Vector3.zero, 0.5f).setEase(LeanTweenType.easeOutCubic).setOnComplete(() => {
                 animator.SetTrigger("jumpEnd");
                 destroyPrints();
                 updatePrints();
-                TriggerMines();
-                TriggerDogEffect();
-                discoverTiles();
                 Floor.s.GetTile(x, y).GetComponent<Tile>().externalDepthImpulse += ConstantsManager.s.playerStepImpulse;
-                EventManager.s.OnPlayerMoveToCoord?.Invoke(x, y);
+                EventManager.s.OnPlayerArriveAtCoord?.Invoke(x, y);
             }).setOnUpdate((float f) => {
                 ShaderManager.s.DisturbShaders(feet.transform.position.x, feet.transform.position.y);
             });
         } else {
             base.Move(x, y, reposition);
-            TriggerMines();
-            TriggerDogEffect();
-            discoverTiles();
             EventManager.s.OnPlayerMoveToCoord?.Invoke(x, y);
-        }
-        //fragile curse passive
-        if (Floor.s.GetTile(x, y).GetComponent<MossyTile>() != null || Floor.s.GetTile(x, y).GetComponent<Puddle>() != null) {
-            tempChanges++;
-            if (tempChanges >= modifiers.tempChangesUntilDeath) {
-                Die();
-            }
-        }
-        tilesVisited.Add(Floor.s.GetTile(x, y));
-        tilesUnvisited.Remove(Floor.s.GetTile(x, y));
-        //watched curse reset
-        if (modifiers.watched) {
-            watchedMineJumpTimer = 0f;
+            EventManager.s.OnPlayerArriveAtCoord?.Invoke(x, y);
         }
         return true;
 	}
@@ -363,16 +358,34 @@ public class Player : Entity {
     private void OnForceMapNumberActive(bool active) {
         mapNumberActive = active;
     }
+    private void OnPlayerMoveToCoord(int x, int y) {
+        //watched curse reset
+        if (modifiers.watched) {
+            watchedMineJumpTimer = 0f;
+        }
+    }
+    private void OnPlayerArriveAtCoord(int x, int y) {
+        TriggerMines();
+        TriggerDogEffect();
+        TriggerFragileEffect();
+        discoverTiles();
+        tilesVisited.Add(Floor.s.GetTile(x, y));
+        tilesUnvisited.Remove(Floor.s.GetTile(x, y));
+    }
     private void OnEnable() {
         EventManager.s.OnFloorChangeBeforeNewLayout += OnFloorChangeBeforeNewLayout;
         EventManager.s.OnFloorChangeAfterEntities += OnFloorChangeAfterEntities;
         EventManager.s.OnExplosionAtCoord += OnExplosionAtCoord;
         EventManager.s.OnForceMapNumberActive += OnForceMapNumberActive;
+        EventManager.s.OnPlayerMoveToCoord += OnPlayerMoveToCoord;
+        EventManager.s.OnPlayerArriveAtCoord += OnPlayerArriveAtCoord;
     }
     private void OnDisable() {
         EventManager.s.OnFloorChangeBeforeNewLayout -= OnFloorChangeBeforeNewLayout;
         EventManager.s.OnFloorChangeAfterEntities -= OnFloorChangeAfterEntities;
         EventManager.s.OnExplosionAtCoord -= OnExplosionAtCoord;
         EventManager.s.OnForceMapNumberActive -= OnForceMapNumberActive;
+        EventManager.s.OnPlayerMoveToCoord -= OnPlayerMoveToCoord;
+        EventManager.s.OnPlayerArriveAtCoord -= OnPlayerArriveAtCoord;
     }
 }
