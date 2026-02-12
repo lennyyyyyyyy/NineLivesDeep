@@ -16,7 +16,8 @@ public class Modifiers {
 				 mapNumberDisappearChancePerSecond,
 				 watchedMineJumpTime,
 				 watchedMineJumpChancePerSecond,
-				 cataractConfuseChance;
+				 cataractConfuseChance,
+                 gamblingSafeChance;
 	public int floorExpansion,
 		       tempChangesUntilDeath,
 			   interactRange,
@@ -25,7 +26,8 @@ public class Modifiers {
 			   moveDirectionDisableDuration,
                reflectionPassiveCount,
                extraShopFlags;
-	public bool watched;
+	public bool watched,
+                gambling;
 	public HashSet<Type> amnesiaUITypes;	
     public List<Vector2Int> moveOptions;
     public HashSet<GameObject> takenFlags;
@@ -46,8 +48,10 @@ public class Modifiers {
 		moveDirectionDisableDuration = 0;
 		amnesiaUITypes = new HashSet<Type>();
 		cataractConfuseChance = 0f;
+        gamblingSafeChance = 1f;
 		mapNumberDisappearChancePerSecond = 0;
 		watched = false;
+        gambling = false;
 		watchedMineJumpTime = 0f;
 		watchedMineJumpChancePerSecond = 0f;
 		tempChangesUntilDeath = (int) 2e9;
@@ -352,7 +356,14 @@ public class Player : Entity {
     private void OnExplosionAtCoord(int x, int y, GameObject source) {
         Vector2Int coord = GetCoord();
         if (coord.x == x && coord.y == y) {
-            Die();
+            if (!modifiers.gambling) {
+                Die();
+            } else if (UnityEngine.Random.value < modifiers.gamblingSafeChance) {
+                HelperManager.s.InstantiateBubble(gameObject, "Saved by gambling...", Color.white);
+            } else {
+                Die();
+                EventManager.s.OnGameLose?.Invoke();
+            }
         }
     }
     private void OnForceMapNumberActive(bool active) {

@@ -12,13 +12,12 @@ public class Placeable : Flag {
         base.Awake();
     }
     protected virtual void OnPointerDown(PointerEventData data) {
-        if (usable) {
-            sprite = Instantiate(PrefabManager.s.flagSpritePrefab, Camera.main.ScreenToWorldPoint(Input.mousePosition), Quaternion.identity);
-            FlagSprite flagSprite = sprite.AddComponent(placeableSpriteType) as FlagSprite;
-			FlagData flagData = CatalogManager.s.typeToData[GetType()] as FlagData;
-			flagSprite.Init(this); 
-            base.OnPointerExit(null);
-        }
+        if (!usable) return;
+        sprite = Instantiate(PrefabManager.s.flagSpritePrefab, Camera.main.ScreenToWorldPoint(Input.mousePosition), Quaternion.identity);
+        FlagSprite flagSprite = sprite.AddComponent(placeableSpriteType) as FlagSprite;
+        FlagData flagData = CatalogManager.s.typeToData[GetType()] as FlagData;
+        flagSprite.Init(this); 
+        base.OnPointerExit(null);
     }
     protected override bool IsUsable() {
         return base.IsUsable() && count > 0 && (sprite == null || sprite.GetComponent<FlagSprite>().state != "held") 

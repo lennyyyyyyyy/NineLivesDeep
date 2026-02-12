@@ -38,7 +38,7 @@ public class GameManager : MonoBehaviour {
         Instantiate(PrefabManager.s.flagPrefab).AddComponent<You>().Init(initialCount: 8);
         Instantiate(PrefabManager.s.flagPrefab).AddComponent<Base>().Init(initialCount: 10);
         Instantiate(PrefabManager.s.flagPrefab).AddComponent<Exit>();
-        Instantiate(PrefabManager.s.flagPrefab).AddComponent<Shovel>();
+        Instantiate(PrefabManager.s.flagPrefab).AddComponent<Gambling>();
         HelperManager.s.DelayAction(() => { Floor.s.IntroAndCreateFloor("minefield", 0); }, 1f);
     }
     private void OnGameLoad() {
@@ -57,15 +57,24 @@ public class GameManager : MonoBehaviour {
         PlayerUIItemModule.s.DestroyAllUIItemsWithoutProcessing();
         Destroy(Run.s.gameObject);
     }
+    private void OnGameWin() {
+        Debug.Log("You won.");
+    }
+    private void OnGameLose() {
+        Debug.Log("You lost.");
+    }
     private void OnEnable() {
         EventManager.s.OnGameStart += OnGameStart;
         EventManager.s.OnGameLoad += OnGameLoad;
         EventManager.s.OnGameExit += OnGameExit;
+        EventManager.s.OnGameWin += OnGameWin;
+        EventManager.s.OnGameLose += OnGameLose;
     }
     private void OnDisable() {
         EventManager.s.OnGameStart -= OnGameStart;
         EventManager.s.OnGameLoad -= OnGameLoad;
         EventManager.s.OnGameExit -= OnGameExit;
+        EventManager.s.OnGameWin -= OnGameWin;
+        EventManager.s.OnGameLose -= OnGameLose;
     }
-
 }
