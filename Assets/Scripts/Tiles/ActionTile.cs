@@ -16,26 +16,23 @@ public class ActionTile : Tile {
 	public int amount = 1;
 	protected Action action;
 	protected Material m;
-    // Creates the default sequence for exiting a floor into a new floor
-	protected Action ExitAction(string newFloorType, int newFloor) {
-		return () => { 
-			Player.s.Remove(false);
-			MainCamera.s.locked = true;
-			MainCamera.s.ExitMotion();
-			HelperManager.s.DelayAction(() => {Floor.s.IntroAndCreateFloor(newFloorType, newFloor);}, 0.5f);
-		};
-	}	
 	public void Init(ActionCode actionCode) {
         this.actionCode = actionCode;
 		if (actionCode == ActionCode.EXITTOSHOP) {
 			m = UIManager.s.tileExitMat;
-			action = ExitAction("shop", Floor.s.floor);
+			action = () => {
+                Floor.s.ExitFloor("shop", Floor.s.floor);
+            };
 		} else if (actionCode == ActionCode.EXITTOMINEFIELD) {
 			m = UIManager.s.tileExitMat;
-			action = ExitAction("minefield", Floor.s.floor+1);
+			action = () => {
+                Floor.s.ExitFloor("minefield", Floor.s.floor+1);
+            };
 		} else if (actionCode == ActionCode.EXITTOTRIAL) {
 			m = UIManager.s.tileTrialMat;
-			action = ExitAction("trial", Floor.s.floor);
+            action = () => {
+                Floor.s.ExitFloor("trial", Floor.s.floor);
+            };
 		} else if (actionCode == ActionCode.GIVETRIALREWARD) {
 			m = UIManager.s.tileTrialMat;
 			action = () => {

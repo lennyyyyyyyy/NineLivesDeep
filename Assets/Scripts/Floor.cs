@@ -579,6 +579,13 @@ public class Floor : MonoBehaviour {
 			Debug.Log("Tried to add entity to invalid tile at " + x + ", " + y);
 		}
 	}
+    // Creates the default sequence for exiting a floor into a new floor
+	public void ExitFloor(string newFloorType, int newFloor) {
+        Player.s.Remove(false);
+        MainCamera.s.locked = true;
+        MainCamera.s.ExitMotion();
+        HelperManager.s.DelayAction(() => {Floor.s.IntroAndCreateFloor(newFloorType, newFloor);}, 0.5f);
+	}	
     private void Awake() {
         s = this;
 		ambientDust = GetComponent<ParticleSystem>();
@@ -589,8 +596,4 @@ public class Floor : MonoBehaviour {
 		windZone.directionX = windDirection.x * Player.s.modifiers.windStrength * 1.5f;
 		windZone.directionY = windDirection.y * Player.s.modifiers.windStrength * 1.5f;
 	}
-    private void OnEnable() {
-    }
-    private void OnDisable() {
-    }
 }
