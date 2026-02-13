@@ -43,9 +43,10 @@ public class UIItemData : TypeData {
 }
 public class FlagData : UIItemData {
     public Type placeableSpriteType;
-	public bool placeableRemovesMines = true;
-    public bool placeableObstacle = true;
-	public int consumableDefaultCount = 0; 
+	public bool placeableRemovesMines = true,
+                placeableObstacle = true,
+                placeableReplenish = true; 
+	public int defaultCount = 0; 
 	public bool showCount = false;
 	public List<string> allowedFloorTypes = new List<string>() {"minefield"};
 	public FlagData(Type type,
@@ -54,14 +55,16 @@ public class FlagData : UIItemData {
 					  Type placeableSpriteType = null,
 					  bool? placeableRemovesMines = null,
                       bool? placeableObstacle = null,
-					  int? consumableDefaultCount = null,
+                      bool? placeableReplenish = null,
+					  int? defaultCount = null,
 					  bool? showCount = null,
 					  List<string> allowedFloorTypes = null) : base(type, "flag", resourceName, tooltipData) {
 		this.placeableSpriteType = placeableSpriteType ?? this.placeableSpriteType;
 		this.placeableRemovesMines = placeableRemovesMines ?? this.placeableRemovesMines;
         this.placeableObstacle = placeableObstacle ?? this.placeableObstacle;
-		this.consumableDefaultCount = consumableDefaultCount ?? this.consumableDefaultCount;
-		this.showCount = showCount ?? (placeableSpriteType != null || consumableDefaultCount != null);
+        this.placeableReplenish = placeableReplenish ?? this.placeableReplenish;
+		this.defaultCount = defaultCount ?? this.defaultCount;
+		this.showCount = showCount ?? (placeableSpriteType != null || defaultCount != null);
 		this.allowedFloorTypes = allowedFloorTypes ?? this.allowedFloorTypes;	
 
 		if (this.placeableSpriteType != null) {
@@ -118,21 +121,29 @@ public class CatalogManager : MonoBehaviour {
         new PrefabData(typeof(Puddle), PrefabManager.s.tilePuddlePrefab);
         //placeable flags
         new FlagData(typeof(Base), "base", new TooltipData("Flag", "Nostalgic, isn't it?", "Drag and drop these wherever you think mines are."),
+                     defaultCount: 0,
                      placeableSpriteType: typeof(BaseSprite),
+                     placeableReplenish: false,
                      allowedFloorTypes: new List<string>{"minefield", "trial"});
         new FlagData(typeof(Anti), "anti", new TooltipData("Anti-Flag", "Anti-matter without the explosion.", "Remove and reuse your placed flags by dropping this flag on them."),
+                     defaultCount: 5,
                      placeableSpriteType: typeof(AntiSprite),
                      placeableRemovesMines: false);
         new FlagData(typeof(Psychic), "psychic", new TooltipData("Psychic Flag", "I can see what you can't, stupid cat.", "Points its eye to the nearest mine."),
+                     defaultCount: 5,
                      placeableSpriteType: typeof(PsychicSprite));	
         new FlagData(typeof(Rahhh), "rahhh", new TooltipData("RAHHH", "Coloni—spread freedom from afar!", "Discovers a 3x3 area, applying to all map flags."),
+                     defaultCount: 3,
                      placeableSpriteType: typeof(RahhhSprite));
         new FlagData(typeof(Rubber), "rubber", new TooltipData("Rubber Flag", "Instead of blowing in the wind, it just kind of vibrates.", "Place these and bounce on them to travel further."),
+                     defaultCount: 3,
                      placeableSpriteType: typeof(RubberSprite));
         new FlagData(typeof(You), "you", new TooltipData("You Flag", "For use in the worst case scenario", "Revive yourself whenever you die"),
+                     defaultCount: 1,
                      placeableSpriteType: typeof(YouSprite),
                      placeableRemovesMines: false,
                      placeableObstacle: false,
+                     placeableReplenish: false,
                      allowedFloorTypes: new List<string>{"minefield", "trial"});
         new FlagData(typeof(Raincloud), "raincloud", new TooltipData("Raincloud Flag", "How does rain even get down here?", "Guarantees a puddle at the same coordinates on all following floors."),
                      placeableSpriteType: typeof(RaincloudSprite));
@@ -147,7 +158,7 @@ public class CatalogManager : MonoBehaviour {
                      showCount: true);
         new FlagData(typeof(Reflection), "reflection", new TooltipData("Reflection Flag", "Use one, get one free.", "Placing a non-base flag in a puddle gives you a base flag back."));
         new FlagData(typeof(Wildcat), "wildcat", new TooltipData("Wildcat Flag", "Born to be wild.", "Every five new grassy tiles you step in gives you an extra life."),
-                     consumableDefaultCount: 5,
+                     defaultCount: 5,
                      showCount: true);
         new FlagData(typeof(Curious), "curious", new TooltipData("Curious Flag", "Very wide-eyed.", "Increases vision distance."));
         new FlagData(typeof(Astral), "astral", new TooltipData("Astral Flag", "Your body held you back.", "Respawn in a 3x3 area around where you died."));
@@ -163,21 +174,21 @@ public class CatalogManager : MonoBehaviour {
         new FlagData(typeof(Knight), "knight", new TooltipData("Knight Flag", "Deez knights.", "Gives the number of mines a knight's move away."));
         //consumable flags
         new FlagData(typeof(Chocolate), "chocolate", new TooltipData("Chocolate Flag", "What did curiosity do again?", "Sacrifice half your health rounded up for two random flags."),
-                     consumableDefaultCount: 2);
+                     defaultCount: 2);
         new FlagData(typeof(Dog), "dog", new TooltipData("Dog Flag", "Oh, how the tables have turned.", "For your next movement, you are immune to mines, but die from safe tiles."),
-                     consumableDefaultCount: 25);
+                     defaultCount: 25);
         new FlagData(typeof(Shovel), "shovel", new TooltipData("Shovel Flag", "An upgrade for your tiny claws.", "Dig, and skip to the start of the next floor."),
-                     consumableDefaultCount: 1);
+                     defaultCount: 1);
         new FlagData(typeof(Exit), "exit", new TooltipData("Exit Flag", "get me out get me out", "Save and exit the current run."),
-                     consumableDefaultCount: 1);
+                     defaultCount: 1);
         new FlagData(typeof(Kamikaze), "kamikaze", new TooltipData("Kamikaze Flag", "C'mon, you've got lives to spare.", "Explode a 3x3 area around you, killing yourself in the process."),
-                     consumableDefaultCount: 10);
+                     defaultCount: 10);
         new FlagData(typeof(Yarn), "yarn", new TooltipData("Yarn Flag", "Cats love yarn.", "Rolls in a chosen direction until hitting an obstacle or detonating a mine."),
-                     consumableDefaultCount: 10);
+                     defaultCount: 10);
         new FlagData(typeof(Fertilizer), "fertilizer", new TooltipData("Fertilizer Flag", "Can't reap what you don't sow.", "Turn one adjacent tile into grass, turn another if you're on grass."),
-                     consumableDefaultCount: 10);
+                     defaultCount: 10);
         new FlagData(typeof(HailMary), "hailmary", new TooltipData("Hail Mary Flag", "Only one way to find out.", "Teleport to a random undiscovered tile."),
-                     consumableDefaultCount: 10);
+                     defaultCount: 10);
         //curses
         new CurseData(typeof(Watched), "watched", new TooltipData("Watched", "They lie in wait...", "Mines jump on you, if you're too still."));
         new CurseData(typeof(Windy), "windy", new TooltipData("Windy", "The ventilation is surprisingly good here.", "Flags may blow and land somewhere else when let go."));

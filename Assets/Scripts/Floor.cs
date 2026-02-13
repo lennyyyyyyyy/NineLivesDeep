@@ -239,7 +239,8 @@ public class Floor : MonoBehaviour {
         List<Vector2Int> potentialExitsList = new List<Vector2Int>(potentialExits);
 
         Vector2Int exitCoord = potentialExitsList[Random.Range(0, potentialExitsList.Count)];
-        ReplaceTile(PrefabManager.s.tileActionPrefab, exitCoord.x, exitCoord.y).GetComponent<ActionTile>().Init(ActionTile.ActionCode.EXITTOSHOP);
+        ActionTile.ActionCode exitCode = (floor == ConstantsManager.s.finalFloor) ? ActionTile.ActionCode.WINGAME : ActionTile.ActionCode.EXITTOSHOP;
+        ReplaceTile(PrefabManager.s.tileActionPrefab, exitCoord.x, exitCoord.y).GetComponent<ActionTile>().Init(exitCode);
 		ReplaceTile(PrefabManager.s.tilePrefab, 0, 0);
         foreach (Vector2Int v in rainCoords) {
             ReplaceTile(PrefabManager.s.tilePuddlePrefab, v.x, v.y);

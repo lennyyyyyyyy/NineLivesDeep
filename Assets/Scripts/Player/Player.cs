@@ -158,6 +158,9 @@ public class Player : Entity {
         EventManager.s.OnPlayerAliveChange?.Invoke();
         EventManager.s.OnPlayerDie?.Invoke();
         UpdateActivePrints();
+        if (PlayerUIItemModule.s.typeToInstances[typeof(You)][0].GetComponent<Flag>().count == 0) {
+            EventManager.s.OnGameLose?.Invoke();
+        }
     }
     public void Revive() {
         EventManager.s.OnPlayerRevive?.Invoke();

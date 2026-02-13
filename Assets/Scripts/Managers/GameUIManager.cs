@@ -113,10 +113,14 @@ public class GameUIManager : MonoBehaviour {
         EventManager.s.OnGameStart += OnGameStart;
         EventManager.s.OnGameLoad += OnGameStart;
         EventManager.s.OnGameExit += OnGameExit;
+        EventManager.s.OnGameWin += OnGameExit;
+        EventManager.s.OnGameLose += OnGameExit;
     }
     private void OnDisable() {
         EventManager.s.OnGameStart -= OnGameStart;
         EventManager.s.OnGameLoad -= OnGameStart;
         EventManager.s.OnGameExit -= OnGameExit;
+        EventManager.s.OnGameWin -= OnGameExit;
+        EventManager.s.OnGameLose -= OnGameExit;
     }
 }

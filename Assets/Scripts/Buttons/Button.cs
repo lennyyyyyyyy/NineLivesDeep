@@ -1,23 +1,30 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 using TMPro;
+using System;
+using Random = UnityEngine.Random;
 
 public class Button : MonoBehaviour {
     private bool hovered = false, pressed = false, finished = false;
     private float hoverOffset;
 
     protected virtual void OnPress() {}
-    protected virtual void Awake() {}
-    protected virtual void OnPointerEnter() {
+    protected virtual void Awake() {
+        HelperManager.s.SetupUIEventTriggers(gameObject, 
+                                             new EventTriggerType[] { EventTriggerType.PointerEnter, EventTriggerType.PointerExit, EventTriggerType.PointerDown, EventTriggerType.PointerUp },
+                                             new Action<PointerEventData>[] { OnPointerEnter, OnPointerExit, OnPointerDown, OnPointerUp });
+    }
+    protected virtual void OnPointerEnter(PointerEventData data) {
         hovered = true;
         hoverOffset = Random.Range(0f, 1f);
     }
-    protected virtual void OnPointerExit() {
+    protected virtual void OnPointerExit(PointerEventData data) {
         hovered = false;
     }
-    protected virtual void OnPointerDown() {
+    protected virtual void OnPointerDown(PointerEventData data) {
         pressed = !finished;
     }
-    protected virtual void OnPointerUp() {
+    protected virtual void OnPointerUp(PointerEventData data) {
         pressed = false;
         if (!finished) OnPress();
         finished = true;

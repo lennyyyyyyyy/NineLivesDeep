@@ -7,8 +7,9 @@ using System.Collections.Generic;
 
 public class Flag : UIItem {
 	public Type placeableSpriteType;	
-	public bool placeableRemovesMines;
-	public int consumableDefaultCount;
+	public bool placeableRemovesMines,
+                placeableReplenish;
+	public int defaultCount;
     public bool showCount;
 	public List<string> allowedFloorTypes;
 
@@ -28,7 +29,8 @@ public class Flag : UIItem {
                             TooltipData tooltipData = null,
                             Type placeableSpriteType = null,
                             bool? placeableRemovesMines = null, 
-                            int? consumableDefaultCount = null, 
+                            bool? placeableReplenish = null,
+                            int? defaultCount = null, 
                             bool? showCount = null,
                             int? initialCount = null,
                             List<string> allowedFloorTypes = null) {
@@ -36,7 +38,8 @@ public class Flag : UIItem {
 		this.tooltipData = tooltipData ?? this.tooltipData;
 		this.placeableSpriteType = placeableSpriteType ?? this.placeableSpriteType;
 		this.placeableRemovesMines = placeableRemovesMines ?? this.placeableRemovesMines;
-		this.consumableDefaultCount = consumableDefaultCount ?? this.consumableDefaultCount;
+        this.placeableReplenish = placeableReplenish ?? this.placeableReplenish;
+		this.defaultCount = defaultCount ?? this.defaultCount;
 		this.showCount = showCount ?? this.showCount;
         this.count = initialCount ?? this.count;
 		this.allowedFloorTypes = allowedFloorTypes ?? this.allowedFloorTypes;
@@ -52,9 +55,10 @@ public class Flag : UIItem {
                  tooltipData: flagData.tooltipData,
                  placeableSpriteType: flagData.placeableSpriteType,
                  placeableRemovesMines: flagData.placeableRemovesMines,
-                 consumableDefaultCount: flagData.consumableDefaultCount,
+                 placeableReplenish: flagData.placeableReplenish,
+                 defaultCount: flagData.defaultCount,
                  showCount: flagData.showCount,
-                 initialCount: flagData.consumableDefaultCount,
+                 initialCount: flagData.defaultCount,
                  allowedFloorTypes: flagData.allowedFloorTypes);
         }
     }

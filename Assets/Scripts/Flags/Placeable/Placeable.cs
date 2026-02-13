@@ -27,12 +27,23 @@ public class Placeable : Flag {
         base.UpdateCount(newCount);
         UpdateUsable();
     }
-    private void Start() {
+    protected void Start() {
         if (PlayerUIItemModule.s.typeToInstances[GetType()].Count > 1 &&
             PlayerUIItemModule.s.typeToInstances[GetType()][0] != gameObject) {
             Placeable existingPlaceable = PlayerUIItemModule.s.typeToInstances[GetType()][0].GetComponent<Placeable>();
             existingPlaceable.UpdateCount(existingPlaceable.count + count);
             Destroy(gameObject);
         }
+    }
+    protected virtual void OnNewMinefield() {
+        if (placeableReplenish) {
+            UpdateCount(Mathf.Max(count, defaultCount));
+        }
+    }
+    protected virtual void OnEnable() {
+        EventManager.s.OnNewMinefield += OnNewMinefield;
+    }
+    protected virtual void OnDisable() {
+        EventManager.s.OnNewMinefield -= OnNewMinefield;
     }
 }

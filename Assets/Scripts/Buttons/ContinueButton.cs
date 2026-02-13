@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 using TMPro;
 
 public class ContinueButton : Button {
@@ -14,12 +15,12 @@ public class ContinueButton : Button {
         s = this;
         continueText = GetComponentInChildren<TMP_Text>();
     }
-    protected override void OnPointerEnter() {
-        base.OnPointerEnter();
+    protected override void OnPointerEnter(PointerEventData data) {
+        base.OnPointerEnter(data);
         continueText.enabled = true;
     }
-    protected override void OnPointerExit() {
-        base.OnPointerExit();
+    protected override void OnPointerExit(PointerEventData data) {
+        base.OnPointerExit(data);
         continueText.enabled = false;
     }
 }

@@ -10,10 +10,13 @@ public class ConstantsManager : MonoBehaviour {
                  tileDampingPower = 0.20f,
                  playerStepImpulse = 0.20f,
                  playerReviveDuration = 3.0f,
-	             minefieldTrialChance = 0.5f,
-                 tooltipPadding = 0.01f;
+	             minefieldTrialChance = 1f,
+                 tooltipPadding = 0.01f,
+                 buttonIdleStrength = 15f,
+                 buttonIdleSpeed = 2f;
     [System.NonSerialized]
-    public int playerMaxMoveHistory = 10;
+    public int playerMaxMoveHistory = 10,
+               finalFloor = 0;
 
     private void Awake() {
         s = this;

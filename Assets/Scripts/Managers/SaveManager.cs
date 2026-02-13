@@ -134,11 +134,18 @@ public class SaveManager : MonoBehaviour {
     [System.NonSerialized]
     public bool saveDataValid = false;
     public SaveData saveData = null;
+
+    private string filepath;
+
     private void Awake() {
         s = this;
+        filepath = Application.persistentDataPath + "/saveData.json";
     }
     private void Start() {
-        string filepath = Application.persistentDataPath + "/savefile.json";
+        CheckSaveDataValidity();
+    }
+    private void CheckSaveDataValidity() {
+        saveDataValid = false;
         if (File.Exists(filepath)) {
             string json = File.ReadAllText(filepath);
             try {
@@ -146,6 +153,7 @@ public class SaveManager : MonoBehaviour {
                 saveDataValid = true;
             } catch (Exception e) {}
         }
+        ContinueButton.s.gameObject.SetActive(saveDataValid);
     }
     public void Save() {
         saveData = new SaveData() {
@@ -247,7 +255,6 @@ public class SaveManager : MonoBehaviour {
             saveData.tiles.Add(data);
         }
         string json = JsonUtility.ToJson(saveData, true);
-        string filepath = Application.persistentDataPath + "/savefile.json";
         File.WriteAllText(filepath, json);
         Debug.Log("Saved to " + filepath);
     }
@@ -327,6 +334,21 @@ public class SaveManager : MonoBehaviour {
             loadData.tiles.Add(tdata);
         }
         return loadData;
+    }
+    private void OnGameExit() {
+        CheckSaveDataValidity();
+    }
+    private void OnReturnToStart() {
+        File.Delete(filepath);
+        CheckSaveDataValidity();
+    }
+    private void OnEnable() {
+        EventManager.s.OnGameExit += OnGameExit;
+        EventManager.s.OnReturnToStart += OnReturnToStart;
+    }
+    private void OnDisable() {
+        EventManager.s.OnGameExit -= OnGameExit;
+        EventManager.s.OnReturnToStart -= OnReturnToStart;
     }
 }
 

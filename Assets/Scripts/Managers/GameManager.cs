@@ -11,6 +11,7 @@ public class GameManager : MonoBehaviour {
     public enum GameState {
         START,
         GAME,
+        END,
         FLOOR_STABLE,
         FLOOR_UNSTABLE,
     }
@@ -35,10 +36,9 @@ public class GameManager : MonoBehaviour {
         Instantiate(PrefabManager.s.runPrefab);
         Instantiate(PrefabManager.s.mineUIItemPrefab);
         Instantiate(PrefabManager.s.flagPrefab).AddComponent<Brain>();
-        Instantiate(PrefabManager.s.flagPrefab).AddComponent<You>().Init(initialCount: 8);
-        Instantiate(PrefabManager.s.flagPrefab).AddComponent<Base>().Init(initialCount: 10);
+        Instantiate(PrefabManager.s.flagPrefab).AddComponent<Base>();
+        Instantiate(PrefabManager.s.flagPrefab).AddComponent<You>();
         Instantiate(PrefabManager.s.flagPrefab).AddComponent<Exit>();
-        Instantiate(PrefabManager.s.flagPrefab).AddComponent<Gambling>();
         HelperManager.s.DelayAction(() => { Floor.s.IntroAndCreateFloor("minefield", 0); }, 1f);
     }
     private void OnGameLoad() {
@@ -57,24 +57,28 @@ public class GameManager : MonoBehaviour {
         PlayerUIItemModule.s.DestroyAllUIItemsWithoutProcessing();
         Destroy(Run.s.gameObject);
     }
-    private void OnGameWin() {
-        Debug.Log("You won.");
+    private void OnGameWinOrLose() {
+        gameState = GameState.END;
+        PlayerUIItemModule.s.DestroyAllUIItemsWithoutProcessing();
+        Destroy(Run.s.gameObject);
     }
-    private void OnGameLose() {
-        Debug.Log("You lost.");
+    private void OnReturnToStart() {
+        gameState = GameState.START;
     }
     private void OnEnable() {
         EventManager.s.OnGameStart += OnGameStart;
         EventManager.s.OnGameLoad += OnGameLoad;
         EventManager.s.OnGameExit += OnGameExit;
-        EventManager.s.OnGameWin += OnGameWin;
-        EventManager.s.OnGameLose += OnGameLose;
+        EventManager.s.OnGameWin += OnGameWinOrLose;
+        EventManager.s.OnGameLose += OnGameWinOrLose;
+        EventManager.s.OnReturnToStart += OnReturnToStart;
     }
     private void OnDisable() {
         EventManager.s.OnGameStart -= OnGameStart;
         EventManager.s.OnGameLoad -= OnGameLoad;
         EventManager.s.OnGameExit -= OnGameExit;
-        EventManager.s.OnGameWin -= OnGameWin;
-        EventManager.s.OnGameLose -= OnGameLose;
+        EventManager.s.OnGameWin -= OnGameWinOrLose;
+        EventManager.s.OnGameLose -= OnGameWinOrLose;
+        EventManager.s.OnReturnToStart -= OnReturnToStart;
     }
 }

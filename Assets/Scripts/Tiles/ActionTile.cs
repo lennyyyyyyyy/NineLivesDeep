@@ -7,7 +7,8 @@ public class ActionTile : Tile {
         EXITTOSHOP,
         EXITTOMINEFIELD,
         EXITTOTRIAL,
-        GIVETRIALREWARD
+        GIVETRIALREWARD,
+        WINGAME
     }
 
     [System.NonSerialized]
@@ -45,7 +46,12 @@ public class ActionTile : Tile {
 					Floor.s.PlacePickupSprite(PlayerUIItemModule.s.flagsUnseen, PickupSprite.SpawnType.TRIAL, 0, new Vector2Int(Floor.s.width-1, Floor.s.height-2));
 				}
 			};
-		}
+		} else if (actionCode == ActionCode.WINGAME) {
+            m = UIManager.s.tileExitMat;
+            action = () => {
+                EventManager.s.OnGameWin?.Invoke();
+            };
+        }
 	}
 	public void Init(Material mat, Action a, int am) {
 		m = mat;
@@ -54,7 +60,7 @@ public class ActionTile : Tile {
 	}
 	public void PerformAction() {
 		if (amount > 0) {
-			action.Invoke();
+			action?.Invoke();
 			amount--;
 		}
 	}

@@ -44,9 +44,9 @@ public class PickupSprite : CorrespondingSprite {
 			if (this.spawnType == SpawnType.RANDOM) {
 				this.count = 1;
 			} else if (this.spawnType == SpawnType.TRIAL) {
-				this.count = Random.Range(Mathf.Max(1, parentFlagData.consumableDefaultCount/3 - 1), parentFlagData.consumableDefaultCount/3 + 2);
+				this.count = Random.Range(Mathf.Max(1, parentFlagData.defaultCount/3 - 1), parentFlagData.defaultCount/3 + 2);
 			} else if (spawnType == SpawnType.SHOP) {
-				this.count = parentFlagData.consumableDefaultCount;
+				this.count = parentFlagData.defaultCount;
 			}
 		}
 		light.color = this.tooltipData.color;
