@@ -30,7 +30,6 @@ public class Modifiers {
                 gambling;
 	public HashSet<Type> amnesiaUITypes;	
     public List<Vector2Int> moveOptions;
-    public HashSet<GameObject> takenFlags;
 	public void Reset() {
 		mineSpawnMult = 1;
 		mineDefuseMult = 1;
@@ -66,7 +65,6 @@ public class Modifiers {
             new Vector2Int(1, 0),
             new Vector2Int(1, 1)
         };
-        takenFlags = new HashSet<GameObject>();
 	}
 	public Modifiers() {
 		Reset();

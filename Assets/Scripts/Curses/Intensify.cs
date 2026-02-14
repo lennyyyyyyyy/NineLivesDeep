@@ -6,8 +6,6 @@ public class Intensify : Curse {
     [System.NonSerialized]
 	public Curse intensifiedCurse;
 
-	public override void Modify(ref Modifiers modifiers) {
-	}
     public void SetIntensifiedCurse(Curse curse) {
         if (!usable) return;
 		if (intensifiedCurse != null) {
@@ -20,8 +18,7 @@ public class Intensify : Curse {
 		Player.s.RecalculateModifiers();
     }
 	private void SetRandomIntensifiedCurse() {
-		List<GameObject> options = new List<GameObject>(PlayerUIItemModule.s.curses);
-		options = options.Where(curse => curse.GetComponent<Intensify>() == null).ToList();
+		List<GameObject> options = PlayerUIItemModule.s.curses.Where(curse => curse.GetComponent<Intensify>() == null).ToList();
         if (options.Count > 0) {
             SetIntensifiedCurse(options[Random.Range(0, options.Count)].GetComponent<Curse>());
         }

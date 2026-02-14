@@ -65,7 +65,7 @@ public class Floor : MonoBehaviour {
 			HelperManager.s.DelayAction(() => {
 				GameObject mine = Instantiate(PrefabManager.s.minePrefab, Vector3.zero, Quaternion.identity);
                 if (floor == 0) {
-                    mine.AddComponent<Hydra>();
+                    mine.AddComponent<Mine>();
                 } else {
                     mine.AddComponent(PlayerUIItemModule.s.minesUnseen[Random.Range(0, PlayerUIItemModule.s.minesUnseen.Count)]);
                 }
@@ -79,7 +79,8 @@ public class Floor : MonoBehaviour {
 			}, time);
 			HelperManager.s.DelayAction(() => {
 				GameObject curse = Instantiate(PrefabManager.s.cursePrefab, Vector3.zero, Quaternion.identity);
-                curse.AddComponent(PlayerUIItemModule.s.cursesUnseen[Random.Range(0, PlayerUIItemModule.s.cursesUnseen.Count)]);
+                curse.AddComponent<Taken>();
+                //curse.AddComponent(PlayerUIItemModule.s.cursesUnseen[Random.Range(0, PlayerUIItemModule.s.cursesUnseen.Count)]);
 			}, time + 1f);
 			time += 2.8f;
 		}

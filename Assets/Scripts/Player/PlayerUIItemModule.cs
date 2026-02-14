@@ -55,16 +55,6 @@ public class PlayerUIItemModule : MonoBehaviour {
             GameObject g = Instantiate(PrefabManager.s.minePrefab);
             Mine mine = g.AddComponent(mineType) as Mine;
         }
-        foreach (CurseLoadData curseData in loadData.curses) {
-            GameObject g = Instantiate(PrefabManager.s.cursePrefab);
-            Curse curse = g.AddComponent(curseData.type) as Curse;
-            if (curseData.type == typeof(Intensify)) {
-                Intensify intensify = curse as Intensify;
-                if (curseData.intensifiedCurseIndex != -1) {
-                    intensify.SetIntensifiedCurse(curses[curseData.intensifiedCurseIndex].GetComponent<Curse>());
-                }
-            }
-        }
         foreach (FlagLoadData flagData in loadData.flags) {
             GameObject g = Instantiate(PrefabManager.s.flagPrefab);
             Flag flag = g.AddComponent(flagData.type) as Flag;
@@ -75,6 +65,23 @@ public class PlayerUIItemModule : MonoBehaviour {
                 foreach (NumberLoadData numberData in flagData.numbers) {
                     mapFlag.SetNumber(numberData.coord.x, numberData.coord.y, numberData.num);
                 }
+            }
+        }
+        foreach (CurseLoadData curseData in loadData.curses) {
+            GameObject g = Instantiate(PrefabManager.s.cursePrefab);
+            Curse curse = g.AddComponent(curseData.type) as Curse;
+            if (curseData.type == typeof(Intensify)) {
+                Intensify intensify = curse as Intensify;
+                if (curseData.intensifiedCurseIndex != -1) {
+                    intensify.SetIntensifiedCurse(curses[curseData.intensifiedCurseIndex].GetComponent<Curse>());
+                }
+            } else if (curseData.type == typeof(Taken)) {
+                Taken taken = curse as Taken;
+                List<Flag> takenFlags = new List<Flag>();
+                foreach (int index in curseData.takenFlagIndices) {
+                    takenFlags.Add(flags[index].GetComponent<Flag>());
+                }
+                taken.SetTakenFlags(takenFlags);
             }
         }
     }

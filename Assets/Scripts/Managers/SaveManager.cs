@@ -8,6 +8,7 @@ using System.IO;
 public class CurseSaveData {
     public int typeID;
     public int intensifiedCurseIndex = -1;
+    public List<int> takenFlagIndices = new List<int>();
 }
 [Serializable]
 public class NumberSaveData {
@@ -72,6 +73,7 @@ public class SaveData {
 public class CurseLoadData {
     public Type type;
     public int intensifiedCurseIndex;
+    public List<int> takenFlagIndices = new List<int>();
 }
 public class NumberLoadData {
     public Vector2Int coord;
@@ -114,9 +116,9 @@ public class LoadData {
     public List<Type> mines = new List<Type>();
     public List<FlagLoadData> flags = new List<FlagLoadData>(); 
     public List<Type> flagsSeen = new List<Type>(),
-                         cursesSeen = new List<Type>(),
-                         minesSeen = new List<Type>(),
-                         minesDefused = new List<Type>();
+                      cursesSeen = new List<Type>(),
+                      minesSeen = new List<Type>(),
+                      minesDefused = new List<Type>();
     public List<Vector2Int> tilesVisited = new List<Vector2Int>();
     public List<Vector2Int> moveHistory;
     public List<Vector2Int> rainCoords;
@@ -180,8 +182,12 @@ public class SaveManager : MonoBehaviour {
                 Intensify intensify = c as Intensify;
                 if (intensify.intensifiedCurse != null) {
                     data.intensifiedCurseIndex = PlayerUIItemModule.s.curses.IndexOf(intensify.intensifiedCurse.gameObject);
-                } else {
-                    data.intensifiedCurseIndex = -1;
+                } 
+            } else if (c is Taken) {
+                Taken taken = c as Taken;
+                foreach (Flag f in taken.takenFlags) {
+                    int flagIndex = PlayerUIItemModule.s.flags.IndexOf(f.gameObject);
+                    data.takenFlagIndices.Add(flagIndex);
                 }
             }
             saveData.curses.Add(data);
@@ -282,7 +288,8 @@ public class SaveManager : MonoBehaviour {
         foreach (CurseSaveData data in saveData.curses) {
             loadData.curses.Add(new CurseLoadData() {
                 type = CatalogManager.s.idToData[data.typeID].type,
-                intensifiedCurseIndex = data.intensifiedCurseIndex
+                intensifiedCurseIndex = data.intensifiedCurseIndex,
+                takenFlagIndices = data.takenFlagIndices.ToList()
             });
         }
         foreach (int typeID in saveData.mines) {

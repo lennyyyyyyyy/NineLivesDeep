@@ -14,7 +14,10 @@ public class Flag : UIItem {
 	public List<string> allowedFloorTypes;
 
     public int count;
+
     protected TMP_Text tmpro;
+    [System.NonSerialized]
+    public HashSet<Taken> takenBy = new HashSet<Taken>();
 
     protected override void BeforeInit() {
         base.BeforeInit();
@@ -73,10 +76,13 @@ public class Flag : UIItem {
         tmpro.text = count.ToString();
     }
     protected override bool IsUsable() {
-        return Player.s.alive && !Player.s.modifiers.takenFlags.Contains(gameObject) && allowedFloorTypes.Contains(Floor.s.floorType);
+        return Player.s.alive && takenBy.Count == 0 && allowedFloorTypes.Contains(Floor.s.floorType);
     }
     protected override void OnDestroy() {
         base.OnDestroy();
+        foreach (Taken taken in takenBy) {
+            taken.takenFlags.Remove(this); 
+        }
         if (GameManager.s.gameState == GameManager.GameState.GAME) {
             PlayerUIItemModule.s.ProcessRemovedFlag(this);
         }

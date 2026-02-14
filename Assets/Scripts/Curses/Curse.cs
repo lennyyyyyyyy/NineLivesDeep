@@ -16,6 +16,9 @@ public class Curse : UIItem {
     }
     protected override void OnDestroy() {
         base.OnDestroy();
+        foreach (Intensify intensify in intensifiedBy) {
+            intensify.intensifiedCurse = null;
+        }
         if (GameManager.s.gameState == GameManager.GameState.GAME) {
             PlayerUIItemModule.s.ProcessRemovedCurse(this);
         }
