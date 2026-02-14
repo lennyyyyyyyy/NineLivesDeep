@@ -7,7 +7,9 @@ public class MouseSprite : MineSprite {
         cooldown = Random.Range(10f, 20f);
         return base.Move(x, y, reposition);
     }
-    public virtual void Move() {
+    private void Move() {
+		cooldown = Random.Range(10f, 20f);
+        if (!PassiveActive()) return;
         List<Vector2Int> neighbors = new List<Vector2Int>();
         for (int i=0; i<4; i++) {
             int dx = new int[]{-1, 1, 0, 0}[i];
@@ -20,7 +22,6 @@ public class MouseSprite : MineSprite {
             Vector2Int chosen = neighbors[Random.Range(0, neighbors.Count)];
             Move(chosen.x, chosen.y);
         }
-		cooldown = Random.Range(10f, 20f);
     }
     protected void Update() {
         timer += Time.deltaTime;

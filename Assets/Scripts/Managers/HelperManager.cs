@@ -92,19 +92,19 @@ public class HelperManager : MonoBehaviour {
         }
         action.Invoke();
     }   
-    public void Shuffle<T>(ref List<T> ts) {
-		int count = ts.Count;
-		int last = count - 1;
-		for (int i = 0; i < last; i++) {
-			int r = UnityEngine.Random.Range(i, count);
+    public void Shuffle<T>(ref List<T> ts, int count = -1) {
+        if (count == -1) count = ts.Count;
+        count = Mathf.Min(count, ts.Count-1);
+		for (int i = 0; i < count; i++) {
+			int r = UnityEngine.Random.Range(i, ts.Count);
             (ts[r], ts[i]) = (ts[i], ts[r]);
         }
     }
-    public void Shuffle<T>(ref T[] ts) {
-        int count = ts.Length;
-        int last = count - 1;
-        for (int i = 0; i < last; i++) {
-            int r = UnityEngine.Random.Range(i, count);
+    public void Shuffle<T>(ref T[] ts, int count = -1) {
+        if (count == -1) count = ts.Length;
+        count = Mathf.Min(count, ts.Length-1);
+        for (int i = 0; i < count; i++) {
+            int r = UnityEngine.Random.Range(i, ts.Length);
             (ts[r], ts[i]) = (ts[i], ts[r]);
         }
     }

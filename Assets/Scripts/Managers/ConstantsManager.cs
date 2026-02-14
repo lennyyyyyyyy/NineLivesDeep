@@ -13,7 +13,9 @@ public class ConstantsManager : MonoBehaviour {
 	             minefieldTrialChance = 1f,
                  tooltipPadding = 0.01f,
                  buttonIdleStrength = 15f,
-                 buttonIdleSpeed = 2f;
+                 buttonIdleSpeed = 2f,
+                 baseMineChance = 0.2f,
+                 mineChanceScaling = 0.6f;
     [System.NonSerialized]
     public int playerMaxMoveHistory = 10,
                finalFloor = 0;

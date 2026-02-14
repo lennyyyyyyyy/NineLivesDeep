@@ -24,16 +24,29 @@ public class MineSprite : Entity {
 		Remove();
     }
 	public override bool Move(GameObject tile, bool reposition = true) {
-        bool success = base.Move(tile, reposition);
-		if (success) {
-            Player.s.TriggerMines();
-            Player.s.discoverTiles();
+		if (base.Move(tile, reposition)) {
+            HelperManager.s.DelayActionFrames(() => {
+                Player.s.TriggerMines();
+                Player.s.discoverTiles();
+            }, 1);
+            return true;
         }
-        return success;
+        return false;
 	}
     public override bool CoordAllowed(int x, int y) {
         return base.CoordAllowed(x, y) && 
                Floor.s.GetTile(x, y).GetComponent<Tile>().uniqueMine != gameObject;
+    }
+    public virtual bool PassiveActive() {
+        Vector2Int coord = GetCoord();
+        for (int x = coord.x - 1; x <= coord.x + 1; x++) {
+            for (int y = coord.y - 1; y <= coord.y + 1; y++) {
+                if (Floor.s.TileExistsAt(x, y) && Floor.s.GetTile(x, y).GetComponent<Tile>().HasEntityOfType<StopSprite>()) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
     protected virtual void OnExplosionAtCoord(int x, int y, GameObject source) {
         Vector2Int coord = GetCoord();

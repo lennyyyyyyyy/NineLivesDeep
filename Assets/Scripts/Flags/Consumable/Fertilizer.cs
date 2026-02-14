@@ -16,7 +16,7 @@ public class Fertilizer : Consumable {
                 adjacentTiles.Add(new Vector2Int(playerCoord.x + dx, playerCoord.y + dy));
             }
         }
-        HelperManager.s.Shuffle(ref adjacentTiles);
+        HelperManager.s.Shuffle(ref adjacentTiles, count: 2);
         if (adjacentTiles.Count == 0) return;
         Floor.s.ReplaceTile(PrefabManager.s.tileMossyPrefab, adjacentTiles[0].x, adjacentTiles[0].y);
         if (adjacentTiles.Count == 1) return;

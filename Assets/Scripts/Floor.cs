@@ -65,7 +65,7 @@ public class Floor : MonoBehaviour {
 			HelperManager.s.DelayAction(() => {
 				GameObject mine = Instantiate(PrefabManager.s.minePrefab, Vector3.zero, Quaternion.identity);
                 if (floor == 0) {
-                    mine.AddComponent<Mine>();
+                    mine.AddComponent<Hydra>();
                 } else {
                     mine.AddComponent(PlayerUIItemModule.s.minesUnseen[Random.Range(0, PlayerUIItemModule.s.minesUnseen.Count)]);
                 }
@@ -281,7 +281,7 @@ public class Floor : MonoBehaviour {
             if (PrelimMineSpawnCheck(i, j)) {
                 float rand = Random.value;
                 float mineMult = GetTile(i, j).GetComponent<Tile>().mineMult * Player.s.modifiers.mineSpawnMult;
-                float totalMineChance = mineMult * (0.1f + 0.05f * floor);
+                float totalMineChance = mineMult * (ConstantsManager.s.baseMineChance + ConstantsManager.s.mineChanceScaling * floor);
                 for (int index = 0; index < PlayerUIItemModule.s.mines.Count; index++) {
                     Mine mine = PlayerUIItemModule.s.mines[index].GetComponent<Mine>();
                     if (rand < totalMineChance * (1 - (PlayerUIItemModule.s.mines.Count - index - 1) / (1.125f + PlayerUIItemModule.s.mines.Count * 0.875f))) {
@@ -384,7 +384,9 @@ public class Floor : MonoBehaviour {
 			for (int j = 0; j < height-1; j++) {
 				if (!TileExistsAt(i, j)) {
 					ReplaceTile(PrefabManager.s.tileActionPrefab, i, j);
-					if (PrelimMineSpawnCheck(i, j) && Random.value < 0.2 * Player.s.modifiers.mineSpawnMult) {
+                    float mineMult = GetTile(i, j).GetComponent<Tile>().mineMult * Player.s.modifiers.mineSpawnMult;
+                    float totalMineChance = mineMult * (ConstantsManager.s.baseMineChance + ConstantsManager.s.mineChanceScaling * floor);
+					if (PrelimMineSpawnCheck(i, j) && Random.value < totalMineChance) {
 						PlaceMine(typeof(MineSprite), i, j);
 					}
 				}

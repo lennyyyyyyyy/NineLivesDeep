@@ -139,7 +139,7 @@ public class CatalogManager : MonoBehaviour {
                      defaultCount: 3,
                      placeableSpriteType: typeof(RubberSprite));
         new FlagData(typeof(You), "you", new TooltipData("You Flag", "For use in the worst case scenario", "Revive yourself whenever you die"),
-                     defaultCount: 1,
+                     defaultCount: 8,
                      placeableSpriteType: typeof(YouSprite),
                      placeableRemovesMines: false,
                      placeableObstacle: false,
@@ -147,6 +147,9 @@ public class CatalogManager : MonoBehaviour {
                      allowedFloorTypes: new List<string>{"minefield", "trial"});
         new FlagData(typeof(Raincloud), "raincloud", new TooltipData("Raincloud Flag", "How does rain even get down here?", "Guarantees a puddle at the same coordinates on all following floors."),
                      placeableSpriteType: typeof(RaincloudSprite));
+        new FlagData(typeof(Stop), "stop", new TooltipData("Stop Flag", "Right meow.", "Disables the passive abilities of surrounding mines."),
+                     defaultCount: 4,
+                     placeableSpriteType: typeof(StopSprite));
         //passive flags
         new FlagData(typeof(Aromatic), "aromatic", new TooltipData("Aromatic Flag", "Breathe it in.", "You can now sniff out mines an extra 1 tile away. Detect mice."));
         new FlagData(typeof(Catnip), "catnip", new TooltipData("Catnip Flag", "Don't do drugs, gamers.", "You can now jump to tiles two units away."));
