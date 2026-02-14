@@ -31,7 +31,6 @@ public class StartUIManager : MonoBehaviour {
         }
     }
     private void Reset() {
-        continuebutton.SetActive(SaveManager.s.saveDataValid);
         ContinueButton.s.Reset();
         StartButton.s.Reset();
     }

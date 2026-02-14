@@ -54,9 +54,6 @@ public class GameManager : MonoBehaviour {
     }
     private void OnGameExit() {
         gameState = GameState.START;
-        SaveManager.s.Save();
-        PlayerUIItemModule.s.DestroyAllUIItemsWithoutProcessing();
-        Destroy(Run.s.gameObject);
     }
     private void OnGameWinOrLose() {
         gameState = GameState.END;

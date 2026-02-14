@@ -343,7 +343,10 @@ public class SaveManager : MonoBehaviour {
         return loadData;
     }
     private void OnGameExit() {
+        Save();
         CheckSaveDataValidity();
+        PlayerUIItemModule.s.DestroyAllUIItemsWithoutProcessing();
+        Destroy(Run.s.gameObject);
     }
     private void OnReturnToStart() {
         File.Delete(filepath);
