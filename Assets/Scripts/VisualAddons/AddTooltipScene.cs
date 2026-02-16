@@ -11,14 +11,17 @@ public class AddTooltipScene : AddTooltip {
             tooltip.GetComponent<Tooltip>().Position(transform.position.x, transform.position.y, sr.bounds.size.x);
         }
     }
-	protected override void SaveMaterial() {
-		savedMaterial = sr.material;
-	}
 	protected override void HoverEffectOn() {
-		sr.material = UIManager.s.alphaEdgeBlueMat;
+        MaterialPropertyBlock mpb = new MaterialPropertyBlock();
+        sr.GetPropertyBlock(mpb);
+        mpb.SetColor(ShaderManager.s.EdgeColorID, ConstantsManager.s.cyanTransparent);
+        sr.SetPropertyBlock(mpb);
 	}
 	protected override void HoverEffectOff() {
-		sr.material = savedMaterial;
+        MaterialPropertyBlock mpb = new MaterialPropertyBlock();
+        sr.GetPropertyBlock(mpb);
+        mpb.SetColor(ShaderManager.s.EdgeColorID, new Color(0, 0, 0, 0));
+        sr.SetPropertyBlock(mpb);
 	}
     protected void OnMouseEnterCustom() {
 		base.MouseEnter();

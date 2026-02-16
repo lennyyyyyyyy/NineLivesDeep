@@ -21,6 +21,7 @@ public class Crank : Entity {
 		return base.IsInteractable() && !isRotating;
 	} 
 	public override void Interact() {
+        if (!IsInteractable()) return;
 		isRotating = true;
 		HelperManager.s.DelayAction(() => { isRotating = false; }, 0.5f);
 		List<Vector2Int> endCoords = new List<Vector2Int>(),

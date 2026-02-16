@@ -60,6 +60,14 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _NormAlt1:
+        m_Texture: {fileID: 18700000, guid: e69dfc777d3cc4a9997193b4cc50c93c, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _NormAlt2:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _Tex1Alt1:
         m_Texture: {fileID: 2800000, guid: d519d2ec36fc24a9c920823b3a56e386, type: 3}
         m_Scale: {x: 1, y: 1}
@@ -81,6 +89,14 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Tex3Alt2:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _TexAlt1:
+        m_Texture: {fileID: 18700000, guid: bda0c1918c59948b599d4340d01bff5b, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _TexAlt2:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}

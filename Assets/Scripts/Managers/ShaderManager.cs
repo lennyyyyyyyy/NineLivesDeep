@@ -20,7 +20,8 @@ public class ShaderManager : MonoBehaviour {
                         WorldPosID = Shader.PropertyToID("_WorldPosition"), 
                         WorldSizeID = Shader.PropertyToID("_WorldSize"),
                         SeedID = Shader.PropertyToID("_Seed"),
-                        ThemeID = Shader.PropertyToID("_Theme");
+                        ThemeID = Shader.PropertyToID("_Theme"),
+                        EdgeColorID = Shader.PropertyToID("_EdgeColor");
     private void Awake() {
         s = this;
         for (int i=0; i<4; i++) {

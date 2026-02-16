@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: TileNormal
-  m_Shader: {fileID: -6465566751694194690, guid: 950c9742d49bc4a5c9fa98ae95933662, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: 389de167223d146aaae46ebbdffc7a20, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -48,7 +48,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _NormAlt1:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 18700000, guid: a5bc5700cd9ec4d4a970f7e2c690eeb0, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _NormAlt2:
@@ -80,7 +80,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _TexAlt1:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 18700000, guid: 62329dd15f64d411297571b238da003c, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _TexAlt2:

@@ -20,6 +20,9 @@ public class ConstantsManager : MonoBehaviour {
     [System.NonSerialized]
     public int playerMaxMoveHistory = 10,
                finalFloor = 0;
+    [System.NonSerialized]
+    public Color cyan = new Color(2f/3, 1, 1, 1),
+                 cyanTransparent = new Color(2f/3, 1, 1, 0.7f);
 
     private void Awake() {
         s = this;

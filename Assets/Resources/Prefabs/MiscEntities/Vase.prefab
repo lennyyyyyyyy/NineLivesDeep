@@ -49,7 +49,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   marker: {fileID: 6092108452976643232}
   sr: {fileID: 0}
-  setInitialData: 1
   sprite: {fileID: 8537198873322406288, guid: 02101f8ed82ae43d5b98605993f9b7c3, type: 3}
   tooltipData:
     name: Vase
@@ -185,7 +184,7 @@ Transform:
   m_GameObject: {fileID: 6092108452976643232}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.407, z: 0}
+  m_LocalPosition: {x: 0, y: -0.21, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

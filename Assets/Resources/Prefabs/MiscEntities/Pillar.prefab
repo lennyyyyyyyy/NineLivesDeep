@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &3134697839201815325
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 692811569244753577}
+  m_Layer: 0
+  m_Name: Marker
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &692811569244753577
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3134697839201815325}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.304, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7667304941788110848}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5592911073765413415
 GameObject:
   m_ObjectHideFlags: 0
@@ -31,7 +62,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 692811569244753577}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &8614567772615401043
@@ -46,7 +78,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9588dfe67a8649ea842e5b6c0682433, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  marker: {fileID: 5592911073765413415}
+  marker: {fileID: 3134697839201815325}
   sr: {fileID: 0}
   sprite: {fileID: 4269108728175869260, guid: c697fc10d1e024032bd7829896db8804, type: 3}
   tooltipData:
@@ -149,8 +181,8 @@ BoxCollider2D:
   m_Offset: {x: -0.004677534, y: 0.76}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.4889167, y: 0.08669625}
-    oldSize: {x: 1, y: 1.9375}
+    pivot: {x: 0.5, y: 0.18}
+    oldSize: {x: 1, y: 2}
     newSize: {x: 0.59375, y: 0.8125}
     adaptiveTilingThreshold: 0.5
     drawMode: 0

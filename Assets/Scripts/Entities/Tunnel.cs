@@ -3,6 +3,9 @@ using System.Linq;
 using System.Collections.Generic;
 
 public class Tunnel : Entity {
+    public override bool IsInteractable() {
+        return false;
+    }
     protected override void BeforeInit() {
         base.BeforeInit();
         Floor.s.tunnels.Add(this);
