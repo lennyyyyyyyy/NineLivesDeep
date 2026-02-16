@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 412c859786ebe469cabe451036a24b2c
+guid: 62329dd15f64d411297571b238da003c
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -2870127409133748915
-    second: tile_brick_0
+      213: 5034032978620772087
+    second: tile_themed_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -55,13 +55,13 @@ TextureImporter:
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
-  alphaIsTransparency: 1
+  alphaIsTransparency: 0
   spriteTessellationDetail: -1
-  textureType: 8
-  textureShape: 1
+  textureType: 0
+  textureShape: 4
   singleChannelComponent: 0
   flipbookRows: 1
-  flipbookColumns: 1
+  flipbookColumns: 2
   maxTextureSizeSet: 0
   compressionQualitySet: 0
   textureFormatSet: 0
@@ -113,23 +113,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: tile_brick_0
+      name: tile_themed_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 32
+        width: 64
         height: 32
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: d4d7876f3524b28d0800000000000000
-      internalID: -2870127409133748915
+      spriteID: 7feea46925a7cd540800000000000000
+      internalID: 5034032978620772087
       vertices: []
       indices: 
       edges: []
@@ -138,19 +138,16 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 3afa4072fd97e47638f9a3ea8d7ddc06
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
     edges: []
     weights: []
-    secondaryTextures:
-    - texture: {fileID: 2800000, guid: 5cad10245513344cead903af41363d54, type: 3}
-      name: _NormalMap
+    secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable:
-      tile_brick_0: -2870127409133748915
+    nameFileIdTable: {}
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

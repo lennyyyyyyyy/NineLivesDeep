@@ -100,6 +100,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e60f35d738814c23b59b6bc12f9c625, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  sr: {fileID: 0}
 --- !u!1 &2300358240967323500
 GameObject:
   m_ObjectHideFlags: 0
@@ -205,7 +206,13 @@ MonoBehaviour:
   referenceScale: {x: 1, y: 1, z: 1}
   depth: 1
   sortWithDepth: []
-  underTileActive: 1
+  mineMult: 1
   coord: {x: 0, y: 0}
+  entities: []
+  oneUpCount: 0
+  externalDepthImpulse: 0
   sr: {fileID: 6338453205203800448}
+  underTileActive: 1
+  uniqueObstacle: {fileID: 0}
+  uniqueMine: {fileID: 0}
   puddle: {fileID: 634095995805408109}

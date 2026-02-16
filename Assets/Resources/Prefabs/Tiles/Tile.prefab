@@ -49,9 +49,15 @@ MonoBehaviour:
   referenceScale: {x: 1, y: 1, z: 1}
   depth: 1
   sortWithDepth: []
-  underTileActive: 1
+  mineMult: 1
   coord: {x: 0, y: 0}
+  entities: []
+  oneUpCount: 0
+  externalDepthImpulse: 0
   sr: {fileID: 5270562765957722696}
+  underTileActive: 1
+  uniqueObstacle: {fileID: 0}
+  uniqueMine: {fileID: 0}
   tileTexture: {fileID: 6595403976180377615}
 --- !u!1 &6595403976180377615
 GameObject:

@@ -7,7 +7,7 @@ public class Tunnel : Entity {
         base.BeforeInit();
         Floor.s.tunnels.Add(this);
     }
-    private void OnPlayerMoveToCoord(int x, int y) {
+    private void OnPlayerArriveAtCoord(int x, int y) {
         if (GetCoord().x == x && GetCoord().y == y && Floor.s.tunnels.Count > 1) {
             if (Player.s.tunneledLastMove) {
                 Player.s.tunneledLastMove = false;
@@ -20,10 +20,10 @@ public class Tunnel : Entity {
         }
     }
     private void OnEnable() {
-        EventManager.s.OnPlayerMoveToCoord += OnPlayerMoveToCoord;
+        EventManager.s.OnPlayerArriveAtCoord += OnPlayerArriveAtCoord;
     }
     private void OnDisable() {
-        EventManager.s.OnPlayerMoveToCoord -= OnPlayerMoveToCoord;
+        EventManager.s.OnPlayerArriveAtCoord -= OnPlayerArriveAtCoord;
     }
     private void OnDestroy() {
         if (Floor.s != null) {

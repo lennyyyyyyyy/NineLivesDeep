@@ -48,7 +48,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   marker: {fileID: 5592911073765413415}
   sr: {fileID: 0}
-  setInitialData: 1
   sprite: {fileID: 7121960792398154069, guid: b49b6f15c9375465cac54d40618ee701, type: 3}
   tooltipData:
     name: Crank
@@ -81,7 +80,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -876546973899608171, guid: d6b690c47f05747c9bfc12d84ca796db, type: 3}
+  - {fileID: 2100000, guid: 9896cbbc602044861857667aa03d9187, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

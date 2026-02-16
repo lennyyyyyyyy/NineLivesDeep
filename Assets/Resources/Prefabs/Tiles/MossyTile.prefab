@@ -4939,9 +4939,15 @@ MonoBehaviour:
   referenceScale: {x: 1, y: 1, z: 1}
   depth: 1
   sortWithDepth: []
-  underTileActive: 1
+  mineMult: 1
   coord: {x: 0, y: 0}
+  entities: []
+  oneUpCount: 0
+  externalDepthImpulse: 0
   sr: {fileID: 2908628964377075787}
+  underTileActive: 1
+  uniqueObstacle: {fileID: 0}
+  uniqueMine: {fileID: 0}
   mossRowCount: 20
   grass1RowCount: 12
   grass2RowCount: 5

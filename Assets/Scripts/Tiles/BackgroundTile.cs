@@ -6,16 +6,9 @@ public class BackgroundTile : Parallax {
 	public SpriteRenderer sr;
 
     protected override void Start() {
-        base.Start();
         seed = new Vector4(Random.Range(0f, 1000f), Random.Range(0f, 1000f), Random.Range(0f, 1000f), Random.Range(0f, 1000f));
-
-		//put the correct theme for the floor
-		MaterialPropertyBlock mpb = new MaterialPropertyBlock();
-		sr.GetPropertyBlock(mpb);
-		mpb.SetFloat(ShaderManager.s.ThemeID, Floor.s.floor/3 + 1);
-		sr.SetPropertyBlock(mpb);
-
         transform.eulerAngles = Random.Range(0,4) * Vector3.forward * 90;
+        base.Start();
     }
     protected override void Update() {
         base.Update();

@@ -48,7 +48,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   marker: {fileID: 5592911073765413415}
   sr: {fileID: 0}
-  setInitialData: 1
   sprite: {fileID: 4269108728175869260, guid: c697fc10d1e024032bd7829896db8804, type: 3}
   tooltipData:
     name: Pillar
@@ -81,7 +80,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -876546973899608171, guid: d6b690c47f05747c9bfc12d84ca796db, type: 3}
+  - {fileID: 2100000, guid: f582a929914bf483ba09cf209751d1b5, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

@@ -32,8 +32,8 @@ public class Floor : MonoBehaviour {
 	private ParticleSystemForceField windZone;
     
     public float Intro(string newFloorType, int newFloor) {
-        EventManager.s.OnFloorChangeBeforeIntro?.Invoke();
-        GameManager.s.floorGameState = GameManager.GameState.FLOOR_UNSTABLE;
+        EventManager.s.OnFloorIntroStart?.Invoke();
+        GameManager.s.floorState = GameManager.GameState.FLOOR_UNSTABLE;
 		// FLOOR TRANSITION FIRST STEP - INTRO SEQUENCE
 		floorType = newFloorType;
 		floor = newFloor;
@@ -54,6 +54,7 @@ public class Floor : MonoBehaviour {
         }, time);
 		time += 2.8f;
 
+        EventManager.s.OnFloorIntroEnd?.Invoke();
         return time;
     }
 	public void IntroAndCreateFloor(string newFloorType, int newFloor) {
@@ -102,7 +103,7 @@ public class Floor : MonoBehaviour {
 			PositionTilesUnbuilt();
 			BuildTiles(2f, 2f);
 			MainCamera.s.ZoomTo(12.5f, 1f);	
-            GameManager.s.floorGameState = GameManager.GameState.FLOOR_STABLE;
+            GameManager.s.floorState = GameManager.GameState.FLOOR_STABLE;
             PlayerUIItemModule.s.OrganizeFlags();
             floorStartTime = Time.time;
         }, time);
@@ -142,7 +143,7 @@ public class Floor : MonoBehaviour {
 			PositionTilesUnbuilt();
 			BuildTiles(2f, 2f);
 			MainCamera.s.ZoomTo(12.5f, 1f);	
-            GameManager.s.floorGameState = GameManager.GameState.FLOOR_STABLE;
+            GameManager.s.floorState = GameManager.GameState.FLOOR_STABLE;
             PlayerUIItemModule.s.OrganizeFlags();
             floorStartTime = Time.time - loadData.floorStartTime;
         }, time);
@@ -249,6 +250,7 @@ public class Floor : MonoBehaviour {
 		//random chance for trial entrance
 		if (Random.value < ConstantsManager.s.minefieldTrialChance) {
             Vector2Int trialCoord = potentialTiles[Random.Range(0, potentialTiles.Count)];
+            Debug.Log("trial entrance at " + trialCoord);
 			if (!TileExistsAt(trialCoord.x, trialCoord.y)) {
 				GameObject t = ReplaceTile(PrefabManager.s.tileActionPrefab, trialCoord.x, trialCoord.y);
 				t.GetComponent<ActionTile>().Init(ActionTile.ActionCode.EXITTOTRIAL);
@@ -384,7 +386,7 @@ public class Floor : MonoBehaviour {
 		for (int i = 0; i < width-1; i++) {
 			for (int j = 0; j < height-1; j++) {
 				if (!TileExistsAt(i, j)) {
-					ReplaceTile(PrefabManager.s.tileActionPrefab, i, j);
+					ReplaceTile(PrefabManager.s.tilePrefab, i, j);
                     float mineMult = GetTile(i, j).GetComponent<Tile>().mineMult * Player.s.modifiers.mineSpawnMult;
                     float totalMineChance = mineMult * (ConstantsManager.s.baseMineChance + ConstantsManager.s.mineChanceScaling * floor);
 					if (PrelimMineSpawnCheck(i, j) && Random.value < totalMineChance) {
@@ -599,5 +601,9 @@ public class Floor : MonoBehaviour {
 		windDirection = Quaternion.AngleAxis(Mathf.PerlinNoise(Player.s.modifiers.windFluctuation * Time.time, 0) * 1000f, Vector3.forward) * Vector3.right;
 		windZone.directionX = windDirection.x * Player.s.modifiers.windStrength * 1.5f;
 		windZone.directionY = windDirection.y * Player.s.modifiers.windStrength * 1.5f;
+        if (floorType == "trial" && GameManager.s.floorState == GameManager.GameState.FLOOR_STABLE && Time.time - floorStartTime > ConstantsManager.s.timeTrialDuration) {
+            Player.s.Die();
+            EventManager.s.OnGameLose?.Invoke();
+        }
 	}
 }

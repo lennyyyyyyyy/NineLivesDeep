@@ -15,7 +15,8 @@ public class ConstantsManager : MonoBehaviour {
                  buttonIdleStrength = 15f,
                  buttonIdleSpeed = 2f,
                  baseMineChance = 0.2f,
-                 mineChanceScaling = 0.6f;
+                 mineChanceScaling = 0.6f,
+                 timeTrialDuration = 60f;
     [System.NonSerialized]
     public int playerMaxMoveHistory = 10,
                finalFloor = 0;

@@ -77,7 +77,7 @@ SpriteRenderer:
   m_SortingLayerID: -1993326907
   m_SortingLayer: 4
   m_SortingOrder: 0
-  m_Sprite: {fileID: 4110330241760252739, guid: 9ff1f305ffb554fba9fa48efe05bae56, type: 3}
+  m_Sprite: {fileID: 470921849537345613, guid: 034c5bb993dde4ae7b592a330367e28b, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -104,6 +104,12 @@ MonoBehaviour:
   referenceScale: {x: 1, y: 1, z: 1}
   depth: 1
   sortWithDepth: []
-  underTileActive: 0
+  mineMult: 1
   coord: {x: 0, y: 0}
+  entities: []
+  oneUpCount: 0
+  externalDepthImpulse: 0
   sr: {fileID: 6338453205203800448}
+  underTileActive: 0
+  uniqueObstacle: {fileID: 0}
+  uniqueMine: {fileID: 0}

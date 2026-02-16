@@ -19,7 +19,7 @@ public class GameManager : MonoBehaviour {
     public static GameManager s;
     [System.NonSerialized]
     public GameState gameState = GameState.START, 
-                     floorGameState = GameState.FLOOR_UNSTABLE;
+                     floorState = GameState.FLOOR_UNSTABLE;
     public Scene scene;
     public PhysicsScene2D physicsScene;
 

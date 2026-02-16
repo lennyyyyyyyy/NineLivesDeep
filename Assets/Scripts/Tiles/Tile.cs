@@ -57,7 +57,6 @@ public class Tile : Parallax {
         return false;
     }
     protected override void Start() {
-        base.Start();
         underTile = new GameObject("UnderTile");
         underTile.transform.parent = transform;
         underTile.AddComponent<Parallax>();
@@ -67,11 +66,7 @@ public class Tile : Parallax {
         collider = gameObject.AddComponent<BoxCollider2D>();
         collider.isTrigger = true;
         period = Random.Range(4f, 6f);
-		//put the correct theme for the floor
-		MaterialPropertyBlock mpb = new MaterialPropertyBlock();
-		sr.GetPropertyBlock(mpb);
-		mpb.SetFloat(ShaderManager.s.ThemeID, Floor.s.floor/3 + 1);
-		sr.SetPropertyBlock(mpb);
+        base.Start();
     }
     protected override void Update() {
         base.Update();
