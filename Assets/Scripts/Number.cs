@@ -2,12 +2,27 @@ using UnityEngine;
 using TMPro;
 
 public class Number : MonoBehaviour {
-	protected Map map;
+	private Map map;
     [System.NonSerialized]
 	public Vector2Int coord;
     [System.NonSerialized]
     public int num;
-	protected TMP_Text text;
+	private TMP_Text text;
+    private Color[] colors;
+
+    private void Awake() {
+        colors = new Color[] {
+            ConstantsManager.s.white,
+            ConstantsManager.s.blue,
+            ConstantsManager.s.green,
+            ConstantsManager.s.red,
+            ConstantsManager.s.darkBlue,
+            ConstantsManager.s.darkRed,
+            ConstantsManager.s.cyan,
+            ConstantsManager.s.black,
+            ConstantsManager.s.gray
+        };
+    }
 	private void Update() {
 		if (Random.value < 1 - Mathf.Pow(1 - Player.s.modifiers.mapNumberDisappearChancePerSecond, Time.deltaTime)) {
 			Destroy(gameObject);
@@ -23,9 +38,14 @@ public class Number : MonoBehaviour {
     public void SetNum(int num) {
         this.num = num;
         text.text = num.ToString();
-        LeanTween.scale(gameObject, Vector3.one, Random.Range(0.5f, 1.5f)).setRepeat(-1).setLoopPingPong().setEase(LeanTweenType.easeInOutCubic);
-        transform.eulerAngles = Vector3.forward * Random.Range(-30f, -10f);
-        LeanTween.rotate(gameObject, Vector3.forward * Random.Range(10f, 30f), Random.Range(0.5f, 1.5f)).setRepeat(-1).setLoopPingPong().setEase(LeanTweenType.easeInOutCubic);
+        //LeanTween.scale(gameObject, Vector3.one, Random.Range(0.5f, 1.5f)).setRepeat(-1).setLoopPingPong().setEase(LeanTweenType.easeInOutCubic);
+        transform.eulerAngles = Vector3.forward * Random.Range(-20f, 20f);
+        //LeanTween.rotate(gameObject, Vector3.forward * Random.Range(10f, 30f), Random.Range(0.5f, 1.5f)).setRepeat(-1).setLoopPingPong().setEase(LeanTweenType.easeInOutCubic);
+        if (num >= 0 && num < colors.Length) {
+            text.color = colors[num];
+        } else {
+            text.color = ConstantsManager.s.white;
+        }
     }
     public void Enter() {
         text.enabled = true;

@@ -15,7 +15,7 @@ public class PickupSprite : CorrespondingSprite {
 
     protected Light2D light;
 	protected TMP_Text tmpro;
-    public static float droppedScale = 0.6f, hoveredScale = 0.8f, hoveredOffset;
+    public static float hoveredScale = 0.8f, hoveredOffset;
 
     protected override void BeforeInit() {
         base.BeforeInit();
@@ -28,6 +28,10 @@ public class PickupSprite : CorrespondingSprite {
         if (hovered) {
             HelperManager.s.FloatingHover(transform, hoveredScale, hoveredOffset, Vector3.zero);
         }
+    }
+    public override void Init() {
+        base.Init();
+        defaultScale = ConstantsManager.s.flagSpriteDroppedScale;
     }
     public virtual void Init(Type correspondingUIType, int? price = null, SpawnType? spawnType = null, Vector2Int? spawnCoord = null, int? count = null) {
 		this.price = price ?? this.price;
@@ -57,10 +61,6 @@ public class PickupSprite : CorrespondingSprite {
 		}
         
     }
-	public override bool Move(GameObject tile, bool reposition = true) {
-		transform.localScale = droppedScale * Vector3.one;
-		return base.Move(tile, reposition);
-	}
     protected override void OnMouseEnterCustom() {
 		base.OnMouseEnterCustom();
         hoveredOffset = Random.Range(0f, 1f);
@@ -71,7 +71,7 @@ public class PickupSprite : CorrespondingSprite {
     protected override void OnMouseExitCustom() {
 		base.OnMouseExitCustom();
         LeanTween.cancel(gameObject);
-        LeanTween.scale(gameObject, droppedScale * Vector3.one, 0.15f).setEase(LeanTweenType.easeInOutCubic);
+        LeanTween.scale(gameObject, ConstantsManager.s.flagSpriteDroppedScale * Vector3.one, 0.15f).setEase(LeanTweenType.easeInOutCubic);
         LeanTween.rotateLocal(gameObject, Vector3.zero, 0.15f).setEase(LeanTweenType.easeInOutCubic);
         LeanTween.cancel(light.gameObject);
         LeanTween.value(light.gameObject, (float f) => { light.intensity = f; }, light.intensity, 3f, 0.25f).setEase(LeanTweenType.easeInOutCubic);

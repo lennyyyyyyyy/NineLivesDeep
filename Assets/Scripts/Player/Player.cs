@@ -289,10 +289,10 @@ public class Player : Entity {
             }
         }
     } 
-	public override bool Move(int x, int y, bool reposition = true) {
-		return Move(x, y, reposition, true);
+	public override bool Move(int x, int y, bool reposition = true, bool rescale = true) {
+		return Move(x, y, reposition, rescale, true);
 	}
-	public virtual bool Move(int x, int y, bool reposition = true, bool animate = true) {
+	public virtual bool Move(int x, int y, bool reposition = true, bool rescale = true, bool animate = true) {
         if (!CoordAllowed(x, y)) {
 			Debug.Log("Tried to move player to invalid coord " + x + ", " + y);
             return false;
@@ -301,10 +301,6 @@ public class Player : Entity {
             if (x - GetCoord().x > 0) {
                 transform.localScale = Vector3.one;
             } else if (x - GetCoord().x < 0) {
-                transform.localScale = new Vector3(-1, 1, 1);
-            } else if (transform.localScale.x > 0) {
-                transform.localScale = Vector3.one;
-            } else {
                 transform.localScale = new Vector3(-1, 1, 1);
             }
             if (y - GetCoord().y >= 0) {

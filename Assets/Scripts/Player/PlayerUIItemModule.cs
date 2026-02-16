@@ -2,12 +2,17 @@ using UnityEngine;
 using System.Collections.Generic;
 using System;
 using System.Linq;
+using Random = UnityEngine.Random;
 
 /*
  * This module keeps track of the player's UI items (flags, curses, mines)
  * It also keeps track of seen and unseen for spawning purposes
  * Being associated with the Player, it is reloaded per run
  */
+public class FlagPool {
+    public List<Type> chooseUnseen = new List<Type>(),
+                      chooseAny = new List<Type>();
+}
 public class PlayerUIItemModule : MonoBehaviour {
     public static PlayerUIItemModule s;
 
@@ -22,7 +27,6 @@ public class PlayerUIItemModule : MonoBehaviour {
 						 minesSeen = new HashSet<Type>(),
                          minesDefused = new HashSet<Type>(); 
 	public List<Type> flagsUnseen,
-                      consumableFlagsUnseen,
                       cursesUnseen,
                       minesUnseen,
                       minesUndefused;
@@ -33,10 +37,30 @@ public class PlayerUIItemModule : MonoBehaviour {
     private void Awake() {
         s = this;
 		flagsUnseen = CatalogManager.s.allFlagTypes.ToList();
-		consumableFlagsUnseen = CatalogManager.s.allFlagTypes.Where(type => typeof(Consumable).IsAssignableFrom(type)).ToList();
 		cursesUnseen = CatalogManager.s.allCurseTypes.ToList();
 		minesUnseen = CatalogManager.s.allMineTypes.ToList();
         minesUndefused = CatalogManager.s.allMineTypes.ToList();
+    }
+    public Type GetRandomFlag(FlagPool flagPool) {
+        List<Type> options = new List<Type>();
+        foreach (Type unseenType in flagPool.chooseUnseen) {
+            foreach (Type flagType in flagsUnseen) {
+                FlagData flagData = CatalogManager.s.typeToData[flagType] as FlagData;
+                if (unseenType.IsAssignableFrom(flagType) && flagData.randomlyChoosable) {
+                    options.Add(flagType);
+                }
+            }
+        }
+        foreach (Type anyType in flagPool.chooseAny) {
+            foreach (Type flagType in CatalogManager.s.allFlagTypes) {
+                FlagData flagData = CatalogManager.s.typeToData[flagType] as FlagData;
+                if (anyType.IsAssignableFrom(flagType) && flagData.randomlyChoosable) {
+                    options.Add(flagType);
+                }
+            }
+        }
+        if (options.Count == 0) return typeof(Base);
+        return options[Random.Range(0, options.Count)];
     }
     public void LoadUIItems(LoadData loadData) {
         foreach (Type type in loadData.flagsSeen) {
@@ -142,7 +166,6 @@ public class PlayerUIItemModule : MonoBehaviour {
     public void NoticeFlag(Type type) {
 		flagsSeen.Add(type);
 		flagsUnseen.Remove(type);
-		consumableFlagsUnseen.Remove(type);
     }
     public void ProcessAddedFlag(Flag flag) {
         flags.Add(flag.gameObject);

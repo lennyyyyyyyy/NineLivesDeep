@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using System;
+using System.Collections.Generic;
 using Random = UnityEngine.Random;
 
 public class Chocolate : Consumable {
@@ -8,10 +9,12 @@ public class Chocolate : Consumable {
         if (!usable) return;
         You you = PlayerUIItemModule.s.typeToInstances[typeof(You)][0].GetComponent<You>();
         you.UpdateCount(you.count/2);
-        Type randomType = PlayerUIItemModule.s.flagsUnseen[Random.Range(0, PlayerUIItemModule.s.flagsUnseen.Count)]; 
-        Instantiate(PrefabManager.s.flagPrefab).AddComponent(randomType);
-        randomType = PlayerUIItemModule.s.flagsUnseen[Random.Range(0, PlayerUIItemModule.s.flagsUnseen.Count)];
-        Instantiate(PrefabManager.s.flagPrefab).AddComponent(randomType);
+        FlagPool flagPool = new FlagPool() {
+            chooseUnseen = new List<Type>() { typeof(Placeable), typeof(Map) },
+            chooseAny = new List<Type>() { typeof(Passive), typeof(Consumable) }
+        };
+        Instantiate(PrefabManager.s.flagPrefab).AddComponent(PlayerUIItemModule.s.GetRandomFlag(flagPool));
+        Instantiate(PrefabManager.s.flagPrefab).AddComponent(PlayerUIItemModule.s.GetRandomFlag(flagPool));
         UpdateCount(count - 1);
     }
 }

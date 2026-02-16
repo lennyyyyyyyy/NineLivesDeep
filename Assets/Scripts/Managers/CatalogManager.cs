@@ -49,6 +49,7 @@ public class FlagData : UIItemData {
 	public int defaultCount = 0; 
 	public bool showCount = false;
 	public List<string> allowedFloorTypes = new List<string>() {"minefield"};
+    public bool randomlyChoosable = true;
 	public FlagData(Type type,
 				      string resourceName, 
 					  TooltipData tooltipData, 
@@ -58,7 +59,9 @@ public class FlagData : UIItemData {
                       bool? placeableReplenish = null,
 					  int? defaultCount = null,
 					  bool? showCount = null,
-					  List<string> allowedFloorTypes = null) : base(type, "flag", resourceName, tooltipData) {
+					  List<string> allowedFloorTypes = null,
+                      bool? randomlyChoosable = null
+                      ) : base(type, "flag", resourceName, tooltipData) {
 		this.placeableSpriteType = placeableSpriteType ?? this.placeableSpriteType;
 		this.placeableRemovesMines = placeableRemovesMines ?? this.placeableRemovesMines;
         this.placeableObstacle = placeableObstacle ?? this.placeableObstacle;
@@ -66,15 +69,13 @@ public class FlagData : UIItemData {
 		this.defaultCount = defaultCount ?? this.defaultCount;
 		this.showCount = showCount ?? (placeableSpriteType != null || defaultCount != null);
 		this.allowedFloorTypes = allowedFloorTypes ?? this.allowedFloorTypes;	
+        this.randomlyChoosable = randomlyChoosable ?? this.randomlyChoosable;
 
 		if (this.placeableSpriteType != null) {
 			CatalogManager.s.spriteTypeToUIType[this.placeableSpriteType] = this.type;
             new TypeData(this.placeableSpriteType);
 		}
 		CatalogManager.s.allFlagTypes.Add(this.type);
-        if (typeof(Consumable).IsAssignableFrom(this.type)) {
-            CatalogManager.s.allConsumableFlagTypes.Add(this.type);
-        }
 	}
 }
 public class CurseData : UIItemData {
@@ -103,7 +104,6 @@ public class CatalogManager : MonoBehaviour {
 	public Dictionary<Type, TypeData> typeToData = new Dictionary<Type, TypeData>();
 	public Dictionary<Type, Type> spriteTypeToUIType = new Dictionary<Type, Type>();
 	public List<Type> allFlagTypes = new List<Type>();
-    public List<Type> allConsumableFlagTypes = new List<Type>();
 	public List<Type> allCurseTypes = new List<Type>();
 	public List<Type> allMineTypes = new List<Type>();
     private void Awake() {
@@ -121,7 +121,7 @@ public class CatalogManager : MonoBehaviour {
         new PrefabData(typeof(Puddle), PrefabManager.s.tilePuddlePrefab);
         //placeable flags
         new FlagData(typeof(Base), "base", new TooltipData("Flag", "Nostalgic, isn't it?", "Drag and drop these wherever you think mines are."),
-                     defaultCount: 0,
+                     defaultCount: 3,
                      placeableSpriteType: typeof(BaseSprite),
                      placeableReplenish: false,
                      allowedFloorTypes: new List<string>{"minefield", "trial"});
@@ -144,14 +144,16 @@ public class CatalogManager : MonoBehaviour {
                      placeableRemovesMines: false,
                      placeableObstacle: false,
                      placeableReplenish: false,
-                     allowedFloorTypes: new List<string>{"minefield", "trial"});
+                     allowedFloorTypes: new List<string>{"minefield", "trial"},
+                     randomlyChoosable: false);
         new FlagData(typeof(Raincloud), "raincloud", new TooltipData("Raincloud Flag", "How does rain even get down here?", "Guarantees a puddle at the same coordinates on all following floors."),
+                     defaultCount: 3,
                      placeableSpriteType: typeof(RaincloudSprite));
         new FlagData(typeof(Stop), "stop", new TooltipData("Stop Flag", "Right meow.", "Disables the passive abilities of surrounding mines."),
                      defaultCount: 4,
                      placeableSpriteType: typeof(StopSprite));
         //passive flags
-        new FlagData(typeof(Aromatic), "aromatic", new TooltipData("Aromatic Flag", "Breathe it in.", "You can now sniff out mines an extra 1 tile away. Detect mice."));
+        new FlagData(typeof(Aromatic), "aromatic", new TooltipData("Aromatic Flag", "Breathe it in.", "You can now sniff out mines an extra 1 tile away."));
         new FlagData(typeof(Catnip), "catnip", new TooltipData("Catnip Flag", "Don't do drugs, gamers.", "You can now jump to tiles two units away."));
         new FlagData(typeof(Gambling), "gambling", new TooltipData("Gambling Addiction", "It's only a crippling addiction if you lose.", "Remove all health. Mines have an 80% chance to do nothing and a 20% chance to kill you instantly."));
         new FlagData(typeof(OneUp), "1up", new TooltipData("One-Up Flag", "Nintendo please don't sue me.", "Two random squares on the floor gives you an additional life."));
@@ -183,11 +185,12 @@ public class CatalogManager : MonoBehaviour {
         new FlagData(typeof(Shovel), "shovel", new TooltipData("Shovel Flag", "An upgrade for your tiny claws.", "Dig, and skip to the start of the next floor."),
                      defaultCount: 1);
         new FlagData(typeof(Exit), "exit", new TooltipData("Exit Flag", "get me out get me out", "Save and exit the current run."),
-                     defaultCount: 1);
+                     defaultCount: 1,
+                     randomlyChoosable: false);
         new FlagData(typeof(Kamikaze), "kamikaze", new TooltipData("Kamikaze Flag", "C'mon, you've got lives to spare.", "Explode a 3x3 area around you, killing yourself in the process."),
                      defaultCount: 10);
-        new FlagData(typeof(Yarn), "yarn", new TooltipData("Yarn Flag", "Cats love yarn.", "Rolls in a chosen direction until hitting an obstacle or detonating a mine."),
-                     defaultCount: 10);
+        //new FlagData(typeof(Yarn), "yarn", new TooltipData("Yarn Flag", "Cats love yarn.", "Rolls in a chosen direction until hitting an obstacle or detonating a mine."),
+        //             defaultCount: 10);
         new FlagData(typeof(Fertilizer), "fertilizer", new TooltipData("Fertilizer Flag", "Can't reap what you don't sow.", "Turn one adjacent tile into grass, turn another if you're on grass."),
                      defaultCount: 10);
         new FlagData(typeof(HailMary), "hailmary", new TooltipData("Hail Mary Flag", "Only one way to find out.", "Teleport to a random undiscovered tile."),

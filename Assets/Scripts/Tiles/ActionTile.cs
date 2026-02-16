@@ -41,9 +41,19 @@ public class ActionTile : Tile {
 				t.PositionUnbuilt();
 				t.Build(2f);
 				if (Player.s.floorDeathCount > 0) {
-					Floor.s.PlacePickupSprite(CatalogManager.s.allConsumableFlagTypes, PickupSprite.SpawnType.TRIAL, 0, new Vector2Int(Floor.s.width-1, Floor.s.height-2));
+					Floor.s.PlacePickupSprite(
+                        new FlagPool() {
+                            chooseUnseen = new List<Type>() { typeof(Consumable) }
+                        },
+                        PickupSprite.SpawnType.TRIAL, 0, new Vector2Int(Floor.s.width-1, Floor.s.height-2)
+                    );
 				} else {
-					Floor.s.PlacePickupSprite(PlayerUIItemModule.s.flagsUnseen, PickupSprite.SpawnType.TRIAL, 0, new Vector2Int(Floor.s.width-1, Floor.s.height-2));
+					Floor.s.PlacePickupSprite(
+                        new FlagPool() {
+                            chooseUnseen = new List<Type>() { typeof(Flag) }
+                        },
+                        PickupSprite.SpawnType.TRIAL, 0, new Vector2Int(Floor.s.width-1, Floor.s.height-2)
+                    );
 				}
 			};
 		} else if (actionCode == ActionCode.WINGAME) {

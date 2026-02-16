@@ -60,7 +60,7 @@ public class ShaderManager : MonoBehaviour {
         LeanTween.value(underDarkenTarget, (float f) => { Shader.SetGlobalFloat(UnderDarkenID, f); }, Shader.GetGlobalFloat(UnderDarkenID), brightness, duration).setEase(LeanTweenType.easeInOutCubic);
     }
     private void SetGlobalTheme() {
-        Shader.SetGlobalFloat(ThemeID, Floor.s.floor / 3);
+        Shader.SetGlobalFloat(ThemeID, Floor.s.floor / ConstantsManager.s.themeFreq);
     }
     private void OnEnable() {
         EventManager.s.OnFloorIntroEnd += SetGlobalTheme;

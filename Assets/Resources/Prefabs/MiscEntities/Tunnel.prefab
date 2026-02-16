@@ -81,7 +81,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -876546973899608171, guid: d6b690c47f05747c9bfc12d84ca796db, type: 3}
+  - {fileID: 2100000, guid: 487c39ae2c9334c4ba8a078ef4d633b2, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -151,7 +151,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.9375, y: 0.96875}
+    oldSize: {x: 1, y: 1}
     newSize: {x: 0.59375, y: 0.8125}
     adaptiveTilingThreshold: 0.5
     drawMode: 0

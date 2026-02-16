@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 public class MouseSprite : MineSprite {
     private float cooldown, timer = 0;
-    public override bool Move(int x, int y, bool reposition = true) {
+    public override bool Move(int x, int y, bool reposition = true, bool rescale = true) {
         cooldown = Random.Range(10f, 20f);
-        return base.Move(x, y, reposition);
+        return base.Move(x, y, reposition, rescale);
     }
     private void Move() {
 		cooldown = Random.Range(10f, 20f);

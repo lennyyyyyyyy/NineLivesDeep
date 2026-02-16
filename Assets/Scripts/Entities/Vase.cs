@@ -1,4 +1,6 @@
 using UnityEngine;
+using System;
+using System.Collections.Generic;
 
 public class Vase : Entity {
     public override bool IsInteractable() {
@@ -6,7 +8,12 @@ public class Vase : Entity {
     }
     private void OnExplosionAtCoord(int x, int y, GameObject source) {
         if (Mathf.Abs(x - GetCoord().x) <= 1 && Mathf.Abs(y - GetCoord().y) <= 1) {
-            Floor.s.PlacePickupSprite(CatalogManager.s.allConsumableFlagTypes, PickupSprite.SpawnType.RANDOM, 0, GetCoord());
+            Floor.s.PlacePickupSprite(
+                new FlagPool() {
+                    chooseAny = new List<Type>() { typeof(Consumable) }
+                },
+                PickupSprite.SpawnType.RANDOM, 0, GetCoord()
+            );
             Remove();
         }
     }

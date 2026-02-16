@@ -23,8 +23,8 @@ public class MineSprite : Entity {
         EventManager.s.OnExplosionAtCoord?.Invoke(GetCoord().x, GetCoord().y, gameObject);
 		Remove();
     }
-	public override bool Move(GameObject tile, bool reposition = true) {
-		if (base.Move(tile, reposition)) {
+	public override bool Move(GameObject tile, bool reposition = true, bool rescale = true) {
+		if (base.Move(tile, reposition, rescale)) {
             HelperManager.s.DelayActionFrames(() => {
                 Player.s.TriggerMines();
                 Player.s.discoverTiles();

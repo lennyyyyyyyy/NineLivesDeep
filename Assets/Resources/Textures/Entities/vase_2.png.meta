@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 02101f8ed82ae43d5b98605993f9b7c3
+guid: 80d598c06874a4a35a1293b565eb8b05
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 8537198873322406288
-    second: vase_0
+      213: 4491462454413592661
+    second: vase_2_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -24,7 +24,7 @@ TextureImporter:
     heightScale: 0.25
     normalMapFilter: 0
     flipGreenChannel: 0
-  isReadable: 1
+  isReadable: 0
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
@@ -37,7 +37,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 0
+    filterMode: 1
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -51,7 +51,7 @@ TextureImporter:
   spriteMeshType: 0
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 32
+  spritePixelsToUnits: 100
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -75,7 +75,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 0
+    textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -113,23 +113,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: vase_0
+      name: vase_2_0
       rect:
         serializedVersion: 2
-        x: 0
+        x: 1
         y: 0
-        width: 32
+        width: 29
         height: 32
-      alignment: 9
-      pivot: {x: 0.5057204, y: 0.24092549}
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 0914f3da4293a7670800000000000000
-      internalID: 8537198873322406288
+      spriteID: 55883553e41e45e30800000000000000
+      internalID: 4491462454413592661
       vertices: []
       indices: 
       edges: []
@@ -138,19 +138,17 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 3c8c500f6abc04120a0e3f3bc048bfe6
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
     edges: []
     weights: []
-    secondaryTextures:
-    - texture: {fileID: 2800000, guid: 3aa88e8ea42ec40dd9679048edce122d, type: 3}
-      name: _NormalMap
+    secondaryTextures: []
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      vase_0: 8537198873322406288
+      vase_2_0: 4491462454413592661
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

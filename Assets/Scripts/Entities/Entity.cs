@@ -7,6 +7,7 @@ public class Entity : VerticalObject {
 
 	protected AddTooltipScene addTooltip;
 	protected bool hovered = false;
+    protected float defaultScale = 1f;
 	
     protected virtual void BeforeInit() {
         sprite = sr.sprite;
@@ -50,7 +51,7 @@ public class Entity : VerticalObject {
 			return Floor.INVALID_COORD;
 		}
 	}
-	public virtual bool Move(GameObject tile, bool reposition = true) {
+	public virtual bool Move(GameObject tile, bool reposition = true, bool rescale = true) {
         Tile tileComponent = tile.GetComponent<Tile>();
         if (tile == null || !CoordAllowed(tileComponent.coord.x, tileComponent.coord.y)) {
 			Debug.Log("Tried to move entity to invalid coord " + tileComponent.coord.ToString());
@@ -58,9 +59,10 @@ public class Entity : VerticalObject {
         }
         Remove(false);
 		tileComponent.AddEntity(gameObject);
-		Vector3 oldScale = transform.localScale;
 		transform.parent = tile.transform;
-		transform.localScale = oldScale;	
+        if (rescale) {
+            transform.localScale = transform.localScale.normalized * 1.73205f * defaultScale;	
+        }
 		if (reposition) {
 			transform.localPosition = Vector3.zero;
 		}
@@ -68,8 +70,8 @@ public class Entity : VerticalObject {
         Player.s.updatePrints();
         return true;
 	}
-	public virtual bool Move(int x, int y, bool reposition = true) {
-        return Move(Floor.s.GetTile(x, y), reposition);
+	public virtual bool Move(int x, int y, bool reposition = true, bool rescale = true) {
+        return Move(Floor.s.GetTile(x, y), reposition, rescale);
 	}
 	public virtual void Remove(bool destroy = true) {
 		if (GetTile() != null) {

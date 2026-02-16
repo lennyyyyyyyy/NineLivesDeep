@@ -59,7 +59,7 @@ public class Floor : MonoBehaviour {
     }
 	public void IntroAndCreateFloor(string newFloorType, int newFloor) {
         float time = Intro(newFloorType, newFloor);
-		if (floorType == "minefield") {
+		if (floorType == "minefield" && floor % ConstantsManager.s.mineFreq == 0) {
 			HelperManager.s.DelayAction(() => {
 				HelperManager.s.InstantiateBubble(Vector3.zero, "a mine appears...", new Color(0.5f, 0.5f, 0.5f), 2f, 2f);
 			}, time);
@@ -74,14 +74,13 @@ public class Floor : MonoBehaviour {
 			time += 2.8f;
 		}
 
-		if (floorType == "minefield" && floor % 3 == 0) {
+		if (floorType == "minefield" && floor % ConstantsManager.s.curseFreq == 0) {
 			HelperManager.s.DelayAction(() => {
 				HelperManager.s.InstantiateBubble(Vector3.zero, "CURSED", new Color(0.5f, 0, 0), 2f, 2f);
 			}, time);
 			HelperManager.s.DelayAction(() => {
 				GameObject curse = Instantiate(PrefabManager.s.cursePrefab, Vector3.zero, Quaternion.identity);
-                curse.AddComponent<Taken>();
-                //curse.AddComponent(PlayerUIItemModule.s.cursesUnseen[Random.Range(0, PlayerUIItemModule.s.cursesUnseen.Count)]);
+                curse.AddComponent(PlayerUIItemModule.s.cursesUnseen[Random.Range(0, PlayerUIItemModule.s.cursesUnseen.Count)]);
 			}, time + 1f);
 			time += 2.8f;
 		}
@@ -366,7 +365,12 @@ public class Floor : MonoBehaviour {
             }
         }
         for (int i=0; i<4; i++) {
-            PlacePickupSprite(PlayerUIItemModule.s.flagsUnseen, PickupSprite.SpawnType.SHOP, prices[i], pickupCoords[i]);
+            PlacePickupSprite(
+                new FlagPool() {
+                    chooseUnseen = new List<Type>() { typeof(Flag) }
+                },
+                PickupSprite.SpawnType.SHOP, prices[i], pickupCoords[i]
+            );
         }
 
         // extra flags - ex. Car passive
@@ -375,7 +379,12 @@ public class Floor : MonoBehaviour {
                                                                      !(c.x == 0 && c.y == 0)).ToList();
         HelperManager.s.Shuffle(ref potentialExtraFlagCoords);
         for (int i=0; i<Mathf.Min(Player.s.modifiers.extraShopFlags, potentialExtraFlagCoords.Count); i++) {
-            PlacePickupSprite(PlayerUIItemModule.s.flagsUnseen, PickupSprite.SpawnType.SHOP, 0, potentialExtraFlagCoords[i]);
+            PlacePickupSprite(
+                new FlagPool() {
+                    chooseUnseen = new List<Type>() { typeof(Flag) }
+                },
+                PickupSprite.SpawnType.SHOP, 0, potentialExtraFlagCoords[i]
+            );
         }
     }
 	public void InitTrial() {
@@ -540,10 +549,10 @@ public class Floor : MonoBehaviour {
 		}
 		return g;
     }
-    public GameObject PlacePickupSprite(List<Type> pool, PickupSprite.SpawnType spawnType, int price, Vector2Int spawnCoord) {
+    public GameObject PlacePickupSprite(FlagPool flagPool, PickupSprite.SpawnType spawnType, int price, Vector2Int spawnCoord) {
         GameObject g = Instantiate(PrefabManager.s.flagSpritePrefab);
         PickupSprite ps = g.AddComponent(typeof(PickupSprite)) as PickupSprite;
-        ps.Init(pool[Random.Range(0, pool.Count)], price, spawnType, spawnCoord);
+        ps.Init(PlayerUIItemModule.s.GetRandomFlag(flagPool), price, spawnType, spawnCoord);
         PlayerUIItemModule.s.NoticeFlag(ps.correspondingUIType);
         return g;
     }

@@ -4,7 +4,7 @@ using UnityEngine.Rendering.Universal;
 using System;
 
 public class FlagSprite : CorrespondingSprite {
-    public static float droppedScale = 0.6f, heldPower = .8f, heldOffset, heldPeriod, overToUnderDuration = 0.5f;
+    public static float heldPower = .8f, heldOffset, heldPeriod, overToUnderDuration = 0.5f;
 
     [System.NonSerialized]
 	public Placeable parent;
@@ -50,7 +50,7 @@ public class FlagSprite : CorrespondingSprite {
     }
     public virtual void Init(Vector2Int spawnCoord) {
         this.state = "dropped";
-        transform.localScale = droppedScale * Vector3.one; 
+        transform.localScale = ConstantsManager.s.flagSpriteDroppedScale * Vector3.one; 
         sr.sortingLayerName = "Player";
         Init(CatalogManager.s.spriteTypeToUIType[GetType()]);
         Move(spawnCoord.x, spawnCoord.y);
@@ -89,11 +89,11 @@ public class FlagSprite : CorrespondingSprite {
             Vector2Int dropCoord = Floor.s.PosToCoord(landingPos);
             OnDrop(dropCoord.x, dropCoord.y);
             if (CoordAllowed(dropCoord.x, dropCoord.y)) {
-				Move(dropCoord.x, dropCoord.y, false);
+				Move(dropCoord.x, dropCoord.y, reposition: false, rescale: false);
 				if (Player.s.modifiers.windStrength != 0) {
 					LeanTween.move(gameObject, landingPos, 0.15f);
 				}
-                LeanTween.scale(gameObject, droppedScale*Vector3.one, 0.15f).setEase(LeanTweenType.easeInCubic);
+                LeanTween.scale(gameObject, ConstantsManager.s.flagSpriteDroppedScale * Vector3.one, 0.15f).setEase(LeanTweenType.easeInCubic);
                 LeanTween.rotate(gameObject, Vector3.zero, 0.15f).setEase(LeanTweenType.easeInCubic).setOnComplete(() => {
                     state = "dropped";
                     //disturb shaders when it hits the ground
@@ -150,9 +150,6 @@ public class FlagSprite : CorrespondingSprite {
 		//give tile momentum downward
 		GetTile().GetComponent<Tile>().externalDepthImpulse += placeImpulse;	
     }
-	public override bool Move(GameObject tile, bool reposition = true) {
-		return base.Move(tile, reposition);
-	}
     public override bool CoordAllowed(int x, int y) {
 		return Floor.s.TileExistsAt(x, y) &&
                (Floor.s.GetTile(x, y).GetComponent<Tile>().uniqueObstacle == null || !obstacle);
