@@ -30,6 +30,7 @@ public class PickupSprite : CorrespondingSprite {
         }
     }
     public override void Init() {
+        Debug.Log("hello im a pickup sprite");
         base.Init();
         defaultScale = ConstantsManager.s.flagSpriteDroppedScale;
     }
@@ -66,7 +67,7 @@ public class PickupSprite : CorrespondingSprite {
         hoveredOffset = Random.Range(0f, 1f);
         LeanTween.cancel(gameObject);
         LeanTween.cancel(light.gameObject);
-        LeanTween.value(light.gameObject, (float f) => { light.intensity = f; }, light.intensity, 5f, 0.25f).setEase(LeanTweenType.easeInOutCubic);
+        LeanTween.value(light.gameObject, (float f) => { light.intensity = f; }, light.intensity, 1f, 0.25f).setEase(LeanTweenType.easeInOutCubic);
     }
     protected override void OnMouseExitCustom() {
 		base.OnMouseExitCustom();
@@ -74,7 +75,7 @@ public class PickupSprite : CorrespondingSprite {
         LeanTween.scale(gameObject, ConstantsManager.s.flagSpriteDroppedScale * Vector3.one, 0.15f).setEase(LeanTweenType.easeInOutCubic);
         LeanTween.rotateLocal(gameObject, Vector3.zero, 0.15f).setEase(LeanTweenType.easeInOutCubic);
         LeanTween.cancel(light.gameObject);
-        LeanTween.value(light.gameObject, (float f) => { light.intensity = f; }, light.intensity, 3f, 0.25f).setEase(LeanTweenType.easeInOutCubic);
+        LeanTween.value(light.gameObject, (float f) => { light.intensity = f; }, light.intensity, 0.2f, 0.25f).setEase(LeanTweenType.easeInOutCubic);
     }
 	public override bool IsInteractable() {	
 		return base.IsInteractable() && Player.s.money >= price;
@@ -83,12 +84,15 @@ public class PickupSprite : CorrespondingSprite {
 		Player.s.UpdateMoney(Player.s.money - price);
 		GameObject g = Instantiate(PrefabManager.s.flagPrefab, transform.position, Quaternion.identity);
 		Flag f = g.AddComponent(correspondingUIType) as Flag;
-		// it this has a count then give the item the same count
 		if (tmpro.enabled) {
-			f.count = count;
+            f.Init(initialCount: count);
 		}
+        AudioManager.s.PlayEffect(AudioManager.s.pickup);
 		Remove();
 		Player.s.destroyPrints();
 		Player.s.updatePrints();
 	}
+    public override bool CoordAllowed(int x, int y) {
+        return Floor.s.TileExistsAt(x, y);
+    }
 }

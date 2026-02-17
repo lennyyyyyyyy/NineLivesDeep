@@ -40,6 +40,7 @@ public class AddTooltip : MonoBehaviour {
 		if (addHoverEffect && !forceHoverEffect) {
 			HoverEffectOn();
 		}
+        AudioManager.s.PlayEffect(AudioManager.s.hover);
 	}
 	public virtual void MouseExit() {
 		hovered = false;

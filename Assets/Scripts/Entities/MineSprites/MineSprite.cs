@@ -17,7 +17,8 @@ public class MineSprite : Entity {
 			
 	}	
 	public override void Init() {
-		Init(sprite: UIManager.s.mineDebugSprite, obstacle: false);
+		//Init(sprite: UIManager.s.mineDebugSprite, obstacle: false);
+		Init(obstacle: false);
 	}
     public virtual void Trigger() {
         EventManager.s.OnExplosionAtCoord?.Invoke(GetCoord().x, GetCoord().y, gameObject);
@@ -33,6 +34,10 @@ public class MineSprite : Entity {
         }
         return false;
 	}
+    public override void Remove(bool destroy = true) {
+        base.Remove(destroy);
+        Player.s.discoverTiles();
+    }
     public override bool CoordAllowed(int x, int y) {
         return base.CoordAllowed(x, y) && 
                Floor.s.GetTile(x, y).GetComponent<Tile>().uniqueMine != gameObject;

@@ -15,6 +15,7 @@ public class MainCamera : MonoBehaviour
     }
 	public void ZoomTo(float endZoom, float time) {
 		LeanTween.value(gameObject, updateZoom, Camera.main.orthographicSize, endZoom, time).setEase(LeanTweenType.easeInOutCubic);
+        AudioManager.s.PlayEffect(AudioManager.s.whoosh);
 	}
     public void ExitMotion() {
         LeanTween.cancel(gameObject);

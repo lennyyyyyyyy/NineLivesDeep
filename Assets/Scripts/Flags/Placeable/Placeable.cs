@@ -17,6 +17,7 @@ public class Placeable : Flag {
         FlagSprite flagSprite = sprite.AddComponent(placeableSpriteType) as FlagSprite;
         FlagData flagData = CatalogManager.s.typeToData[GetType()] as FlagData;
         flagSprite.Init(this); 
+        AudioManager.s.PlayEffect(AudioManager.s.pickup);
         base.OnPointerExit(null);
     }
     protected override bool IsUsable() {

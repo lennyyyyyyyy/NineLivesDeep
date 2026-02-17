@@ -103,7 +103,8 @@ public class Player : Entity {
     public int texWidth, texHeight;
 	public Modifiers modifiers = new Modifiers();
 	[System.NonSerialized]
-	public float watchedMineJumpTimer = 0f;
+	public float watchedMineJumpTimer = 0f,
+                 meowTimer = 0f;
     [System.NonSerialized]
     public bool dogFlagActive = false,
                 mapNumberActive = true;
@@ -132,6 +133,11 @@ public class Player : Entity {
 		if (modifiers.watched) {
 			watchedMineJumpTimer += Time.deltaTime;
 		}
+        meowTimer += Time.deltaTime;
+        if (meowTimer >= ConstantsManager.s.meowCooldown && Player.s.alive) {
+            meowTimer = 0f;
+            EventManager.s.OnPlayerMeow?.Invoke();
+        }
     }
     public void Load(LoadData loadData) {
         money = loadData.money;
@@ -184,10 +190,10 @@ public class Player : Entity {
         }
     }
     public void UpdateMoney(float newCount) {
+        if (newCount - money > 0) AudioManager.s.PlayEffect(AudioManager.s.money);
         HelperManager.s.InstantiateBubble(MineUIItem.s.gameObject, (newCount - money >= 0 ? "+" : "-") + (Mathf.Round(Mathf.Abs(newCount - money)*100f)/100f).ToString(), Color.white);
         money = newCount;
-        
-        MineUIItem.s.count.text = money.ToString();
+        MineUIItem.s.count.text = (Mathf.Round(money*100f)/100f).ToString();
     }
     public void destroyPrints() {
         for (int i = 0; i < prints.Count; i++) {
@@ -310,9 +316,9 @@ public class Player : Entity {
             } else {
                 animator.SetTrigger("jumpNeutralStart");
             }
+            EventManager.s.OnPlayerMoveToCoord?.Invoke(x, y);
             base.Move(x, y, false);
             destroyPrints();
-            EventManager.s.OnPlayerMoveToCoord?.Invoke(x, y);
             LeanTween.moveLocal(gameObject, Vector3.zero, 0.5f).setEase(LeanTweenType.easeOutCubic).setOnComplete(() => {
                 animator.SetTrigger("jumpEnd");
                 destroyPrints();
@@ -380,6 +386,9 @@ public class Player : Entity {
         tilesVisited.Add(Floor.s.GetTile(x, y));
         tilesUnvisited.Remove(Floor.s.GetTile(x, y));
     }
+    private void OnPlayerMeow() {
+        HelperManager.s.InstantiateBubble(gameObject, "meow", Color.white);
+    }
     private void OnEnable() {
         EventManager.s.OnFloorChangeBeforeNewLayout += OnFloorChangeBeforeNewLayout;
         EventManager.s.OnFloorChangeAfterEntities += OnFloorChangeAfterEntities;
@@ -387,6 +396,7 @@ public class Player : Entity {
         EventManager.s.OnForceMapNumberActive += OnForceMapNumberActive;
         EventManager.s.OnPlayerMoveToCoord += OnPlayerMoveToCoord;
         EventManager.s.OnPlayerArriveAtCoord += OnPlayerArriveAtCoord;
+        EventManager.s.OnPlayerMeow += OnPlayerMeow;
     }
     private void OnDisable() {
         EventManager.s.OnFloorChangeBeforeNewLayout -= OnFloorChangeBeforeNewLayout;
@@ -395,5 +405,6 @@ public class Player : Entity {
         EventManager.s.OnForceMapNumberActive -= OnForceMapNumberActive;
         EventManager.s.OnPlayerMoveToCoord -= OnPlayerMoveToCoord;
         EventManager.s.OnPlayerArriveAtCoord -= OnPlayerArriveAtCoord;
+        EventManager.s.OnPlayerMeow -= OnPlayerMeow;
     }
 }

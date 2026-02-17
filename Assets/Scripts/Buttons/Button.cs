@@ -8,7 +8,9 @@ public class Button : MonoBehaviour {
     private bool hovered = false, pressed = false, finished = false;
     private float hoverOffset;
 
-    protected virtual void OnPress() {}
+    protected virtual void OnPress() {
+        AudioManager.s.PlayEffect(AudioManager.s.press);
+    }
     protected virtual void Awake() {
         HelperManager.s.SetupUIEventTriggers(gameObject, 
                                              new EventTriggerType[] { EventTriggerType.PointerEnter, EventTriggerType.PointerExit, EventTriggerType.PointerDown, EventTriggerType.PointerUp },
@@ -17,6 +19,7 @@ public class Button : MonoBehaviour {
     protected virtual void OnPointerEnter(PointerEventData data) {
         hovered = true;
         hoverOffset = Random.Range(0f, 1f);
+        AudioManager.s.PlayEffect(AudioManager.s.hover);
     }
     protected virtual void OnPointerExit(PointerEventData data) {
         hovered = false;

@@ -15,7 +15,7 @@ public class Taken : Curse {
         foreach (Flag f in takenFlags) {
             f.takenBy.Add(this);
         }
-		tooltipData.flavor = "Currently taking " + string.Join(", ", takenFlags.Select(f => f.tooltipData.name));
+		tooltipData.flavor = "Currently taking " + (takenFlags.Count == 0 ? "nothing" : string.Join(", ", takenFlags.Select(f => f.tooltipData.name))) + ".";
         Init(tooltipData: tooltipData);	
 		Player.s.RecalculateModifiers();
     }
@@ -33,11 +33,16 @@ public class Taken : Curse {
         }
         SetTakenFlags(options.Select(g => g.GetComponent<Flag>()).ToList());
 	}
+    private void ResetTakenFlags() {
+        SetTakenFlags(new List<Flag>());
+    }
 	private void OnEnable() {
 		EventManager.s.OnFloorChangeBeforeNewLayout += SetRandomTakenFlag;
+        EventManager.s.OnPlayerDie += ResetTakenFlags;
 	}
 	private void OnDisable() {
 		EventManager.s.OnFloorChangeBeforeNewLayout -= SetRandomTakenFlag;
+        EventManager.s.OnPlayerDie -= ResetTakenFlags;
 	}
 }
 

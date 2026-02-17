@@ -202,7 +202,7 @@ public class CatalogManager : MonoBehaviour {
         new CurseData(typeof(Expansion), "expansion", new TooltipData("Expansion", "The unknowable will of the tiles.", "All floors become larger."));
         new CurseData(typeof(Decrepit), "decrepit", new TooltipData("Decrepit", "This place is falling apart. Probably the explosions.", "More holes."));
         new CurseData(typeof(Fragile), "fragile", new TooltipData("Fragile", "Sensitive skin is an understatement.", "Walking into grass or water enough kills you, eventually. Resets on new floors."));
-        new CurseData(typeof(Taken), "taken", new TooltipData("Taken", "Currently disabling nothing.", "Takes flags away on every minefield."));
+        new CurseData(typeof(Taken), "taken", new TooltipData("Taken", "Currently taking nothing.", "Disables a selection of your flags, until your first death on the floor."));
         new CurseData(typeof(Intensify), "intensify", new TooltipData("Intensify", "Currently intensifying nothing.", "One random curse is heightened every floor."));
         new CurseData(typeof(Amnesia), "amnesia", new TooltipData("Amnesia", "Why are you here again?", "Tooltips disappear from items. Map numbers have a chance to disappear."));
         new CurseData(typeof(Wobbly), "wobbly", new TooltipData("Wobbly", "They fried your cerebellum lil bro", "You can't walk straight."));

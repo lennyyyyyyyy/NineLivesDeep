@@ -21,6 +21,7 @@ public class Print : MonoBehaviour {
         hoverOffset = Random.Range(0f, 1f);
         hoverPeriod = 0.65f + 0.15f * Random.Range(-1f, 1f);
         GetComponent<SpriteRenderer>().color = hoveredColor;
+        AudioManager.s.PlayEffect(AudioManager.s.hover);
     }
     private void OnMouseExitCustom() {
 		hovered = false;
@@ -34,6 +35,7 @@ public class Print : MonoBehaviour {
 		while (Player.s.moveHistory.Count > ConstantsManager.s.playerMaxMoveHistory) {
 			Player.s.moveHistory.RemoveAt(0);
 		}
+        AudioManager.s.PlayEffect(AudioManager.s.press);
     }
     private void Update() {
         if (hovered) {

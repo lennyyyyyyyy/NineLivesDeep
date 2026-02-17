@@ -2401,6 +2401,58 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3ef3879a4e3e842209490287a621d196, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  menuMusic:
+    clip: {fileID: 8300000, guid: 7fedca4b5d26b44b0bf21bb5a5b8fb75, type: 3}
+    volume: 0.2
+  gameMusic:
+    clip: {fileID: 8300000, guid: ab66c762c0fe2409c8ea1082313c6d54, type: 3}
+    volume: 0.1
+  meow:
+  - clip: {fileID: 8300000, guid: d787a941e4e1f4db88149a98a85c6702, type: 3}
+    volume: 0.6
+  - clip: {fileID: 8300000, guid: a203948fb4e5c4300b9122780151ea6c, type: 3}
+    volume: 0.6
+  ground:
+  - clip: {fileID: 8300000, guid: e77ec9abc64794369b4fd0927644ad21, type: 3}
+    volume: 1
+  - clip: {fileID: 8300000, guid: b1a75a10df35b49af9e227c8f76c9698, type: 3}
+    volume: 1
+  splash:
+  - clip: {fileID: 8300000, guid: c176f60047a604c9b9e97054d30e2b8e, type: 3}
+    volume: 0.6
+  - clip: {fileID: 8300000, guid: e2dfa55f76613495f92cada03ce79720, type: 3}
+    volume: 0.6
+  rustle:
+  - clip: {fileID: 8300000, guid: 5d638a60a20414b22b301345015e84b8, type: 3}
+    volume: 0.6
+  whoosh:
+  - clip: {fileID: 8300000, guid: 229a9168115864bbe9b7ae18995b5b6e, type: 3}
+    volume: 0.3
+  explosion:
+  - clip: {fileID: 8300000, guid: 64bac7ed2a9704b95b945063eadad2a5, type: 3}
+    volume: 0.3
+  - clip: {fileID: 8300000, guid: 586fea5a741a24acc920269811b7824a, type: 3}
+    volume: 0.3
+  pickup:
+  - clip: {fileID: 8300000, guid: 213e6cf1cae984218927a1c2343cca89, type: 3}
+    volume: 0.05
+  hover:
+  - clip: {fileID: 8300000, guid: 6b10b45a84f7a47f69aae7e9ffed1aab, type: 3}
+    volume: 0.4
+  press:
+  - clip: {fileID: 8300000, guid: 169950b8f5e594e708a7ba06415ff371, type: 3}
+    volume: 0.4
+  gong:
+  - clip: {fileID: 8300000, guid: ca255dd395de446b2b0cad9c17559e7e, type: 3}
+    volume: 0.17
+  paper:
+  - clip: {fileID: 8300000, guid: 41ced060382d642fa9321c159a857e72, type: 3}
+    volume: 0.6
+  win: []
+  lose: []
+  money:
+  - clip: {fileID: 8300000, guid: 3ec0fe1dc15994861a2b71fa5f14b63b, type: 3}
+    volume: 0.6
 --- !u!1 &1982705830
 GameObject:
   m_ObjectHideFlags: 0

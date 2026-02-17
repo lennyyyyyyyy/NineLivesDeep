@@ -147,11 +147,12 @@ public class FlagSprite : CorrespondingSprite {
             Flag b = PlayerUIItemModule.s.typeToInstances[typeof(Base)][0].GetComponent<Flag>();
             b.UpdateCount(b.count + Player.s.modifiers.reflectionPassiveCount);
         }
-		//give tile momentum downward
+        Tile tile = GetTile().GetComponent<Tile>();
 		GetTile().GetComponent<Tile>().externalDepthImpulse += placeImpulse;	
+        AudioManager.s.PlayCorrespondingTileEffect(tile);
     }
     public override bool CoordAllowed(int x, int y) {
 		return Floor.s.TileExistsAt(x, y) &&
-               (Floor.s.GetTile(x, y).GetComponent<Tile>().uniqueObstacle == null || !obstacle);
+               Floor.s.GetTile(x, y).GetComponent<Tile>().uniqueObstacle == null;
     }
 }

@@ -10,21 +10,26 @@ public class ConstantsManager : MonoBehaviour {
                  tileDampingPower = 0.20f,
                  playerStepImpulse = 0.20f,
                  playerReviveDuration = 3.0f,
-	             minefieldTrialChance = 1f,
+	             minefieldTrialChance = 0.5f,
                  tooltipPadding = 0.01f,
                  buttonIdleStrength = 15f,
                  buttonIdleSpeed = 2f,
-                 baseMineChance = 0.2f,
-                 mineChanceScaling = 0.06f,
+                 baseMineChance = 0.15f,
+                 mineChanceScaling = 0.05f,
                  timeTrialDuration = 60f,
-                 flagSpriteDroppedScale = 0.6f;
+                 flagSpriteDroppedScale = 0.6f,
+                 randomPitchMin = 0.9f,
+                 randomPitchMax = 1.1f,
+                 musicFadeDuration = 0.5f,
+                 meowCooldown = 20f;
 
     [System.NonSerialized]
     public int playerMaxMoveHistory = 10,
                finalFloor = 5,
                curseFreq = 2,
                mineFreq = 2,
-               themeFreq = 3;
+               themeFreq = 3,
+               audioSources = 10;
 
     [System.NonSerialized]
     public Color cyan = new Color(2f/3, 1, 1, 1),

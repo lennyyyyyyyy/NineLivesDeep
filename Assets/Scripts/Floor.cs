@@ -51,6 +51,7 @@ public class Floor : MonoBehaviour {
 
         HelperManager.s.DelayAction(() => {
             HelperManager.s.InstantiateBubble(Vector3.zero, introduction, Color.white, 2f, 2f);
+            AudioManager.s.PlayEffect(AudioManager.s.paper);
         }, time);
 		time += 2.8f;
 
@@ -62,6 +63,7 @@ public class Floor : MonoBehaviour {
 		if (floorType == "minefield" && floor % ConstantsManager.s.mineFreq == 0) {
 			HelperManager.s.DelayAction(() => {
 				HelperManager.s.InstantiateBubble(Vector3.zero, "a mine appears...", new Color(0.5f, 0.5f, 0.5f), 2f, 2f);
+                AudioManager.s.PlayEffect(AudioManager.s.gong);
 			}, time);
 			HelperManager.s.DelayAction(() => {
 				GameObject mine = Instantiate(PrefabManager.s.minePrefab, Vector3.zero, Quaternion.identity);
@@ -77,6 +79,7 @@ public class Floor : MonoBehaviour {
 		if (floorType == "minefield" && floor % ConstantsManager.s.curseFreq == 0) {
 			HelperManager.s.DelayAction(() => {
 				HelperManager.s.InstantiateBubble(Vector3.zero, "CURSED", new Color(0.5f, 0, 0), 2f, 2f);
+                AudioManager.s.PlayEffect(AudioManager.s.gong);
 			}, time);
 			HelperManager.s.DelayAction(() => {
 				GameObject curse = Instantiate(PrefabManager.s.cursePrefab, Vector3.zero, Quaternion.identity);
@@ -249,7 +252,6 @@ public class Floor : MonoBehaviour {
 		//random chance for trial entrance
 		if (Random.value < ConstantsManager.s.minefieldTrialChance) {
             Vector2Int trialCoord = potentialTiles[Random.Range(0, potentialTiles.Count)];
-            Debug.Log("trial entrance at " + trialCoord);
 			if (!TileExistsAt(trialCoord.x, trialCoord.y)) {
 				GameObject t = ReplaceTile(PrefabManager.s.tileActionPrefab, trialCoord.x, trialCoord.y);
 				t.GetComponent<ActionTile>().Init(ActionTile.ActionCode.EXITTOTRIAL);
